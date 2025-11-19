@@ -1,494 +1,824 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRYONIS INTELLIGENCE STUDIO™ | Strategic Architecture Division</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0B0C14;
-            color: #E8ECF6;
-        }
-        #background-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.5;
-        }
-        .card {
-            background-color: #131127;
-        }
-        .chart-container {
-            position: relative;
-            height: 40vh;
-            width: 100%;
-            max-height: 450px;
-        }
-        .flowchart-step {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1rem;
-            border: 1px solid #5C47FF;
-            background-color: #1a1833;
-            min-height: 120px;
-        }
-        .flowchart-arrow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #5C47FF;
-            font-size: 2rem;
-            padding: 0 1rem;
-        }
-        .vision-panel {
-            background: linear-gradient(90deg, rgba(11,12,20,1) 0%, rgba(26,24,51,1) 50%, rgba(11,12,20,1) 100%);
-        }
-        .lang-btn {
-            background-color: #131127;
-            border: 1px solid #5C47FF;
-            color: #E8ECF6;
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s;
-            cursor: pointer;
-        }
-        .lang-btn.active, .lang-btn:hover {
-            background-color: #5C47FF;
-            color: white;
-        }
-        @media (max-width: 767px) {
-            .flowchart-arrow {
-                transform: rotate(90deg);
-                padding: 1rem 0;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KRYONIS INTELLIGENCE STUDIO — Sovereign Strategic Architecture Division</title>
+  <meta name="description" content="KRYONIS INTELLIGENCE STUDIO — the sovereign research and documentation bureau of KRYONIS, producing strategic architecture papers and doctrinal intelligence for states and institutes." />
+
+  <style>
+    :root {
+      --bg: #05060a;
+      --bg-soft: #0b0d14;
+      --fg: #f5f5f5;
+      --muted: #a3a7b3;
+      --gold: #f5c76a;
+      --violet: #6e63ff;
+      --border: #1b1f2b;
+
+      --radius-lg: 24px;
+      --radius-md: 16px;
+
+      --max-width: 1120px;
+      --shadow-soft: 0 18px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #151827 0, #05060a 52%);
+      color: var(--fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.6rem;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 6, 10, 0.96),
+        rgba(5, 6, 10, 0.85),
+        transparent
+      );
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 0;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .nav-logo-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 199, 106, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--gold);
+    }
+
+    .nav-title {
+      font-size: 0.95rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a {
+      position: relative;
+      padding-bottom: 0.1rem;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.18s ease-out;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links .active {
+      color: var(--fg);
+    }
+    .nav-links .active::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 199, 106, 0.3);
+      font-size: 0.8rem;
+      color: var(--gold);
+      background: rgba(245, 199, 106, 0.04);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+      }
+      .nav-links {
+        justify-content: flex-start;
+      }
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 3.6rem 0 3.2rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-kicker {
+      font-size: 0.72rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3.1vw, 2.6rem);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 32rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-subtitle strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.18s ease-out, border-color 0.18s ease-out,
+        color 0.18s ease-out, transform 0.12s ease-out;
+    }
+
+    .btn-gold {
+      background: rgba(245, 199, 106, 0.08);
+      border: 1px solid rgba(245, 199, 106, 0.35);
+      color: var(--gold);
+      font-weight: 500;
+      border-radius: 999px;
+      padding: 0.65rem 1.25rem;
+      transition: 0.2s ease-out;
+    }
+
+    .btn-gold:hover {
+      background: rgba(245, 199, 106, 0.16);
+      border-color: rgba(245, 199, 106, 0.6);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      border-color: rgba(163, 167, 179, 0.5);
+      color: var(--muted);
+      background: rgba(4, 5, 8, 0.7);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--fg);
+      transform: translateY(-1px);
+    }
+
+    .hero-aside {
+      background: radial-gradient(circle at top, #23253b, #05060a);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 1.6rem 1.4rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 199, 106, 0.4);
+      font-size: 0.75rem;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .hero-metric {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .hero-aside {
+        order: 1;
+        margin-top: 1.4rem;
+      }
+    }
+
+    /* SECTIONS */
+
+    section {
+      padding: 3.2rem 0;
+    }
+
+    .section-heading {
+      margin-bottom: 2rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .section-lead {
+      font-size: 0.98rem;
+      color: var(--muted);
+      max-width: 32rem;
+      margin-top: 0.6rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 2.4rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      padding: 1.6rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card + .card {
+      margin-top: 1.6rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .card-heading {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1.1rem;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      padding: 0.32rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(12, 14, 22, 0.96);
+      color: var(--muted);
+    }
+
+    .pill.gold {
+      border-color: rgba(245, 199, 106, 0.8);
+      color: var(--gold);
+      background: rgba(245, 199, 106, 0.08);
+    }
+
+    .list {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 0.8rem;
+    }
+
+    .list li {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .list li strong {
+      color: var(--fg);
+    }
+
+    .columns-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.8rem;
+    }
+
+    @media (max-width: 900px) {
+      .columns-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2.4rem 0;
+      padding-bottom: calc(2.8rem + env(safe-area-inset-bottom));
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-top: 1.6rem;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 720px) {
+      .footer-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      section {
+        padding: 3.4rem 0;
+      }
+      .hero {
+        padding: 4.4rem 0 4rem;
+      }
+      .grid-2 {
+        align-items: center;
+      }
+    }
+  </style>
 </head>
-<body class="antialiased">
-    
-    <canvas id="background-canvas"></canvas>
+<body>
+  <div class="page">
 
-    <div class="container mx-auto p-4 md:p-8 relative z-10">
+    <!-- HEADER -->
+    <header>
+      <div class="wrapper">
+        <nav class="nav">
+          <div class="nav-brand">
+            <div class="nav-logo-circle">⦿</div>
+            <div class="nav-title">KRYONIS INTELLIGENCE STUDIO</div>
+          </div>
+          <div class="nav-links">
+            <a href="https://kryonis.global" target="_blank" rel="noopener">KRYONIS.GLOBAL</a>
+            <a href="#era">Era</a>
+            <a href="#poc">PoC</a>
+            <a href="#method">Method</a>
+            <a href="#commissions">Commissions</a>
+          </div>
+          <a class="nav-cta" href="#contact">Initiate briefing</a>
+        </nav>
+      </div>
+    </header>
 
-        <div id="language-switcher" class="text-center mb-8">
-            <button class="lang-btn active" data-lang="en">EN</button>
-            <button class="lang-btn" data-lang="es">ES</button>
-            <button class="lang-btn" data-lang="ru">RU</button>
-            <button class="lang-btn" data-lang="de">DE</button>
-            <button class="lang-btn" data-lang="fr">FR</button>
+    <main>
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="wrapper">
+          <div class="hero-grid">
+            <div>
+              <div class="hero-kicker">SOVEREIGN STRATEGIC ARCHITECTURE DIVISION</div>
+              <h1 class="hero-title">
+                KRYONIS INTELLIGENCE STUDIO
+              </h1>
+              <p class="hero-subtitle">
+                KRYONIS INTELLIGENCE STUDIO is the <strong>research and documentation bureau of KRYONIS</strong>.
+                It produces strategic architecture papers, doctrinal reports and classified-grade
+                written intelligence for states, institutes and sovereign funds.
+              </p>
+              <div class="hero-actions">
+                <a class="btn btn-gold" href="#era">Explore the mandate</a>
+                <a class="btn btn-outline" href="#contact">Initiate a briefing</a>
+              </div>
+            </div>
+
+            <aside class="hero-aside">
+              <div class="hero-chip">
+                ∴ Studio Snapshot
+              </div>
+              <div class="hero-metric">
+                <strong>Primary function</strong><br />
+                Strategic architecture & doctrinal intelligence
+              </div>
+              <div class="hero-metric" style="margin-top:0.6rem;">
+                <strong>Commissioning scope</strong><br />
+                Governments · institutes · sovereign capital
+              </div>
+              <div class="hero-metric" style="margin-top:0.6rem;">
+                <strong>Output formats</strong><br />
+                Architecture papers · doctrinal reports · whitebooks
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- STRATEGIC ARCHITECTURE ERA -->
+      <section id="era">
+        <div class="wrapper">
+          <div class="section-heading">
+            <div class="section-eyebrow">MANDATE</div>
+            <h2 class="section-title">The strategic architecture era</h2>
+            <p class="section-lead">
+              Humanity is moving from industrial administration to cognitive, system-based governance.
+              KRYONIS INTELLIGENCE STUDIO authors the frameworks that define this transition.
+            </p>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">TRANSITION</div>
+              <h3 class="card-heading">From analysis to architecture</h3>
+              <p class="card-text">
+                Legacy analytical models describe the world; they rarely redesign it.
+                The studio focuses on <strong>architectural writing</strong> — documents that not only interpret
+                complex systems, but specify how they should be rebuilt for the next intelligence epoch.
+              </p>
+              <p class="card-text" style="margin-top:0.9rem;">
+                Each strategic paper or doctrinal report is treated as an operational blueprint:
+                a living interface between states, infrastructures and emerging forms of consciousness.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-title">SOVEREIGN POSITIONING</div>
+              <h3 class="card-heading">Written intelligence, not opinion</h3>
+              <p class="card-text">
+                Studio outputs are produced to sovereign-grade standards. They are not
+                essays, blog posts or analyst memos. They are structured as
+                <strong>formal instruments</strong> that can be adopted into national strategies,
+                institutional doctrines and long-horizon investment theses.
+              </p>
+              <div class="pill-row" style="margin-top:1.1rem;">
+                <span class="pill gold">STRATEGIC ARCHITECTURE PAPERS</span>
+                <span class="pill">DOCTRINAL REPORTS</span>
+                <span class="pill">WHITEBOOKS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROOF OF COHERENCE -->
+      <section id="poc">
+        <div class="wrapper">
+          <div class="section-heading">
+            <div class="section-eyebrow">ANALYTICAL CORE</div>
+            <h2 class="section-title">Proof-of-Coherence (PoC)</h2>
+            <p class="section-lead">
+              Proof-of-Coherence is the analytical backbone of all KRYONIS documents — a method for
+              measuring the systemic integrity of an institution or architecture.
+            </p>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">METHODOLOGY</div>
+              <h3 class="card-heading">Four interdependent vectors</h3>
+              <p class="card-text">
+                PoC evaluates any system across four tightly coupled domains:
+              </p>
+              <ul class="list">
+                <li><strong>INTENT</strong> — purpose architecture and doctrinal alignment.</li>
+                <li><strong>MECHANISM</strong> — governance logic and operational protocols.</li>
+                <li><strong>METABOLISM</strong> — economic circuitry and resource dynamics.</li>
+                <li><strong>IDENTITY</strong> — signal interface and external information signature.</li>
+              </ul>
+              <p class="card-text" style="margin-top:0.9rem;">
+                A high PoC score indicates robust internal alignment and strategic viability.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-title">APPLICATION</div>
+              <h3 class="card-heading">Legibility for long-horizon actors</h3>
+              <p class="card-text">
+                For ministries, sovereign funds and research institutes, PoC turns vague notions
+                of “resilience” or “coherence” into something legible and governable.
+                The studio uses PoC to benchmark proposed architectures before they are deployed
+                into the real world.
+              </p>
+              <p class="card-text" style="margin-top:0.9rem;">
+                PoC is also the anchor for the future KRYONIS tokenomics layer,
+                where value is tied not to volume, but to measurable coherence.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCUMENTATION ARCHITECTURE / METHOD -->
+      <section id="method">
+        <div class="wrapper">
+          <div class="section-heading">
+            <div class="section-eyebrow">AUTHORSHIP PROTOCOL</div>
+            <h2 class="section-title">KRYONIS documentation architecture</h2>
+            <p class="section-lead">
+              Each publication is produced through a structured five-phase authorship protocol,
+              aligning analytical rigour with doctrinal clarity.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">FIVE PHASES</div>
+            <div class="columns-2">
+              <div>
+                <h3 class="card-heading">1. ANALYSIS</h3>
+                <p class="card-text">
+                  Establish the scope of inquiry, doctrinal parameters and strategic objectives.
+                  Map existing architectures, actors and constraints.
+                </p>
+
+                <h3 class="card-heading" style="margin-top:1.4rem;">2. SYNTHESIS</h3>
+                <p class="card-text">
+                  Synthesize heterogeneous data sources, model system dynamics and surface
+                  the underlying cognitive and economic patterns.
+                </p>
+
+                <h3 class="card-heading" style="margin-top:1.4rem;">3. STRUCTURING</h3>
+                <p class="card-text">
+                  Author the core textual and logical architecture — the “spine” of the document
+                  that defines how the system should evolve.
+                </p>
+              </div>
+
+              <div>
+                <h3 class="card-heading">4. VALIDATION</h3>
+                <p class="card-text">
+                  Conduct doctrinal review, PoC evaluation and coherence validation across
+                  stakeholder domains (policy, economy, infrastructure, culture).
+                </p>
+
+                <h3 class="card-heading" style="margin-top:1.4rem;">5. PUBLICATION</h3>
+                <p class="card-text">
+                  Finalise and deliver the document in its agreed classification tier, with
+                  annexes, diagrams and implementation notes where required.
+                </p>
+
+                <div class="pill-row" style="margin-top:1.3rem;">
+                  <span class="pill gold">SOVEREIGN-GRADE STANDARD</span>
+                  <span class="pill">MULTI-ITERATION REVIEW</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:1.8rem;">
+            <div class="card-title">OPERATIONAL COMPOSITION</div>
+            <h3 class="card-heading">Micro-institution · Hybrid intelligence</h3>
+            <p class="card-text">
+              KRYONIS INTELLIGENCE STUDIO operates as a micro-institution: a small, elite core
+              of human analysts working in tandem with a distributed AI synthesis mesh.
+            </p>
+            <p class="card-text" style="margin-top:0.8rem;">
+              This hybrid composition allows the studio to co-author complex strategic
+              architectures with exceptional depth and speed, while maintaining a
+              human-led doctrinal filter.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMISSIONS -->
+      <section id="commissions">
+        <div class="wrapper">
+          <div class="section-heading">
+            <div class="section-eyebrow">COMMISSIONS</div>
+            <h2 class="section-title">Institutional commissions</h2>
+            <p class="section-lead">
+              The studio accepts commissions from actors responsible for architecting
+              national and civilizational infrastructure.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-title">WHO WE WORK WITH</div>
+            <ul class="list">
+              <li><strong>SOVEREIGN INSTITUTIONS</strong> — ministries, national councils, sovereign funds.</li>
+              <li><strong>RESEARCH AGENCIES</strong> — advanced institutes in bioeconomy, AI, space and systems science.</li>
+              <li><strong>CONSORTIA</strong> — scientific and industrial coalitions tasked with long-horizon infrastructure.</li>
+            </ul>
+            <p class="card-text" style="margin-top:0.9rem;">
+              Each commission is executed under a formal sovereign or institutional agreement,
+              with clearly defined classification, authorship and dissemination protocols.
+            </p>
+          </div>
+
+          <div class="card" style="margin-top:1.8rem;">
+            <div class="card-title">COMMISSIONING FRAMEWORK</div>
+            <p class="card-text">
+              Commissions are accepted for specific publication categories. Indicative
+              budget ranges are provided for planning purposes. Each engagement
+              remains confidential and is executed under a Sovereign Contract.
+            </p>
+
+            <div class="columns-2" style="margin-top:1.3rem;">
+              <div>
+                <h3 class="card-heading">Strategic Architecture Papers</h3>
+                <p class="card-text">Indicative range: €60,000 – €180,000</p>
+
+                <h3 class="card-heading" style="margin-top:1.2rem;">Doctrinal Reports</h3>
+                <p class="card-text">Indicative range: €45,000 – €120,000</p>
+              </div>
+              <div>
+                <h3 class="card-heading">Whitebooks &amp; Intelligence Compendiums</h3>
+                <p class="card-text">Indicative range: €100,000 – €250,000</p>
+                <p class="card-text" style="margin-top:0.9rem;">
+                  Final budgets are set after a brief diagnostic phase, once scope and
+                  doctrinal depth are agreed.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT / MISSION -->
+      <section id="contact">
+        <div class="wrapper">
+          <div class="section-heading">
+            <div class="section-eyebrow">CONTACT</div>
+            <h2 class="section-title">Initiate a sovereign briefing</h2>
+            <p class="section-lead">
+              For governments, institutes and long-term capital only. No retail offers,
+              no public token sales, no mass-market products.
+            </p>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <div class="card">
+                <div class="card-title">MISSION</div>
+                <h3 class="card-heading">Textual architectures for the next intelligence epoch</h3>
+                <p class="card-text">
+                  The studio designs the textual architectures through which civilization
+                  organises its next intelligence epoch — documents that encode not just
+                  information, but intent, coherence and sovereignty.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <div class="card">
+                <div class="card-title">INITIATION PROTOCOL</div>
+                <p class="card-text">
+                  To initiate a briefing, send a concise introduction outlining:
+                </p>
+                <ul class="list" style="margin-top:0.7rem;">
+                  <li>▸ Who you are and what system you speak for.</li>
+                  <li>▸ The time horizon you are responsible for (5 / 25 / 100+ years).</li>
+                  <li>▸ The domain you wish to stabilise: bioeconomy, AI, governance, orbital, other.</li>
+                  <li>▸ Why you believe a KRYONIS-aligned architecture is necessary now.</li>
+                </ul>
+                <p class="card-text" style="margin-top:0.9rem;">
+                  <strong>Primary contact:</strong><br />
+                  hq@kryonis.global
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="wrapper">
+
+        <div style="
+          height:1px;
+          background:linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
+          margin-bottom:2.2rem;
+        "></div>
+
+        <div class="footer-row">
+          <div style="line-height:1.55; font-size:0.9rem;">
+            <div style="opacity:0.85; font-weight:500;">Get in touch:</div>
+            <div style="opacity:0.85;">hq@kryonis.global</div>
+          </div>
+
+          <div style="line-height:1.55; font-size:0.82rem; text-align:right; opacity:0.75;">
+            © KRYONIS Sovereign Systems Limited · 2025<br />
+            Sovereign Strategic Architecture Division<br />
+            Hong Kong SAR
+          </div>
         </div>
 
-        <header class="text-center my-8 md:my-12">
-            <h1 class="text-3xl md:text-5xl font-light tracking-wider text-white">KRYONIS INTELLIGENCE STUDIO™</h1>
-            <p class="text-lg md:text-xl text-[#CBB7FF] mt-3" data-lang-en="A sovereign-grade research and documentation bureau." data-lang-es="Una oficina de investigación y documentación de grado soberano." data-lang-ru="Бюро исследований и документации суверенного уровня." data-lang-de="Ein Forschungs- und Dokumentationsbüro auf souveräner Ebene." data-lang-fr="Un bureau de recherche et de documentation de niveau souverain.">A sovereign-grade research and documentation bureau.</p>
-        </header>
+      </div>
+    </footer>
 
-        <main class="space-y-8">
+  </div>
 
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-[#CBB7FF] mb-4" data-lang-en="The Strategic Architecture Era" data-lang-es="La Era de la Arquitectura Estratégica" data-lang-ru="Эпоха стратегической архитектуры" data-lang-de="Die Ära der strategischen Architektur" data-lang-fr="L'Ère de l'Architecture Stratégique">The Strategic Architecture Era</h2>
-                <p class="text-[#9AA0B4] mb-6" data-lang-en="Humanity is transitioning from an epoch of industrial administration to one of cognitive, system-based governance. KRYONIS authors the formal frameworks that define this transition, producing classified-grade written intelligence for state institutions and advanced research agencies." data-lang-es="La humanidad está en transición de una época de administración industrial a una de gobernanza cognitiva basada en sistemas. KRYONIS redacta los marcos formales que definen esta transición, produciendo inteligencia escrita de grado clasificado para instituciones estatales y agencias de investigación avanzadas." data-lang-ru="Человечество переходит от эпохи индустриального управления к когнитивному, системному управлению. KRYONIS разрабатывает формальные основы, определяющие этот переход, создавая письменные разведывательные материалы секретного уровня для государственных учреждений и передовых исследовательских агентств." data-lang-de="Die Menschheit befindet sich im Übergang von einer Epoche industrieller Verwaltung zu einer kognitiven, systembasierten Regierungsführung. KRYONIS verfasst die formalen Rahmenwerke, die diesen Übergang definieren, und erstellt klassifizierte schriftliche Informationen für staatliche Institutionen und fortgeschrittene Forschungsagenturen." data-lang-fr="L'humanité passe d'une ère d'administration industrielle à une gouvernance cognitive et systémique. KRYONIS rédige les cadres formels qui définissent cette transition, produisant des renseignements écrits de niveau classifié pour les institutions étatiques et les agences de recherche avancées.">Humanity is transitioning from an epoch of industrial administration to one of cognitive, system-based governance. KRYONIS authors the formal frameworks that define this transition, producing classified-grade written intelligence for state institutions and advanced research agencies.</p>
-                <div class="chart-container mx-auto max-w-4xl">
-                    <canvas id="paradigmShiftChart"></canvas>
-                </div>
-                <p class="text-center text-sm text-[#9AA0B4] mt-4" data-lang-en="The chart illustrates the declining utility of legacy analytical models versus the rising strategic value of documented cognitive architecture." data-lang-es="El gráfico ilustra la decreciente utilidad de los modelos analíticos heredados frente al creciente valor estratégico de la arquitectura cognitiva documentada." data-lang-ru="Диаграмма иллюстрирует снижение полезности устаревших аналитических моделей по сравнению с ростом стратегической ценности документированной когнитивной архитектуры." data-lang-de="Das Diagramm veranschaulicht den abnehmenden Nutzen herkömmlicher Analysemodelle gegenüber dem steigenden strategischen Wert dokumentierter kognitiver Architektur." data-lang-fr="Le graphique illustre l'utilité déclinante des modèles analytiques traditionnels par rapport à la valeur stratégique croissante de l'architecture cognitive documentée.">The chart illustrates the declining utility of legacy analytical models versus the rising strategic value of documented cognitive architecture.</p>
-            </section>
-            
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-center text-[#CBB7FF] mb-4" data-lang-en="Proof-of-Coherence (PoC)" data-lang-es="Prueba de Coherencia (PoC)" data-lang-ru="Доказательство согласованности (PoC)" data-lang-de="Kohärenznachweis (PoC)" data-lang-fr="Preuve de Cohérence (PoC)">Proof-of-Coherence (PoC)</h2>
-                <p class="text-[#9AA0B4] text-center max-w-3xl mx-auto" data-lang-en="Proof-of-Coherence is the analytical backbone of all KRYONIS documents. It is a formal methodology used to measure the systemic integrity of an institution across four interdependent vectors: Intent, Mechanism, Metabolism, and Identity. A high PoC score indicates robust internal alignment and strategic viability." data-lang-es="La Prueba de Coherencia es la columna vertebral analítica de todos los documentos de KRYONIS. Es una metodología formal utilizada para medir la integridad sistémica de una institución a través de cuatro vectores interdependientes: Intención, Mecanismo, Metabolismo e Identidad. Una puntuación alta de PoC indica una sólida alineación interna y viabilidad estratégica." data-lang-ru="Доказательство согласованности (PoC) является аналитической основой всех документов KRYONIS. Это формальная методология, используемая для измерения системной целостности учреждения по четырем взаимозависимым векторам: Намерение, Механизм, Метаболизм и Идентичность. Высокий балл PoC указывает на прочную внутреннюю согласованность и стратегическую жизнеспособность." data-lang-de="Der Kohärenznachweis (PoC) ist das analytische Rückgrat aller KRYONIS-Dokumente. Es handelt sich um eine formale Methodik zur Messung der systemischen Integrität einer Institution anhand von vier voneinander abhängigen Vektoren: Absicht, Mechanismus, Metabolismus und Identität. Ein hoher PoC-Wert weist auf eine robuste interne Ausrichtung und strategische Lebensfähigkeit hin." data-lang-fr="La Preuve de Cohérence (PoC) est l'épine dorsale analytique de tous les documents de KRYONIS. C'est une méthodologie formelle utilisée pour mesurer l'intégrité systémique d'une institution à travers quatre vecteurs interdépendants : Intention, Mécanisme, Métabolisme et Identité. Un score PoC élevé indique un alignement interne robuste et une viabilité stratégique.">Proof-of-Coherence is the analytical backbone of all KRYONIS documents. It is a formal methodology used to measure the systemic integrity of an institution across four interdependent vectors: Intent, Mechanism, Metabolism, and Identity. A high PoC score indicates robust internal alignment and strategic viability.</p>
-                <div class="chart-container mx-auto max-w-xl">
-                    <canvas id="coherenceChart"></canvas>
-                </div>
-            </section>
-            
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                 <h2 class="text-2xl font-bold text-center text-[#CBB7FF] mb-4" data-lang-en="The Four Pillars of Coherence" data-lang-es="Los Cuatro Pilares de la Coherencia" data-lang-ru="Четыре столпа согласованности" data-lang-de="Die vier Säulen der Kohärenz" data-lang-fr="Les Quatre Piliers de la Cohérence">The Four Pillars of Coherence</h2>
-                 <p class="text-[#9AA0B4] text-center max-w-3xl mx-auto mb-8" data-lang-en="Our analytical framework assesses four interdependent domains to produce a final coherence score for each documented architecture." data-lang-es="Nuestro marco analítico evalúa cuatro dominios interdependientes para producir una puntuación de coherencia final para cada arquitectura documentada." data-lang-ru="Наша аналитическая основа оценивает четыре взаимозависимых домена для получения окончательной оценки согласованности для каждой документированной архитектуры." data-lang-de="Unser analytischer Rahmen bewertet vier voneinander abhängige Bereiche, um für jede dokumentierte Architektur eine endgültige Kohärenzbewertung zu erstellen." data-lang-fr="Notre cadre analytique évalue quatre domaines interdépendants pour produire un score de cohérence final pour chaque architecture documentée.">Our analytical framework assesses four interdependent domains to produce a final coherence score for each documented architecture.</p>
-                 <div class="max-w-md mx-auto">
-                    <ul class="space-y-4 text-lg">
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>1. Intent:</strong> The Purpose Architecture and doctrinal alignment of the institution." data-lang-es="<strong class='text-[#CBB7FF]'>1. Intención:</strong> La Arquitectura del Propósito y la alineación doctrinal de la institución." data-lang-ru="<strong class='text-[#CBB7FF]'>1. Намерение:</strong> Архитектура цели и доктринальное соответствие учреждения." data-lang-de="<strong class='text-[#CBB7FF]'>1. Absicht:</strong> Die Zweckarchitektur und die doktrinäre Ausrichtung der Institution." data-lang-fr="<strong class='text-[#CBB7FF]'>1. Intention:</strong> L'architecture de l'objectif et l'alignement doctrinal de l'institution."><strong class='text-[#CBB7FF]'>1. Intent:</strong> The Purpose Architecture and doctrinal alignment of the institution.</li>
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>2. Mechanism:</strong> The Governance Logic and operational protocols of the system." data-lang-es="<strong class='text-[#CBB7FF]'>2. Mecanismo:</strong> La Lógica de Gobernanza y los protocolos operativos del sistema." data-lang-ru="<strong class='text-[#CBB7FF]'>2. Механизм:</strong> Логика управления и операционные протоколы системы." data-lang-de="<strong class='text-[#CBB7FF]'>2. Mechanismus:</strong> Die Governance-Logik und die operativen Protokolle des Systems." data-lang-fr="<strong class='text-[#CBB7FF]'>2. Mécanisme:</strong> La logique de gouvernance et les protocoles opérationnels du système."><strong class='text-[#CBB7FF]'>2. Mechanism:</strong> The Governance Logic and operational protocols of the system.</li>
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>3. Metabolism:</strong> The Economic Circuitry and resource dynamics." data-lang-es="<strong class='text-[#CBB7FF]'>3. Metabolismo:</strong> El Circuito Económico y la dinámica de los recursos." data-lang-ru="<strong class='text-[#CBB7FF]'>3. Метаболизм:</strong> Экономическая схема и динамика ресурсов." data-lang-de="<strong class='text-[#CBB7FF]'>3. Metabolismus:</strong> Die ökonomische Schaltung und die Ressourcendynamik." data-lang-fr="<strong class='text-[#CBB7FF]'>3. Métabolisme:</strong> Le circuit économique et la dynamique des ressources."><strong class='text-[#CBB7FF]'>3. Metabolism:</strong> The Economic Circuitry and resource dynamics.</li>
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>4. Identity:</strong> The Signal Interface and external information signature." data-lang-es="<strong class='text-[#CBB7FF]'>4. Identidad:</strong> La Interfaz de Señal y la firma de información externa." data-lang-ru="<strong class='text-[#CBB7FF]'>4. Идентичность:</strong> Интерфейс сигналов и внешняя информационная подпись." data-lang-de="<strong class='text-[#CBB7FF]'>4. Identität:</strong> Die Signalschnittstelle und die externe Informationssignatur." data-lang-fr="<strong class='text-[#CBB7FF]'>4. Identité:</strong> L'interface de signal et la signature d'information externe."><strong class='text-[#CBB7FF]'>4. Identity:</strong> The Signal Interface and external information signature.</li>
-                    </ul>
-                 </div>
-            </section>
-
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-[#CBB7FF] mb-4 text-center" data-lang-en="KRYONIS Documentation Architecture" data-lang-es="Arquitectura de Documentación KRYONIS" data-lang-ru="Архитектура документации KRYONIS" data-lang-de="KRYONIS Dokumentationsarchitektur" data-lang-fr="Architecture de Documentation KRYONIS">KRYONIS Documentation Architecture</h2>
-                <p class="text-[#9AA0B4] mb-8 text-center max-w-4xl mx-auto" data-lang-en="Our publications are produced using a proprietary five-phase authorship protocol. This structured process ensures analytical rigor and doctrinal clarity in every Strategic Paper and Doctrinal Report we author." data-lang-es="Nuestras publicaciones se producen utilizando un protocolo de autoría patentado de cinco fases. Este proceso estructurado garantiza el rigor analítico y la claridad doctrinal en cada Documento Estratégico e Informe Doctrinal que elaboramos." data-lang-ru="Наши публикации создаются с использованием собственного пятифазного протокола авторства. Этот структурированный процесс обеспечивает аналитическую строгость и доктринальную ясность в каждом стратегическом документе и доктринальном отчете, которые мы разрабатываем." data-lang-de="Unsere Publikationen werden nach einem proprietären fünfphasigen Autorenschaftsprotokoll erstellt. Dieser strukturierte Prozess gewährleistet analytische Strenge und doktrinäre Klarheit in jedem von uns verfassten Strategiepapier und Doktrinbericht." data-lang-fr="Nos publications sont produites à l'aide d'un protocole de rédaction propriétaire en cinq phases. Ce processus structuré garantit la rigueur analytique et la clarté doctrinale de chaque document stratégique et rapport doctrinal que nous rédigeons.">Our publications are produced using a proprietary five-phase authorship protocol. This structured process ensures analytical rigor and doctrinal clarity in every Strategic Paper and Doctrinal Report we author.</p>
-                <div class="flex flex-col md:flex-row items-center justify-center w-full">
-                    <div class="flowchart-step rounded-lg flex-1"><div data-lang-en="<h3 class='font-bold'>1. Analysis</h3><p class='text-sm text-[#9AA0B4]'>Establish scope of inquiry and doctrinal parameters.</p>" data-lang-es="<h3 class='font-bold'>1. Análisis</h3><p class='text-sm text-[#9AA0B4]'>Establecer el alcance de la investigación y los parámetros doctrinales.</p>" data-lang-ru="<h3 class='font-bold'>1. Анализ</h3><p class='text-sm text-[#9AA0B4]'>Определение объема исследования и доктринальных параметров.</p>" data-lang-de="<h3 class='font-bold'>1. Analyse</h3><p class='text-sm text-[#9AA0B4]'>Festlegung des Untersuchungsumfangs und der doktrinären Parameter.</p>" data-lang-fr="<h3 class='font-bold'>1. Analyse</h3><p class='text-sm text-[#9AA0B4]'>Définir le champ de l'enquête et les paramètres doctrinaux.</p>"><h3 class='font-bold'>1. Analysis</h3><p class='text-sm text-[#9AA0B4]'>Establish scope of inquiry and doctrinal parameters.</p></div></div>
-                    <div class="flowchart-arrow">›</div>
-                    <div class="flowchart-step rounded-lg flex-1"><div data-lang-en="<h3 class='font-bold'>2. Synthesis</h3><p class='text-sm text-[#9AA0B4]'>Synthesize data and model systemic logic.</p>" data-lang-es="<h3 class='font-bold'>2. Síntesis</h3><p class='text-sm text-[#9AA0B4]'>Sintetizar datos y modelar la lógica sistémica.</p>" data-lang-ru="<h3 class='font-bold'>2. Синтез</h3><p class='text-sm text-[#9AA0B4]'>Синтез данных и моделирование системной логики.</p>" data-lang-de="<h3 class='font-bold'>2. Synthese</h3><p class='text-sm text-[#9AA0B4]'>Daten synthetisieren und systemische Logik modellieren.</p>" data-lang-fr="<h3 class='font-bold'>2. Synthèse</h3><p class='text-sm text-[#9AA0B4]'>Synthétiser les données et modéliser la logique systémique.</p>"><h3 class='font-bold'>2. Synthesis</h3><p class='text-sm text-[#9AA0B4]'>Synthesize data and model systemic logic.</p></div></div>
-                    <div class="flowchart-arrow">›</div>
-                    <div class="flowchart-step rounded-lg flex-1"><div data-lang-en="<h3 class='font-bold'>3. Structuring</h3><p class='text-sm text-[#9AA0B4]'>Author the core textual and logical architecture.</p>" data-lang-es="<h3 class='font-bold'>3. Estructuración</h3><p class='text-sm text-[#9AA0B4]'>Redactar la arquitectura textual y lógica central.</p>" data-lang-ru="<h3 class='font-bold'>3. Структурирование</h3><p class='text-sm text-[#9AA0B4]'>Разработка основной текстовой и логической архитектуры.</p>" data-lang-de="<h3 class='font-bold'>3. Strukturierung</h3><p class='text-sm text-[#9AA0B4]'>Verfassen der zentralen textlichen und logischen Architektur.</p>" data-lang-fr="<h3 class='font-bold'>3. Structuration</h3><p class='text-sm text-[#9AA0B4]'>Rédiger l'architecture textuelle et logique de base.</p>"><h3 class='font-bold'>3. Structuring</h3><p class='text-sm text-[#9AA0B4]'>Author the core textual and logical architecture.</p></div></div>
-                    <div class="flowchart-arrow">›</div>
-                    <div class="flowchart-step rounded-lg flex-1"><div data-lang-en="<h3 class='font-bold'>4. Validation</h3><p class='text-sm text-[#9AA0B4]'>Conduct doctrinal review and coherence validation.</p>" data-lang-es="<h3 class='font-bold'>4. Validación</h3><p class='text-sm text-[#9AA0B4]'>Realizar revisión doctrinal y validación de coherencia.</p>" data-lang-ru="<h3 class='font-bold'>4. Валидация</h3><p class='text-sm text-[#9AA0B4]'>Проведение доктринальной проверки и валидации согласованности.</p>" data-lang-de="<h3 class='font-bold'>4. Validierung</h3><p class='text-sm text-[#9AA0B4]'>Durchführung der doktrinären Überprüfung und Kohärenzvalidierung.</p>" data-lang-fr="<h3 class='font-bold'>4. Validation</h3><p class='text-sm text-[#9AA0B4]'>Effectuer une revue doctrinale et une validation de la cohérence.</p>"><h3 class='font-bold'>4. Validation</h3><p class='text-sm text-[#9AA0B4]'>Conduct doctrinal review and coherence validation.</p></div></div>
-                    <div class="flowchart-arrow">›</div>
-                    <div class="flowchart-step rounded-lg flex-1"><div data-lang-en="<h3 class='font-bold'>5. Publication</h3><p class='text-sm text-[#9AA0B4]'>Finalize and deliver the classified-grade document.</p>" data-lang-es="<h3 class='font-bold'>5. Publicación</h3><p class='text-sm text-[#9AA0B4]'>Finalizar y entregar el documento de grado clasificado.</p>" data-lang-ru="<h3 class='font-bold'>5. Публикация</h3><p class='text-sm text-[#9AA0B4]'>Завершение и предоставление документа секретного уровня.</p>" data-lang-de="<h3 class='font-bold'>5. Veröffentlichung</h3><p class='text-sm text-[#9AA0B4]'>Fertigstellung und Lieferung des klassifizierten Dokuments.</p>" data-lang-fr="<h3 class='font-bold'>5. Publication</h3><p class='text-sm text-[#9AA0B4]'>Finaliser et livrer le document de niveau classifié.</p>"><h3 class='font-bold'>5. Publication</h3><p class='text-sm text-[#9AA0B4]'>Finalize and deliver the classified-grade document.</p></div></div>
-                </div>
-            </section>
-
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="card rounded-lg shadow-xl p-6 md:p-8">
-                    <h2 class="text-2xl font-bold text-[#CBB7FF] mb-4" data-lang-en="Operational Composition" data-lang-es="Composición Operativa" data-lang-ru="Операционная композиция" data-lang-de="Operative Zusammensetzung" data-lang-fr="Composition Opérationnelle">Operational Composition</h2>
-                    <p class="text-[#9AA0B4] mb-6" data-lang-en="KRYONIS operates as a micro-institution. Our structure maximizes analytical depth by combining a small, elite Human Analyst core with a vast, distributed AI Synthesis Mesh. This hybrid composition allows the bureau to co-author complex strategic architectures with exceptional rigor and speed." data-lang-es="KRYONIS opera como una micro-institución. Nuestra estructura maximiza la profundidad analítica al combinar un núcleo de Analistas Humanos de élite con una vasta Malla de Síntesis de IA distribuida. Esta composición híbrida permite a la oficina co-redactar arquitecturas estratégicas complejas con un rigor y una velocidad excepcionales." data-lang-ru="KRYONIS функционирует как микроинститут. Наша структура максимизирует аналитическую глубину, сочетая небольшое элитное ядро аналитиков-людей с обширной распределенной сетью синтеза ИИ. Эта гибридная композиция позволяет бюро совместно разрабатывать сложные стратегические архитектуры с исключительной строгостью и скоростью." data-lang-de="KRYONIS agiert als Mikroinstitution. Unsere Struktur maximiert die analytische Tiefe durch die Kombination eines kleinen, elitären Kerns menschlicher Analysten mit einem riesigen, verteilten KI-Synthese-Netzwerk. Diese hybride Zusammensetzung ermöglicht es dem Büro, komplexe strategische Architekturen mit außergewöhnlicher Strenge und Geschwindigkeit mitzuverfassen." data-lang-fr="KRYONIS fonctionne comme une micro-institution. Notre structure maximise la profondeur analytique en combinant un noyau restreint et d'élite d'analystes humains avec un vaste réseau de synthèse d'IA distribué. Cette composition hybride permet au bureau de co-rédiger des architectures stratégiques complexes avec une rigueur et une rapidité exceptionnelles.">KRYONIS operates as a micro-institution. Our structure maximizes analytical depth by combining a small, elite Human Analyst core with a vast, distributed AI Synthesis Mesh. This hybrid composition allows the bureau to co-author complex strategic architectures with exceptional rigor and speed.</p>
-                    <div class="chart-container mx-auto max-w-xl">
-                        <canvas id="hybridIntelligenceChart"></canvas>
-                    </div>
-                </div>
-                <div class="card rounded-lg shadow-xl p-6 md:p-8">
-                    <h2 class="text-2xl font-bold text-[#CBB7FF] mb-4" data-lang-en="Authorship Cycle" data-lang-es="Ciclo de Autoría" data-lang-ru="Авторский цикл" data-lang-de="Autorschaftszyklus" data-lang-fr="Cycle de Rédaction">Authorship Cycle</h2>
-                    <p class="text-[#9AA0B4] mb-6" data-lang-en="Each document is produced via a formal authorship workflow that follows a sovereign-grade analytical standard. This ensures doctrinal coherence from initial research to final publication." data-lang-es="Cada documento se produce a través de un flujo de trabajo de autoría formal que sigue un estándar analítico de grado soberano. Esto garantiza la coherencia doctrinal desde la investigación inicial hasta la publicación final." data-lang-ru="Каждый документ создается в рамках формального авторского процесса, соответствующего суверенному аналитическому стандарту. Это обеспечивает доктринальную согласованность от первоначального исследования до окончательной публикации." data-lang-de="Jedes Dokument wird über einen formalen Autorschafts-Workflow erstellt, der einem souveränen analytischen Standard folgt. Dies gewährleistet doktrinäre Kohärenz von der ersten Recherche bis zur endgültigen Veröffentlichung." data-lang-fr="Chaque document est produit via un processus de rédaction formel qui respecte une norme analytique de niveau souverain. Cela garantit la cohérence doctrinale de la recherche initiale à la publication finale.">Each document is produced via a formal authorship workflow that follows a sovereign-grade analytical standard. This ensures doctrinal coherence from initial research to final publication.</p>
-                    <ol class="relative border-l border-[#5C47FF]">                  
-                        <li class="mb-10 ml-4">
-                            <div class="absolute w-3 h-3 bg-[#CBB7FF] rounded-full mt-1.5 -left-1.5 border border-white"></div>
-                            <h3 class="text-lg font-semibold text-white" data-lang-en="1. Research & Analysis" data-lang-es="1. Investigación y Análisis" data-lang-ru="1. Исследование и анализ" data-lang-de="1. Forschung & Analyse" data-lang-fr="1. Recherche & Analyse">1. Research & Analysis</h3>
-                            <p class="text-base font-normal text-[#E8ECF6]" data-lang-en="Intelligence gathering and diagnostic modeling." data-lang-es="Recopilación de inteligencia y modelado de diagnóstico." data-lang-ru="Сбор разведывательной информации и диагностическое моделирование." data-lang-de="Nachrichtengewinnung und diagnostische Modellierung." data-lang-fr="Collecte de renseignements et modélisation diagnostique.">Intelligence gathering and diagnostic modeling.</p>
-                        </li>
-                        <li class="mb-10 ml-4">
-                            <div class="absolute w-3 h-3 bg-[#CBB7FF] rounded-full mt-1.5 -left-1.5 border border-white"></div>
-                            <h3 class="text-lg font-semibold text-white" data-lang-en="2. Drafting & Synthesis" data-lang-es="2. Redacción y Síntesis" data-lang-ru="2. Разработка и синтез" data-lang-de="2. Entwurf & Synthese" data-lang-fr="2. Rédaction & Synthèse">2. Drafting & Synthesis</h3>
-                            <p class="text-base font-normal text-[#E8ECF6]" data-lang-en="Authorship of the core doctrinal framework." data-lang-es="Redacción del marco doctrinal central." data-lang-ru="Разработка основной доктринальной основы." data-lang-de="Verfassen des zentralen doktrinären Rahmens." data-lang-fr="Rédaction du cadre doctrinal de base.">Authorship of the core doctrinal framework.</p>
-                        </li>
-                        <li class="ml-4">
-                            <div class="absolute w-3 h-3 bg-[#CBB7FF] rounded-full mt-1.5 -left-1.5 border border-white"></div>
-                            <h3 class="text-lg font-semibold text-white" data-lang-en="3. Doctrinal Review & Publication" data-lang-es="3. Revisión Doctrinal y Publicación" data-lang-ru="3. Доктринальный обзор и публикация" data-lang-de="3. Doktrinäre Überprüfung & Veröffentlichung" data-lang-fr="3. Examen Doctrinal & Publication">3. Doctrinal Review & Publication</h3>
-                            <p class="text-base font-normal text-[#E8ECF6]" data-lang-en="Final validation and compilation of the intelligence document." data-lang-es="Validación final y compilación del documento de inteligencia." data-lang-ru="Окончательная проверка и составление разведывательного документа." data-lang-de="Endgültige Validierung und Zusammenstellung des Nachrichtendokuments." data-lang-fr="Validation finale et compilation du document de renseignement.">Final validation and compilation of the intelligence document.</p>
-                        </li>
-                    </ol>
-                </div>
-            </section>
-            
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-center text-[#CBB7FF] mb-4" data-lang-en="Institutional Commissions" data-lang-es="Comisiones Institucionales" data-lang-ru="Институциональные комиссии" data-lang-de="Institutionelle Kommissionen" data-lang-fr="Commissions Institutionnelles">Institutional Commissions</h2>
-                <p class="text-[#9AA0B4] text-center max-w-3xl mx-auto" data-lang-en="The bureau accepts commissions from sovereign institutions, ministries, research agencies, and scientific consortia responsible for architecting national and civilizational infrastructure." data-lang-es="La oficina acepta comisiones de instituciones soberanas, ministerios, agencias de investigación y consorcios científicos responsables de la arquitectura de la infraestructura nacional y civilizatoria." data-lang-ru="Бюро принимает заказы от суверенных учреждений, министерств, исследовательских агентств и научных консорциумов, ответственных за архитектуру национальной и цивилизационной инфраструктуры." data-lang-de="Das Büro nimmt Aufträge von souveränen Institutionen, Ministerien, Forschungsagenturen und wissenschaftlichen Konsortien an, die für die Gestaltung nationaler und zivilisatorischer Infrastrukturen verantwortlich sind." data-lang-fr="Le bureau accepte les commissions d'institutions souveraines, de ministères, d'agences de recherche et de consortiums scientifiques responsables de l'architecture des infrastructures nationales et civilisationnelles.">The bureau accepts commissions from sovereign institutions, ministries, research agencies, and scientific consortia responsible for architecting national and civilizational infrastructure.</p>
-            </section>
-
-            <section class="card rounded-lg shadow-xl p-6 md:p-8">
-                <h2 class="text-2xl font-bold text-center text-[#CBB7FF] mb-4" data-lang-en="Commissioning Framework" data-lang-es="Marco de Comisiones" data-lang-ru="Система заказов" data-lang-de="Auftragsrahmen" data-lang-fr="Cadre de Commission">Commissioning Framework</h2>
-                <p class="text-[#9AA0B4] text-center max-w-3xl mx-auto mb-8" data-lang-en="Commissions are accepted for specific publication categories. Indicative budget ranges are provided for planning purposes. Each commission is confidential and executed under a formal Sovereign Contract." data-lang-es="Se aceptan comisiones para categorías de publicación específicas. Se proporcionan rangos de presupuesto indicativos para fines de planificación. Cada comisión es confidencial y se ejecuta bajo un Contrato Soberano formal." data-lang-ru="Заказы принимаются для определенных категорий публикаций. Ориентировочные диапазоны бюджетов предоставляются для целей планирования. Каждый заказ является конфиденциальным и выполняется в рамках официального Суверенного контракта." data-lang-de="Aufträge werden für bestimmte Publikationskategorien angenommen. Richtwerte für Budgets werden zu Planungszwecken bereitgestellt. Jeder Auftrag ist vertraulich und wird im Rahmen eines formellen souveränen Vertrags ausgeführt." data-lang-fr="Les commissions sont acceptées pour des catégories de publication spécifiques. Des fourchettes budgétaires indicatives sont fournies à des fins de planification. Chaque commission est confidentielle et exécutée dans le cadre d'un contrat souverain formel.">Commissions are accepted for specific publication categories. Indicative budget ranges are provided for planning purposes. Each commission is confidential and executed under a formal Sovereign Contract.</p>
-                <div class="max-w-2xl mx-auto text-center">
-                    <ul class="space-y-4 text-lg">
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>Strategic Architecture Papers</strong><p class='text-base text-white mt-1'>€60,000 – €180,000</p>" data-lang-es="<strong class='text-[#CBB7FF]'>Documentos de Arquitectura Estratégica</strong><p class='text-base text-white mt-1'>€60,000 – €180,000</p>" data-lang-ru="<strong class='text-[#CBB7FF]'>Стратегические архитектурные документы</strong><p class='text-base text-white mt-1'>€60,000 – €180,000</p>" data-lang-de="<strong class='text-[#CBB7FF]'>Strategische Architekturpapiere</strong><p class='text-base text-white mt-1'>€60.000 – €180.000</p>" data-lang-fr="<strong class='text-[#CBB7FF]'>Papiers d'Architecture Stratégique</strong><p class='text-base text-white mt-1'>60 000 € – 180 000 €</p>"><strong class='text-[#CBB7FF]'>Strategic Architecture Papers</strong><p class='text-base text-white mt-1'>€60,000 – €180,000</p></li>
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>Doctrinal Reports</strong><p class='text-base text-white mt-1'>€45,000 – €120,000</p>" data-lang-es="<strong class='text-[#CBB7FF]'>Informes Doctrinales</strong><p class='text-base text-white mt-1'>€45,000 – €120,000</p>" data-lang-ru="<strong class='text-[#CBB7FF]'>Доктринальные отчеты</strong><p class='text-base text-white mt-1'>€45,000 – €120,000</p>" data-lang-de="<strong class='text-[#CBB7FF]'>Doktrinäre Berichte</strong><p class='text-base text-white mt-1'>€45.000 – €120.000</p>" data-lang-fr="<strong class='text-[#CBB7FF]'>Rapports Doctrinaux</strong><p class='text-base text-white mt-1'>45 000 € – 120 000 €</p>"><strong class='text-[#CBB7FF]'>Doctrinal Reports</strong><p class='text-base text-white mt-1'>€45,000 – €120,000</p></li>
-                        <li data-lang-en="<strong class='text-[#CBB7FF]'>Whitebooks & Intelligence Compendiums</strong><p class='text-base text-white mt-1'>€100,000 – €250,000</p>" data-lang-es="<strong class='text-[#CBB7FF]'>Libros Blancos y Compendios de Inteligencia</strong><p class='text-base text-white mt-1'>€100,000 – €250,000</p>" data-lang-ru="<strong class='text-[#CBB7FF]'>Белые книги и сборники разведывательных данных</strong><p class='text-base text-white mt-1'>€100,000 – €250,000</p>" data-lang-de="<strong class='text-[#CBB7FF]'>Whitebooks & Intelligence Compendiums</strong><p class='text-base text-white mt-1'>€100.000 – €250.000</p>" data-lang-fr="<strong class='text-[#CBB7FF]'>Livres Blancs & Compendiums de Renseignement</strong><p class='text-base text-white mt-1'>100 000 € – 250 000 €</p>"><strong class='text-[#CBB7FF]'>Whitebooks & Intelligence Compendiums</strong><p class='text-base text-white mt-1'>€100,000 – €250,000</p></li>
-                    </ul>
-                </div>
-            </section>
-        
-        </main>
-
-        <footer class="mt-8 md:mt-12">
-            <div class="card rounded-lg shadow-xl p-6 md:p-8 text-center">
-                 <h2 class="text-2xl font-bold text-[#CBB7FF] mb-4" data-lang-en="Mission" data-lang-es="Misión" data-lang-ru="Миссия" data-lang-de="Mission" data-lang-fr="Mission">Mission</h2>
-                 <p class="text-[#9AA0B4] text-lg max-w-4xl mx-auto" data-lang-en="We design the textual architectures through which civilization organizes its next intelligence epoch." data-lang-es="Diseñamos las arquitecturas textuales a través de las cuales la civilización organiza su próxima época de inteligencia." data-lang-ru="Мы проектируем текстовые архитектуры, с помощью которых цивилизация организует свою следующую эпоху интеллекта." data-lang-de="Wir entwerfen die textuellen Architekturen, durch die die Zivilisation ihre nächste Intelligenzepoche organisiert." data-lang-fr="Nous concevons les architectures textuelles à travers lesquelles la civilisation organise sa prochaine ère d'intelligence.">We design the textual architectures through which civilization organizes its next intelligence epoch.</p>
-                 
-                 <div class="pt-8 mt-8 border-t border-[#5C47FF]/20">
-                     <h3 class="text-xl font-bold text-[#CBB7FF] mb-4" data-lang-en="Initiate a Briefing" data-lang-es="Iniciar un Briefing" data-lang-ru="Инициировать брифинг" data-lang-de="Ein Briefing initiieren" data-lang-fr="Lancer un Briefing">Initiate a Briefing</h3>
-                     <p class="text-[#9AA0B4] max-w-3xl mx-auto mb-6" data-lang-en="Once accepted, each commission begins with a confidential diagnostic phase to define intent and structural parameters. This marks the formal initiation of the authorship workflow." data-lang-es="Una vez aceptada, cada comisión comienza con una fase de diagnóstico confidencial para definir la intención y los parámetros estructurales. Esto marca el inicio formal del flujo de trabajo de autoría." data-lang-ru="После принятия каждый заказ начинается с конфиденциальной диагностической фазы для определения намерения и структурных параметров. Это знаменует формальное начало авторского процесса." data-lang-de="Nach der Annahme beginnt jeder Auftrag mit einer vertraulichen Diagnosephase zur Definition von Absicht und strukturellen Parametern. Dies markiert den formellen Beginn des Autorschafts-Workflows." data-lang-fr="Une fois acceptée, chaque commission commence par une phase de diagnostic confidentielle pour définir l'intention et les paramètres structurels. Cela marque le début formel du processus de rédaction.">Once accepted, each commission begins with a confidential diagnostic phase to define intent and structural parameters. This marks the formal initiation of the authorship workflow.</p>
-                     <div class="space-y-2">
-                         <a href="mailto:hq@kryonis.global?subject=Sovereign%20Briefing%20Request&body=Please%20introduce%20your%20organization%2C%20its%20mission%2C%20and%20what%20you%20wish%20to%20architect%20with%20KRYONIS.%20All%20submissions%20are%20handled%20confidentially."
-                           class="mt-2 inline-block bg-[#5C47FF] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#4a39d6] transition-colors"
-                           data-lang-en="Initiate a Sovereign Briefing" 
-                           data-lang-es="Iniciar un Briefing Soberano" 
-                           data-lang-ru="Инициировать суверенный брифинг" 
-                           data-lang-de="Ein souveränes Briefing initiieren" 
-                           data-lang-fr="Lancer un Briefing Souverain">
-                           Initiate a Sovereign Briefing
-                         </a>
-                         <p class="text-xs text-[#9AA0B4] mt-2">
-                           <span data-lang-en="or use webmail: " data-lang-es="o use webmail: " data-lang-ru="или используйте веб-почту: " data-lang-de="oder Webmail verwenden: " data-lang-fr="ou utilisez le webmail : ">or use webmail: </span>
-                           <a href="https://mail.google.com/mail/?view=cm&fs=1&to=hq@kryonis.global&su=Sovereign%20Briefing%20Request&body=Please%20introduce%20your%20organization%20and%20vision%20for%20collaboration%20with%20KRYONIS."
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              class="text-[#CBB7FF] underline hover:text-[#E8ECF6]"
-                              data-lang-en="Open in Gmail"
-                              data-lang-es="Abrir en Gmail"
-                              data-lang-ru="Открыть в Gmail"
-                              data-lang-de="In Gmail öffnen"
-                              data-lang-fr="Ouvrir dans Gmail">
-                              Open in Gmail
-                           </a>
-                         </p>
-                    </div>
-                 </div>
-            </div>
-
-            <div class="text-center my-8 text-xs text-[#9AA0B4] leading-relaxed">
-                <p>© KRYONIS Sovereign Systems Limited 2025</p>
-                <p>Sovereign Strategic Architecture Division</p>
-                <p>Hong Kong &middot; Singapore &middot; Tokyo &middot; New York &middot; London &middot; Moscow</p>
-                <p>All publications produced under confidential authorship and sovereignty protocols.</p>
-                <p>hq@kryonis.global</p>
-            </div>
-        </footer>
-
-    </div>
-
-    <script>
-        // Background Animation
-        const canvas = document.getElementById('background-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        function createParticles() {
-            particles = [];
-            let particleCount = (canvas.width * canvas.height) / 10000;
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    size: Math.random() * 1.5 + 0.5
-                });
-            }
-        }
-        
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(154, 160, 180, 0.5)';
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(92, 71, 255, ${1 - dist / 120})`;
-                        ctx.stroke();
-                    }
-                }
-            }
-            
-            requestAnimationFrame(animate);
-        }
-
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            createParticles();
-        });
-
-        resizeCanvas();
-        createParticles();
-        animate();
-
-
-        // Chart and Language Logic
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const translations = {
-                paradigmShift: {
-                    legacyLabel: { 
-                        en: 'Legacy Analytical Models', 
-                        es: 'Modelos Analíticos Heredados', 
-                        ru: 'Устаревшие аналитические модели', 
-                        de: 'Veraltete Analysemodelle', 
-                        fr: 'Modèles Analytiques Hérités' 
-                    },
-                    sovereignLabel: { 
-                        en: 'Cognitive Architecture Value', 
-                        es: 'Valor de la Arquitectura Cognitiva', 
-                        ru: 'Ценность когнитивной архитектуры', 
-                        de: 'Wert der kognitiven Architektur', 
-                        fr: 'Valeur de l\'Architecture Cognitive' 
-                    }
-                },
-                coherence: {
-                    labels: {
-                        en: ['Purpose Architecture', 'Governance Logic', 'Economic Circuitry', 'Signal Interface'],
-                        es: ['Arquitectura del Propósito', 'Lógica de Gobernanza', 'Circuito Económico', 'Interfaz de Señal'],
-                        ru: ['Архитектура цели', 'Логика управления', 'Экономическая схема', 'Сигнальный интерфейс'],
-                        de: ['Zweckarchitektur', 'Governance-Logik', 'Wirtschaftskreislauf', 'Signalschnittstelle'],
-                        fr: ['Architecture de l\'Objectif', 'Logique de Gouvernance', 'Circuit Économique', 'Interface de Signal']
-                    },
-                    coherentLabel: { 
-                        en: 'High Coherence System', 
-                        es: 'Sistema de Alta Coherencia', 
-                        ru: 'Высококогерентная система', 
-                        de: 'System mit hoher Kohärenz', 
-                        fr: 'Système à Haute Cohérence' 
-                    },
-                    incoherentLabel: { 
-                        en: 'Low Coherence System', 
-                        es: 'Sistema de Baja Coherencia', 
-                        ru: 'Низкокогерентная система', 
-                        de: 'System mit geringer Kohärenz', 
-                        fr: 'Système à Faible Cohérence' 
-                    }
-                },
-                hybridIntelligence: {
-                    labels: {
-                        en: ['AI Synthesis Mesh', 'Human Analyst Core'],
-                        es: ['Malla de Síntesis de IA', 'Núcleo de Analistas Humanos'],
-                        ru: ['Сеть синтеза ИИ', 'Ядро аналитиков-людей'],
-                        de: ['KI-Synthese-Netzwerk', 'Menschlicher Analystenkern'],
-                        fr: ['Réseau de Synthèse d\'IA', 'Noyau d\'Analystes Humains']
-                    }
-                }
-            };
-            
-            const CHART_COLORS = {
-                color1: '#58508d',
-                color3: '#ff6361',
-                accent: '#CBB7FF'
-            };
-
-            const defaultChartOptions = {
-                maintainAspectRatio: false,
-                responsive: true,
-                scales: {
-                    y: { ticks: { color: '#9AA0B4', beginAtZero: true }, grid: { color: 'rgba(154, 160, 180, 0.1)' }, border: { display: false } },
-                    x: { ticks: { color: '#9AA0B4' }, grid: { display: false }, border: { display: false } }
-                },
-                plugins: {
-                    legend: { labels: { color: '#E8ECF6' } },
-                    tooltip: {
-                        callbacks: {
-                            title: function(tooltipItems) {
-                                const item = tooltipItems[0];
-                                let label = item.chart.data.labels[item.dataIndex];
-                                return Array.isArray(label) ? label.join(' ') : label;
-                            }
-                        }
-                    }
-                }
-            };
-            
-            let paradigmShiftChart, coherenceChart, hybridIntelligenceChart;
-
-            function createCharts(lang) {
-                if(paradigmShiftChart) paradigmShiftChart.destroy();
-                paradigmShiftChart = new Chart(document.getElementById('paradigmShiftChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['2020', '2025', '2030', '2035', '2040', '2050'],
-                        datasets: [{
-                            label: translations.paradigmShift.legacyLabel[lang],
-                            data: [100, 85, 60, 40, 25, 10],
-                            backgroundColor: CHART_COLORS.color1,
-                        }, {
-                            label: translations.paradigmShift.sovereignLabel[lang],
-                            data: [5, 20, 50, 80, 120, 150],
-                            backgroundColor: CHART_COLORS.accent,
-                        }]
-                    },
-                    options: defaultChartOptions
-                });
-
-                if(coherenceChart) coherenceChart.destroy();
-                coherenceChart = new Chart(document.getElementById('coherenceChart'), {
-                    type: 'radar',
-                    data: {
-                        labels: translations.coherence.labels[lang],
-                        datasets: [{
-                            label: translations.coherence.coherentLabel[lang],
-                            data: [90, 90, 90, 90],
-                            fill: true,
-                            backgroundColor: 'rgba(92, 71, 255, 0.2)',
-                            borderColor: CHART_COLORS.accent,
-                        }, {
-                            label: translations.coherence.incoherentLabel[lang],
-                            data: [95, 60, 80, 40],
-                            fill: true,
-                            backgroundColor: 'rgba(255, 99, 97, 0.2)',
-                            borderColor: CHART_COLORS.color3,
-                        }]
-                    },
-                    options: { 
-                        maintainAspectRatio: false,
-                        responsive: true,
-                        plugins: {
-                            legend: { 
-                                position: 'bottom', align: 'center',
-                                labels: { color: '#E8ECF6', boxWidth: 18, font: { size: 12 }, padding: 12 } 
-                            },
-                            tooltip: defaultChartOptions.plugins.tooltip
-                        },
-                        scales: { r: { angleLines: { color: 'rgba(154, 160, 180, 0.2)' }, grid: { color: 'rgba(154, 160, 180, 0.2)' }, pointLabels: { color: '#E8ECF6', font: {size: 14} }, ticks: { backdropColor: 'transparent', color: '#9AA0B4' } } } 
-                    }
-                });
-
-                if(hybridIntelligenceChart) hybridIntelligenceChart.destroy();
-                hybridIntelligenceChart = new Chart(document.getElementById('hybridIntelligenceChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: translations.hybridIntelligence.labels[lang],
-                        datasets: [{
-                            data: [85, 15],
-                            backgroundColor: [CHART_COLORS.color1, CHART_COLORS.accent],
-                            borderColor: ['#131127'], borderWidth: 4
-                        }]
-                    },
-                     options: {
-                        maintainAspectRatio: false,
-                        responsive: true,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: '#E8ECF6' } },
-                            tooltip: defaultChartOptions.plugins.tooltip
-                        }
-                    }
-                });
-            }
-
-            function switchLanguage(lang) {
-                document.querySelectorAll('[data-lang-en]').forEach(el => {
-                    const key = `data-lang-${lang}`;
-                    if(el.hasAttribute(key)) {
-                        el.innerHTML = el.getAttribute(key);
-                    }
-                });
-                createCharts(lang);
-                
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
-            }
-
-            document.getElementById('language-switcher').addEventListener('click', (e) => {
-                if (e.target.matches('.lang-btn')) {
-                    const lang = e.target.getAttribute('data-lang');
-                    switchLanguage(lang);
-                }
-            });
-
-            // Initial load
-            switchLanguage('en');
-        });
-    </script>
+  <script>
+    // always start from top on refresh
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    };
+  </script>
 </body>
 </html>
