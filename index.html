@@ -8,14 +8,30 @@
 
   <style>
     :root {
+      /* CORE BRAND BACKGROUND */
       --bg: #05060a;
       --bg-soft: #0b0d14;
-      --fg: #f5f5f5;
-      --muted: #a3a7b3;
-      --gold: #f5c76a;
-      --violet: #6e63ff;
-      --border: #1b1f2b;
+      --bg-elevated: #111322;
 
+      /* TEXT */
+      --fg: #f5f5f5;
+      --fg-soft: #d7dae2;
+      --muted: #a3a7b3;
+
+      /* GOLD ACCENT */
+      --gold: #f5c76a;
+      --gold-soft: #f5c76a1a;
+      --gold-strong: #ffde8a;
+
+      /* VIOLET ACCENT */
+      --violet: #6e63ff;
+      --violet-soft: #6e63ff1a;
+
+      /* BORDERS */
+      --border: #1b1f2b;
+      --border-soft: #121623;
+
+      /* DESIGN TOKENS */
       --radius-lg: 24px;
       --radius-md: 16px;
 
@@ -136,6 +152,7 @@
     .nav-links .active {
       color: var(--fg);
     }
+
     .nav-links .active::after {
       width: 100%;
     }
@@ -223,19 +240,16 @@
     }
 
     .btn-gold {
-      background: rgba(245, 199, 106, 0.08);
+      background: var(--gold-soft);
       border: 1px solid rgba(245, 199, 106, 0.35);
       color: var(--gold);
       font-weight: 500;
-      border-radius: 999px;
-      padding: 0.65rem 1.25rem;
-      transition: 0.2s ease-out;
     }
 
     .btn-gold:hover {
-      background: rgba(245, 199, 106, 0.16);
+      background: var(--gold-strong);
       border-color: rgba(245, 199, 106, 0.6);
-      color: #ffffff;
+      color: #000;
       transform: translateY(-1px);
     }
 
