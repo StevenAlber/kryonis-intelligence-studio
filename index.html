@@ -3,40 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KRYONIS INTELLIGENCE STUDIO — Sovereign Strategic Architecture Division</title>
-  <meta name="description" content="KRYONIS INTELLIGENCE STUDIO — the sovereign research and documentation bureau of KRYONIS, producing strategic architecture papers and doctrinal intelligence for states and institutes." />
+  <title>KRYONIS INTELLIGENCE STUDIO — Strategic Architecture</title>
+  <meta name="description" content="KRYONIS INTELLIGENCE STUDIO — The sovereign research and documentation bureau producing doctrinal intelligence for states and institutes." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* CORE BRAND BACKGROUND */
-      --bg: #05060a;
-      --bg-soft: #0b0d14;
-      --bg-elevated: #111322;
+      /* PALETTE - STUDIO VARIANT */
+      --bg-deep: #030304;
+      --bg-panel: rgba(10, 12, 16, 0.7);
+      
+      --fg: #e0e0e6;
+      --fg-muted: #7a808d;
+      --fg-dim: #4a505d;
 
-      /* TEXT */
-      --fg: #f5f5f5;
-      --fg-soft: #d7dae2;
-      --muted: #a3a7b3;
+      /* ACCENTS */
+      --gold: #C5A028; /* Slightly darker, more "stamped" gold */
+      --gold-dim: rgba(197, 160, 40, 0.3);
+      --tech-blue: #6e8cff; /* Intelligence Blue accent */
 
-      /* GOLD ACCENT */
-      --gold: #f5c76a;
-      --gold-soft: #f5c76a1a;
-      --gold-strong: #ffde8a;
-
-      /* VIOLET ACCENT */
-      --violet: #6e63ff;
-      --violet-soft: #6e63ff1a;
-
-      /* BORDERS */
-      --border: #1b1f2b;
-      --border-soft: #121623;
-
-      /* DESIGN TOKENS */
-      --radius-lg: 24px;
-      --radius-md: 16px;
-
-      --max-width: 1120px;
-      --shadow-soft: 0 18px 60px rgba(0, 0, 0, 0.45);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --glass: blur(10px);
+      
+      --ease: cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     *, *::before, *::after {
@@ -46,793 +39,531 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #151827 0, #05060a 52%);
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-deep);
       color: var(--fg);
       line-height: 1.6;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    /* UTILITIES */
+    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+    .serif { font-family: 'Cinzel', serif; }
+    .caps { text-transform: uppercase; letter-spacing: 0.12em; }
+    .text-gold { color: var(--gold); }
+    .text-blue { color: var(--tech-blue); }
+    .text-muted { color: var(--fg-muted); }
+    
+    a { text-decoration: none; color: inherit; transition: all 0.3s var(--ease); }
+
+    /* NOISE TEXTURE (SHARED DNA) */
+    .noise {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 900;
+      opacity: 0.05;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
     }
 
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    /* CANVAS BG */
+    #studio-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      opacity: 0.4;
     }
 
+    /* LAYOUT */
     .wrapper {
       width: 100%;
-      max-width: var(--max-width);
+      max-width: 1160px;
       margin: 0 auto;
-      padding: 0 1.6rem;
-    }
-
-    /* HEADER */
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      backdrop-filter: blur(18px);
-      background: linear-gradient(
-        to bottom,
-        rgba(5, 6, 10, 0.96),
-        rgba(5, 6, 10, 0.85),
-        transparent
-      );
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.7rem 0;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
-    .nav-logo-circle {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      border: 1px solid rgba(245, 199, 106, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: var(--gold);
-    }
-
-    .nav-title {
-      font-size: 0.95rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.2rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .nav-links a {
+      padding: 0 2rem;
       position: relative;
-      padding-bottom: 0.1rem;
+      z-index: 10;
     }
 
-    .nav-links a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0;
-      height: 1px;
-      background: var(--gold);
-      transition: width 0.18s ease-out;
+    /* HEADER - COMPACT & TECHNICAL */
+    header {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      z-index: 100;
+      padding: 1rem 0;
+      background: rgba(3, 3, 4, 0.9);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--border);
     }
 
-    .nav-links a:hover::after {
-      width: 100%;
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    
+    .brand { display: flex; flex-direction: column; line-height: 1; }
+    .brand-title { font-size: 0.9rem; font-weight: 600; color: var(--fg); }
+    .brand-sub { font-size: 0.6rem; color: var(--gold); margin-top: 4px; }
+
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { 
+      font-size: 0.7rem; color: var(--fg-muted); 
+      border: 1px solid transparent; padding: 0.3rem 0.6rem;
     }
-
-    .nav-links .active {
-      color: var(--fg);
+    .nav-links a:hover { 
+      border-color: var(--fg-muted); color: var(--fg); 
+      background: rgba(255,255,255,0.03);
     }
+    .nav-links a.back-link { color: var(--gold); border-color: var(--gold-dim); }
 
-    .nav-links .active::after {
-      width: 100%;
-    }
-
-    .nav-cta {
-      padding: 0.4rem 0.9rem;
-      border-radius: 999px;
-      border: 1px solid rgba(245, 199, 106, 0.3);
-      font-size: 0.8rem;
-      color: var(--gold);
-      background: rgba(245, 199, 106, 0.04);
-      white-space: nowrap;
-    }
-
-    @media (max-width: 720px) {
-      .nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.4rem;
-      }
-      .nav-links {
-        justify-content: flex-start;
-      }
-    }
-
-    /* HERO */
-
+    /* HERO - THE ARCHIVE */
     .hero {
-      padding: 3.6rem 0 3.2rem;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-      gap: 3rem;
+      min-height: 90vh;
+      display: flex;
       align-items: center;
+      padding-top: 5rem;
     }
 
-    .hero-kicker {
-      font-size: 0.72rem;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.8rem;
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 4rem;
+      align-items: start;
     }
 
-    .hero-title {
-      font-size: clamp(2rem, 3.1vw, 2.6rem);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin-bottom: 1.1rem;
-    }
-
-    .hero-subtitle {
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 32rem;
+    .bureau-stamp {
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.2rem 0.6rem;
+      font-size: 0.65rem;
+      display: inline-block;
       margin-bottom: 1.5rem;
     }
 
-    .hero-subtitle strong {
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
       color: var(--fg);
-      font-weight: 500;
     }
 
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.9rem;
-      align-items: center;
+    .hero-lead {
+      font-size: 1rem;
+      color: var(--fg-muted);
+      max-width: 90%;
+      margin-bottom: 2rem;
+      font-weight: 300;
+      border-left: 1px solid var(--border-strong);
+      padding-left: 1.5rem;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      padding: 0.7rem 1.4rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: background 0.18s ease-out, border-color 0.18s ease-out,
-        color 0.18s ease-out, transform 0.12s ease-out;
+    /* COMPONENTS: DOCKETS & FILES */
+    .docket {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      transition: 0.3s;
+    }
+    
+    /* The "Tab" look */
+    .docket::before {
+      content: ''; position: absolute; top: -1px; left: -1px;
+      width: 40px; height: 1px; background: var(--gold);
+    }
+    .docket::after {
+      content: ''; position: absolute; top: -1px; right: -1px;
+      width: 10px; height: 10px; 
+      border-top: 1px solid var(--border); border-right: 1px solid var(--border);
     }
 
-    .btn-gold {
-      background: var(--gold-soft);
-      border: 1px solid rgba(245, 199, 106, 0.35);
-      color: var(--gold);
-      font-weight: 500;
+    .docket:hover {
+      border-color: var(--fg-muted);
+      background: rgba(20, 22, 28, 0.8);
     }
 
-    .btn-gold:hover {
-      background: var(--gold-strong);
-      border-color: rgba(245, 199, 106, 0.6);
-      color: #000;
-      transform: translateY(-1px);
-    }
-
-    .btn-outline {
-      border-color: rgba(163, 167, 179, 0.5);
-      color: var(--muted);
-      background: rgba(4, 5, 8, 0.7);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--gold);
-      color: var(--fg);
-      transform: translateY(-1px);
-    }
-
-    .hero-aside {
-      background: radial-gradient(circle at top, #23253b, #05060a);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 1.6rem 1.4rem;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .hero-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.22rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid rgba(245, 199, 106, 0.4);
-      font-size: 0.75rem;
-      color: var(--gold);
-      margin-bottom: 0.8rem;
-    }
-
-    .hero-metric {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 0.3rem;
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .hero-aside {
-        order: 1;
-        margin-top: 1.4rem;
-      }
+    .docket-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;
     }
 
     /* SECTIONS */
-
-    section {
-      padding: 3.2rem 0;
+    section { padding: 5rem 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+    
+    .section-label {
+      font-size: 0.7rem; color: var(--gold); margin-bottom: 0.5rem; display: block;
+    }
+    .section-heading {
+      font-family: 'Cinzel', serif; font-size: 2rem; margin-bottom: 3rem;
     }
 
-    .section-heading {
+    .grid-3 {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    }
+
+    /* METHODOLOGY STEPS */
+    .step-card {
+      border-left: 1px solid var(--border);
+      padding-left: 1.5rem;
       margin-bottom: 2rem;
     }
+    .step-num { font-size: 0.7rem; color: var(--gold); margin-bottom: 0.3rem; }
+    .step-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; }
+    .step-desc { font-size: 0.85rem; color: var(--fg-muted); }
 
-    .section-eyebrow {
-      font-size: 0.75rem;
-      letter-spacing: 0.26em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
+    /* DATA TABLE FOR COMMISSIONS */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
     }
-
-    .section-title {
-      font-size: 1.3rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
+    .data-table th {
+      text-align: left; color: var(--fg-dim); font-weight: 400;
+      padding: 0.5rem 0; border-bottom: 1px solid var(--border);
     }
-
-    .section-lead {
-      font-size: 0.98rem;
-      color: var(--muted);
-      max-width: 32rem;
-      margin-top: 0.6rem;
+    .data-table td {
+      padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--fg-muted);
     }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      gap: 2.4rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 900px) {
-      .grid-2 {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .card {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: var(--bg-soft);
-      padding: 1.6rem 1.5rem;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .card + .card {
-      margin-top: 1.6rem;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.8rem;
-    }
-
-    .card-heading {
-      font-size: 1.2rem;
-      font-weight: 500;
-      margin-bottom: 0.6rem;
-    }
-
-    .card-text {
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1.1rem;
-    }
-
-    .pill {
-      font-size: 0.78rem;
-      padding: 0.32rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(12, 14, 22, 0.96);
-      color: var(--muted);
-    }
-
-    .pill.gold {
-      border-color: rgba(245, 199, 106, 0.8);
-      color: var(--gold);
-      background: rgba(245, 199, 106, 0.08);
-    }
-
-    .list {
-      list-style: none;
-      padding-left: 0;
-      margin-top: 0.8rem;
-    }
-
-    .list li {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 0.35rem;
-    }
-
-    .list li strong {
-      color: var(--fg);
-    }
-
-    .columns-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.8rem;
-    }
-
-    @media (max-width: 900px) {
-      .columns-2 {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
+    .data-table tr:hover td { color: var(--fg); }
+    .val { color: var(--gold); }
 
     /* FOOTER */
-
     footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 2.4rem 0;
-      padding-bottom: calc(2.8rem + env(safe-area-inset-bottom));
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin-top: 1.6rem;
+      padding: 4rem 0; border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--fg-dim);
     }
 
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 2rem;
-      flex-wrap: wrap;
-      align-items: flex-start;
+    /* ANIMATIONS */
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: all 0.6s var(--ease);
     }
+    .reveal.active { opacity: 1; transform: translateY(0); }
 
-    @media (max-width: 720px) {
-      .footer-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      section {
-        padding: 3.4rem 0;
-      }
-      .hero {
-        padding: 4.4rem 0 4rem;
-      }
-      .grid-2 {
-        align-items: center;
-      }
+    @media (max-width: 900px) {
+      .hero-layout, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .hero-title { font-size: 2.5rem; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="page">
 
-    <!-- HEADER -->
+  <div class="noise"></div>
+  <canvas id="studio-grid"></canvas>
+
+  <div class="page">
+    
     <header>
       <div class="wrapper">
         <nav class="nav">
-          <div class="nav-brand">
-            <div class="nav-logo-circle">⦿</div>
-            <div class="nav-title">KRYONIS INTELLIGENCE STUDIO</div>
+          <div class="brand">
+            <div class="brand-title serif caps">Kryonis Intelligence Studio</div>
+            <div class="brand-sub mono caps">Sovereign Architecture Division</div>
           </div>
-          <div class="nav-links">
-            <a href="https://kryonis.global" target="_blank" rel="noopener">KRYONIS.GLOBAL</a>
-            <a href="#era">Era</a>
-            <a href="#poc">PoC</a>
+          <div class="nav-links mono caps">
+            <a href="https://kryonis.global" class="back-link">← Return to Global</a>
+            <a href="#mandate">Mandate</a>
             <a href="#method">Method</a>
             <a href="#commissions">Commissions</a>
+            <a href="#contact">Briefing</a>
           </div>
-          <a class="nav-cta" href="#contact">Initiate briefing</a>
         </nav>
       </div>
     </header>
 
     <main>
-
-      <!-- HERO -->
       <section class="hero">
         <div class="wrapper">
-          <div class="hero-grid">
-            <div>
-              <div class="hero-kicker">SOVEREIGN STRATEGIC ARCHITECTURE DIVISION</div>
+          <div class="hero-layout">
+            <div class="reveal">
+              <div class="bureau-stamp mono caps">Doc. Ref: KIS-2025-PUB</div>
               <h1 class="hero-title">
-                KRYONIS INTELLIGENCE STUDIO
+                The Textual Architecture of<br>
+                <span class="text-gold">Sovereignty.</span>
               </h1>
-              <p class="hero-subtitle">
-                KRYONIS INTELLIGENCE STUDIO is the <strong>research and documentation bureau of KRYONIS</strong>.
-                It produces strategic architecture papers, doctrinal reports and classified-grade
-                written intelligence for states, institutes and sovereign funds.
+              <p class="hero-lead">
+                We do not write essays. We engineer the doctrinal frameworks that allow states, institutes and cognitive zones to survive the transition to a post-industrial intelligence epoch.
               </p>
-              <div class="hero-actions">
-                <a class="btn btn-gold" href="#era">Explore the mandate</a>
-                <a class="btn btn-outline" href="#contact">Initiate a briefing</a>
+              <div style="display:flex; gap:1rem;">
+                <a href="#commissions" style="border:1px solid var(--fg); padding:0.8rem 1.5rem; font-size:0.8rem;" class="mono caps hover-fill">Access Commissioning</a>
               </div>
             </div>
 
-            <aside class="hero-aside">
-              <div class="hero-chip">
-                ∴ Studio Snapshot
+            <aside class="docket reveal" style="transition-delay: 0.2s;">
+              <div class="docket-header">
+                <span class="mono caps text-gold" style="font-size:0.7rem;">Bureau Snapshot</span>
+                <span class="mono" style="font-size:0.7rem;">STATUS: ONLINE</span>
               </div>
-              <div class="hero-metric">
-                <strong>Primary function</strong><br />
-                Strategic architecture & doctrinal intelligence
-              </div>
-              <div class="hero-metric" style="margin-top:0.6rem;">
-                <strong>Commissioning scope</strong><br />
-                Governments · institutes · sovereign capital
-              </div>
-              <div class="hero-metric" style="margin-top:0.6rem;">
-                <strong>Output formats</strong><br />
-                Architecture papers · doctrinal reports · whitebooks
+              <div style="display:grid; gap:1rem;">
+                <div>
+                  <div class="mono text-muted" style="font-size:0.65rem;">PRIMARY FUNCTION</div>
+                  <div class="serif" style="font-size:0.9rem;">Strategic Architecture</div>
+                </div>
+                <div>
+                  <div class="mono text-muted" style="font-size:0.65rem;">OUTPUT FORMAT</div>
+                  <div class="serif" style="font-size:0.9rem;">Classified-Grade Intelligence</div>
+                </div>
+                <div>
+                  <div class="mono text-muted" style="font-size:0.65rem;">CLIENT TIER</div>
+                  <div class="serif" style="font-size:0.9rem;">State / Sovereign / Institute</div>
+                </div>
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      <!-- STRATEGIC ARCHITECTURE ERA -->
-      <section id="era">
+      <section id="mandate">
         <div class="wrapper">
-          <div class="section-heading">
-            <div class="section-eyebrow">MANDATE</div>
-            <h2 class="section-title">The strategic architecture era</h2>
-            <p class="section-lead">
-              Humanity is moving from industrial administration to cognitive, system-based governance.
-              KRYONIS INTELLIGENCE STUDIO authors the frameworks that define this transition.
-            </p>
+          <div class="reveal">
+            <span class="section-label mono caps">The Mandate</span>
+            <h2 class="section-heading">Architectural Writing</h2>
           </div>
-
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-title">TRANSITION</div>
-              <h3 class="card-heading">From analysis to architecture</h3>
-              <p class="card-text">
-                Legacy analytical models describe the world; they rarely redesign it.
-                The studio focuses on <strong>architectural writing</strong> — documents that not only interpret
-                complex systems, but specify how they should be rebuilt for the next intelligence epoch.
+          
+          <div class="grid-2 reveal">
+            <div>
+              <p class="text-muted" style="margin-bottom:1.5rem;">
+                Legacy analysis describes the world. <strong>Architectural writing redesigns it.</strong>
               </p>
-              <p class="card-text" style="margin-top:0.9rem;">
-                Each strategic paper or doctrinal report is treated as an operational blueprint:
-                a living interface between states, infrastructures and emerging forms of consciousness.
+              <p class="text-muted">
+                The Studio produces documents that act as operational blueprints. Whether it is a bioeconomic charter for the Arctic or a governance protocol for an AI grid, our output is designed to be adopted into national law and institutional doctrine.
               </p>
             </div>
-
-            <div class="card">
-              <div class="card-title">SOVEREIGN POSITIONING</div>
-              <h3 class="card-heading">Written intelligence, not opinion</h3>
-              <p class="card-text">
-                Studio outputs are produced to sovereign-grade standards. They are not
-                essays, blog posts or analyst memos. They are structured as
-                <strong>formal instruments</strong> that can be adopted into national strategies,
-                institutional doctrines and long-horizon investment theses.
-              </p>
-              <div class="pill-row" style="margin-top:1.1rem;">
-                <span class="pill gold">STRATEGIC ARCHITECTURE PAPERS</span>
-                <span class="pill">DOCTRINAL REPORTS</span>
-                <span class="pill">WHITEBOOKS</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROOF OF COHERENCE -->
-      <section id="poc">
-        <div class="wrapper">
-          <div class="section-heading">
-            <div class="section-eyebrow">ANALYTICAL CORE</div>
-            <h2 class="section-title">Proof-of-Coherence (PoC)</h2>
-            <p class="section-lead">
-              Proof-of-Coherence is the analytical backbone of all KRYONIS documents — a method for
-              measuring the systemic integrity of an institution or architecture.
-            </p>
-          </div>
-
-          <div class="grid-2">
-            <div class="card">
-              <div class="card-title">METHODOLOGY</div>
-              <h3 class="card-heading">Four interdependent vectors</h3>
-              <p class="card-text">
-                PoC evaluates any system across four tightly coupled domains:
-              </p>
-              <ul class="list">
-                <li><strong>INTENT</strong> — purpose architecture and doctrinal alignment.</li>
-                <li><strong>MECHANISM</strong> — governance logic and operational protocols.</li>
-                <li><strong>METABOLISM</strong> — economic circuitry and resource dynamics.</li>
-                <li><strong>IDENTITY</strong> — signal interface and external information signature.</li>
+            <div class="docket">
+              <div class="mono caps text-blue" style="font-size:0.7rem; margin-bottom:1rem;">// Core Output Vectors</div>
+              <ul style="list-style:none; padding:0; font-size:0.85rem;" class="mono">
+                <li style="margin-bottom:0.8rem;">[01] STRATEGIC ARCHITECTURE PAPERS</li>
+                <li style="margin-bottom:0.8rem;">[02] DOCTRINAL REPORTS</li>
+                <li style="margin-bottom:0.8rem;">[03] INTELLIGENCE COMPENDIUMS</li>
+                <li>[04] SOVEREIGN WHITEBOOKS</li>
               </ul>
-              <p class="card-text" style="margin-top:0.9rem;">
-                A high PoC score indicates robust internal alignment and strategic viability.
-              </p>
-            </div>
-
-            <div class="card">
-              <div class="card-title">APPLICATION</div>
-              <h3 class="card-heading">Legibility for long-horizon actors</h3>
-              <p class="card-text">
-                For ministries, sovereign funds and research institutes, PoC turns vague notions
-                of “resilience” or “coherence” into something legible and governable.
-                The studio uses PoC to benchmark proposed architectures before they are deployed
-                into the real world.
-              </p>
-              <p class="card-text" style="margin-top:0.9rem;">
-                PoC is also the anchor for the future KRYONIS tokenomics layer,
-                where value is tied not to volume, but to measurable coherence.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- DOCUMENTATION ARCHITECTURE / METHOD -->
       <section id="method">
         <div class="wrapper">
-          <div class="section-heading">
-            <div class="section-eyebrow">AUTHORSHIP PROTOCOL</div>
-            <h2 class="section-title">KRYONIS documentation architecture</h2>
-            <p class="section-lead">
-              Each publication is produced through a structured five-phase authorship protocol,
-              aligning analytical rigour with doctrinal clarity.
-            </p>
+          <div class="reveal">
+             <span class="section-label mono caps">Execution Protocol</span>
+             <h2 class="section-heading">The 5-Phase Authoring Cycle</h2>
           </div>
 
-          <div class="card">
-            <div class="card-title">FIVE PHASES</div>
-            <div class="columns-2">
-              <div>
-                <h3 class="card-heading">1. ANALYSIS</h3>
-                <p class="card-text">
-                  Establish the scope of inquiry, doctrinal parameters and strategic objectives.
-                  Map existing architectures, actors and constraints.
-                </p>
-
-                <h3 class="card-heading" style="margin-top:1.4rem;">2. SYNTHESIS</h3>
-                <p class="card-text">
-                  Synthesize heterogeneous data sources, model system dynamics and surface
-                  the underlying cognitive and economic patterns.
-                </p>
-
-                <h3 class="card-heading" style="margin-top:1.4rem;">3. STRUCTURING</h3>
-                <p class="card-text">
-                  Author the core textual and logical architecture — the “spine” of the document
-                  that defines how the system should evolve.
-                </p>
-              </div>
-
-              <div>
-                <h3 class="card-heading">4. VALIDATION</h3>
-                <p class="card-text">
-                  Conduct doctrinal review, PoC evaluation and coherence validation across
-                  stakeholder domains (policy, economy, infrastructure, culture).
-                </p>
-
-                <h3 class="card-heading" style="margin-top:1.4rem;">5. PUBLICATION</h3>
-                <p class="card-text">
-                  Finalise and deliver the document in its agreed classification tier, with
-                  annexes, diagrams and implementation notes where required.
-                </p>
-
-                <div class="pill-row" style="margin-top:1.3rem;">
-                  <span class="pill gold">SOVEREIGN-GRADE STANDARD</span>
-                  <span class="pill">MULTI-ITERATION REVIEW</span>
-                </div>
+          <div class="grid-3 reveal">
+            <div>
+               <div class="step-card">
+                 <div class="step-num mono">PHASE I</div>
+                 <div class="step-title serif">Analysis</div>
+                 <div class="step-desc">Mapping the constraint landscape and doctrinal objectives.</div>
+               </div>
+               <div class="step-card">
+                 <div class="step-num mono">PHASE II</div>
+                 <div class="step-title serif">Synthesis</div>
+                 <div class="step-desc">Modeling system dynamics and cognitive patterns.</div>
+               </div>
+            </div>
+            <div>
+               <div class="step-card">
+                 <div class="step-num mono">PHASE III</div>
+                 <div class="step-title serif">Structuring</div>
+                 <div class="step-desc">Drafting the logical spine of the architecture.</div>
+               </div>
+               <div class="step-card">
+                 <div class="step-num mono">PHASE IV</div>
+                 <div class="step-title serif">Validation (PoC)</div>
+                 <div class="step-desc">Testing against Proof-of-Coherence metrics.</div>
+               </div>
+            </div>
+            <div class="docket" style="height:fit-content;">
+              <div class="step-num mono text-gold">PHASE V</div>
+              <div class="step-title serif text-gold">Publication</div>
+              <p class="step-desc" style="margin-bottom:1rem;">
+                Final delivery under agreed classification tier. Sovereign-grade standard.
+              </p>
+              <div class="mono caps" style="font-size:0.6rem; border:1px solid var(--gold-dim); display:inline-block; padding:2px 6px; color:var(--gold);">
+                Encrypted Delivery
               </div>
             </div>
-          </div>
-
-          <div class="card" style="margin-top:1.8rem;">
-            <div class="card-title">OPERATIONAL COMPOSITION</div>
-            <h3 class="card-heading">Micro-institution · Hybrid intelligence</h3>
-            <p class="card-text">
-              KRYONIS INTELLIGENCE STUDIO operates as a micro-institution: a small, elite core
-              of human analysts working in tandem with a distributed AI synthesis mesh.
-            </p>
-            <p class="card-text" style="margin-top:0.8rem;">
-              This hybrid composition allows the studio to co-author complex strategic
-              architectures with exceptional depth and speed, while maintaining a
-              human-led doctrinal filter.
-            </p>
           </div>
         </div>
       </section>
 
-      <!-- COMMISSIONS -->
       <section id="commissions">
         <div class="wrapper">
-          <div class="section-heading">
-            <div class="section-eyebrow">COMMISSIONS</div>
-            <h2 class="section-title">Institutional commissions</h2>
-            <p class="section-lead">
-              The studio accepts commissions from actors responsible for architecting
-              national and civilizational infrastructure.
-            </p>
+          <div class="reveal">
+            <span class="section-label mono caps">Commissioning</span>
+            <h2 class="section-heading">Fiscal Framework</h2>
           </div>
 
-          <div class="card">
-            <div class="card-title">WHO WE WORK WITH</div>
-            <ul class="list">
-              <li><strong>SOVEREIGN INSTITUTIONS</strong> — ministries, national councils, sovereign funds.</li>
-              <li><strong>RESEARCH AGENCIES</strong> — advanced institutes in bioeconomy, AI, space and systems science.</li>
-              <li><strong>CONSORTIA</strong> — scientific and industrial coalitions tasked with long-horizon infrastructure.</li>
-            </ul>
-            <p class="card-text" style="margin-top:0.9rem;">
-              Each commission is executed under a formal sovereign or institutional agreement,
-              with clearly defined classification, authorship and dissemination protocols.
-            </p>
-          </div>
-
-          <div class="card" style="margin-top:1.8rem;">
-            <div class="card-title">COMMISSIONING FRAMEWORK</div>
-            <p class="card-text">
-              Commissions are accepted for specific publication categories. Indicative
-              budget ranges are provided for planning purposes. Each engagement
-              remains confidential and is executed under a Sovereign Contract.
-            </p>
-
-            <div class="columns-2" style="margin-top:1.3rem;">
-              <div>
-                <h3 class="card-heading">Strategic Architecture Papers</h3>
-                <p class="card-text">Indicative range: €60,000 – €180,000</p>
-
-                <h3 class="card-heading" style="margin-top:1.2rem;">Doctrinal Reports</h3>
-                <p class="card-text">Indicative range: €45,000 – €120,000</p>
-              </div>
-              <div>
-                <h3 class="card-heading">Whitebooks &amp; Intelligence Compendiums</h3>
-                <p class="card-text">Indicative range: €100,000 – €250,000</p>
-                <p class="card-text" style="margin-top:0.9rem;">
-                  Final budgets are set after a brief diagnostic phase, once scope and
-                  doctrinal depth are agreed.
-                </p>
-              </div>
-            </div>
+          <div class="docket reveal">
+             <div class="docket-header">
+               <span class="mono caps">Indicative Budget Ranges (EUR)</span>
+               <span class="mono caps text-muted">FY 2025-2026</span>
+             </div>
+             
+             <table class="data-table">
+               <thead>
+                 <tr>
+                   <th class="caps">Instrument Type</th>
+                   <th class="caps">Est. Scope</th>
+                   <th class="caps">Range</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td>STRATEGIC ARCHITECTURE PAPER</td>
+                   <td>6-10 Weeks</td>
+                   <td class="val">€60,000 – €180,000</td>
+                 </tr>
+                 <tr>
+                   <td>DOCTRINAL REPORT</td>
+                   <td>4-8 Weeks</td>
+                   <td class="val">€45,000 – €120,000</td>
+                 </tr>
+                 <tr>
+                   <td>INTELLIGENCE COMPENDIUM</td>
+                   <td>12-24 Weeks</td>
+                   <td class="val">€100,000 – €250,000</td>
+                 </tr>
+               </tbody>
+             </table>
+             <div class="mono text-muted" style="font-size:0.7rem; margin-top:1.5rem;">
+               * Final budgets set after diagnostic phase. Executed under Sovereign Contract.
+             </div>
           </div>
         </div>
       </section>
 
-      <!-- CONTACT / MISSION -->
-      <section id="contact">
+      <section id="contact" style="border-bottom:none;">
         <div class="wrapper">
-          <div class="section-heading">
-            <div class="section-eyebrow">CONTACT</div>
-            <h2 class="section-title">Initiate a sovereign briefing</h2>
-            <p class="section-lead">
-              For governments, institutes and long-term capital only. No retail offers,
-              no public token sales, no mass-market products.
-            </p>
-          </div>
+          <div class="grid-2 reveal">
+             <div>
+               <span class="section-label mono caps">Initiation</span>
+               <h2 class="section-heading">Request Briefing</h2>
+               <p class="text-muted">
+                 For governments, institutes and long-term capital only. No retail offers.
+               </p>
+               <div style="margin-top:2rem;">
+                 <div class="mono caps text-gold" style="font-size:0.8rem;">Secure Channel</div>
+                 <div style="font-size:1.1rem; margin-top:0.5rem; font-family:'Cinzel', serif;">hq@kryonis.global</div>
+               </div>
+             </div>
 
-          <div class="grid-2">
-            <div>
-              <div class="card">
-                <div class="card-title">MISSION</div>
-                <h3 class="card-heading">Textual architectures for the next intelligence epoch</h3>
-                <p class="card-text">
-                  The studio designs the textual architectures through which civilization
-                  organises its next intelligence epoch — documents that encode not just
-                  information, but intent, coherence and sovereignty.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <div class="card">
-                <div class="card-title">INITIATION PROTOCOL</div>
-                <p class="card-text">
-                  To initiate a briefing, send a concise introduction outlining:
-                </p>
-                <ul class="list" style="margin-top:0.7rem;">
-                  <li>▸ Who you are and what system you speak for.</li>
-                  <li>▸ The time horizon you are responsible for (5 / 25 / 100+ years).</li>
-                  <li>▸ The domain you wish to stabilise: bioeconomy, AI, governance, orbital, other.</li>
-                  <li>▸ Why you believe a KRYONIS-aligned architecture is necessary now.</li>
-                </ul>
-                <p class="card-text" style="margin-top:0.9rem;">
-                  <strong>Primary contact:</strong><br />
-                  hq@kryonis.global
-                </p>
-              </div>
-            </div>
+             <div class="docket">
+               <div class="mono caps text-muted" style="font-size:0.7rem; margin-bottom:1rem;">Briefing Protocol</div>
+               <p class="text-muted" style="font-size:0.85rem; margin-bottom:1rem;">
+                 Please outline your jurisdiction, time horizon (25/100yr), and target domain (Bioeconomy, AI, Governance).
+               </p>
+               <div class="mono caps" style="font-size:0.6rem; color:var(--fg-dim);">
+                 ENCRYPTION: OPTIONAL / PREFERRED
+               </div>
+             </div>
           </div>
         </div>
       </section>
 
     </main>
 
-    <!-- FOOTER -->
     <footer>
       <div class="wrapper">
-
-        <div style="
-          height:1px;
-          background:linear-gradient(to right, transparent, rgba(255,255,255,0.12), transparent);
-          margin-bottom:2.2rem;
-        "></div>
-
-        <div class="footer-row">
-          <div style="line-height:1.55; font-size:0.9rem;">
-            <div style="opacity:0.85; font-weight:500;">Get in touch:</div>
-            <div style="opacity:0.85;">hq@kryonis.global</div>
-          </div>
-
-          <div style="line-height:1.55; font-size:0.82rem; text-align:right; opacity:0.75;">
-            © KRYONIS Sovereign Systems Limited · 2025<br />
-            Sovereign Strategic Architecture Division<br />
-            Hong Kong SAR
-          </div>
+        <div style="display:flex; justify-content:space-between; align-items:end;">
+           <div>
+             <div class="serif text-gold">Kryonis Intelligence Studio</div>
+             <div class="mono caps text-muted" style="margin-top:0.5rem;">Sovereign Strategic Architecture Division</div>
+           </div>
+           <div class="text-muted" style="text-align:right;">
+             Hong Kong SAR<br>
+             © 2025
+           </div>
         </div>
-
       </div>
     </footer>
 
   </div>
 
   <script>
-    // always start from top on refresh
-    window.onbeforeunload = function () {
-      window.scrollTo(0, 0);
-    };
+    // 1. ANIMATIONS (REVEAL)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // 2. STUDIO GRID (The Architect's Canvas)
+    // Represents structure and design, differing from the 'Global' consciousness lattice
+    const canvas = document.getElementById('studio-grid');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let points = [];
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Point {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.15;
+        this.vy = (Math.random() - 0.5) * 0.15;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if(this.x < 0) this.x = width;
+        if(this.x > width) this.x = 0;
+        if(this.y < 0) this.y = height;
+        if(this.y > height) this.y = 0;
+      }
+    }
+
+    // Create a grid-like structure
+    function initPoints() {
+      points = [];
+      const count = Math.min(width / 12, 80);
+      for(let i=0; i<count; i++) points.push(new Point());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      
+      for(let i=0; i<points.length; i++) {
+        points[i].update();
+        
+        // Draw rigid connections (The Architect's Lines)
+        for(let j=i; j<points.length; j++) {
+          const dx = points[i].x - points[j].x;
+          const dy = points[i].y - points[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          
+          if(dist < 120) {
+            ctx.beginPath();
+            // Tech-blue/white lines, very faint
+            ctx.strokeStyle = `rgba(110, 140, 255, ${0.04 - dist/3000})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[j].x, points[j].y);
+            ctx.stroke();
+          }
+        }
+        
+        // Draw "Nodes"
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillRect(points[i].x - 1, points[i].y - 1, 2, 2); // Square dots for "structure"
+      }
+      requestAnimationFrame(animate);
+    }
+
+    initPoints();
+    animate();
   </script>
 </body>
 </html>
