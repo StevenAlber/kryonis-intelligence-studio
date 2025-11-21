@@ -85,7 +85,7 @@
       z-index: 10;
     }
 
-    /* HEADER */
+    /* HEADER - COMPACT & TECHNICAL */
     header {
       position: fixed;
       top: 0; left: 0; width: 100%;
@@ -113,7 +113,7 @@
     }
     .nav-links a.back-link { color: var(--gold); border-color: var(--gold-dim); }
 
-    /* HERO */
+    /* HERO - THE ARCHIVE */
     .hero {
       min-height: 90vh;
       display: flex;
@@ -164,6 +164,7 @@
       transition: 0.3s;
     }
     
+    /* The "Tab" look */
     .docket::before {
       content: ''; position: absolute; top: -1px; left: -1px;
       width: 40px; height: 1px; background: var(--gold);
@@ -211,7 +212,7 @@
     .step-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; }
     .step-desc { font-size: 0.85rem; color: var(--fg-muted); }
 
-    /* DATA TABLE */
+    /* DATA TABLE FOR COMMISSIONS */
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -264,7 +265,7 @@
             <div class="brand-sub mono caps">Sovereign Architecture Division</div>
           </div>
           <div class="nav-links mono caps">
-            <a href="https://kryonis.global" class="back-link">← Return to Global</a>
+            <a href="https://kryonis-global-proto.onrender.com" class="back-link">← Return to Global</a>
             <a href="#mandate">Mandate</a>
             <a href="#method">Method</a>
             <a href="#commissions">Commissions</a>
@@ -431,7 +432,7 @@
                  
                  <tr style="border-top: 1px solid var(--gold-dim);">
                    <td style="padding-top:1.5rem;">
-                     <a href="protocol.html" style="color:var(--gold); font-weight:600; letter-spacing:0.05em; text-decoration:none; border-bottom:1px solid rgba(197, 160, 40, 0.3);">
+                     <a href="https://kryonis-global-proto.onrender.com/protocol.html" target="_blank" style="color:var(--gold); font-weight:600; letter-spacing:0.05em; text-decoration:none; border-bottom:1px solid rgba(197, 160, 40, 0.3); transition:0.2s;">
                        LAZY SUSAN
                      </a>
                      <div class="text-muted" style="font-size:0.7rem; margin-top:6px;">*Hybrid Synthesis Protocol (12 Nodes)</div>
@@ -506,6 +507,7 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // 2. STUDIO GRID (The Architect's Canvas)
+    // Represents structure and design, differing from the 'Global' consciousness lattice
     const canvas = document.getElementById('studio-grid');
     const ctx = canvas.getContext('2d');
     let width, height;
