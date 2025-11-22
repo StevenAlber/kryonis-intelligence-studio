@@ -6,7 +6,6 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
   <style>
-    /* --- KRYONIS PX-Δ1 PRO / BLACK–GOLD–NEON THEME --- */
     :root {
       --term-green: #00ff33;
       --term-dim: #004411;
@@ -31,7 +30,6 @@
       flex-direction: column;
     }
 
-    /* HEADER */
     #top-bar {
       height: 44px;
       flex-shrink: 0;
@@ -54,7 +52,6 @@
       color: var(--term-gold);
     }
 
-    /* GEMINI SIGNAL STACK */
     #signal-stack {
       background: #050505;
       border-bottom: 1px solid #222;
@@ -94,7 +91,6 @@
     .sig-val-med  { color: var(--term-amber); }
     .sig-val-low  { color: var(--term-green); }
 
-    /* MAIN GRID */
     #main-grid {
       display: flex;
       flex: 1;
@@ -105,7 +101,6 @@
       border-bottom: 1px solid #0c0c0c;
     }
 
-    /* COL 1: RAW / RHEOSTAT */
     #col-raw {
       width: 70px;
       flex-shrink: 0;
@@ -124,7 +119,6 @@
       user-select: none;
     }
 
-    /* RHEOSTAT METER */
     #raw-meter {
       position: absolute;
       bottom: 6px;
@@ -156,7 +150,6 @@
       color: #666045;
     }
 
-    /* COL 2: INTELLIGENCE FEED */
     #col-main {
       flex: 1;
       padding: 15px;
@@ -167,7 +160,6 @@
     #col-main::-webkit-scrollbar { width: 4px; }
     #col-main::-webkit-scrollbar-thumb { background: #2f6132; }
 
-    /* STATUS SIDEBAR */
     #col-stat {
       width: 135px;
       border-left: 1px solid #181818;
@@ -189,7 +181,6 @@
     .stat-label {
       font-size: 8px;
       color: #747474;
-      display: block;
       text-transform: uppercase;
     }
     .stat-val {
@@ -198,7 +189,6 @@
       color: var(--term-gold);
     }
 
-    /* CONTROLS */
     #controls {
       background: #040404;
       border-top: 1px solid #181818;
@@ -234,7 +224,6 @@
       box-shadow: 0 0 6px rgba(212,175,55,0.4);
     }
 
-    /* PROMPT HELP */
     #prompt-help {
       font-size: 9px;
       color: #848484;
@@ -309,10 +298,6 @@
     <span class="sig-label">Pulse Density</span>
     <span class="sig-value" id="sig-pulse">0.84</span>
   </div>
-  <div class="signal-metric">
-    <span class="sig-label">Strategic Load</span>
-    <span class="sig-value" id="sig-load">41%</span>
-  </div>
   <div class="signal-metric" style="border:none; min-width:110px;">
     <span class="sig-label">Mode</span>
     <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
@@ -379,37 +364,33 @@
 </div>
 
 <script>
-  /* ==========================================
-     CONFIG — SYSTEM PROMPT (PX-Δ1 DOCTRINE)
-     ========================================== */
-  const COSMOTRON_ENDPOINT = "https://cosmotron-proxy.stevenalber.workers.dev";
+  const COSMOTRON_PROXY_URL = "https://cosmotron-proxy.stevenalber.workers.dev";
 
   const SYSTEM_PROMPT = `
-  You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
-  Your output must be a STRATEGIC INTELLIGENCE REPORT.
-  Style: Military, cryptic, high-level. No polite filler words.
+You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
+Your output must be a STRATEGIC INTELLIGENCE REPORT.
+Style: Military, cryptic, high-level. No polite filler words.
 
-  Format structure:
-  1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
-  2. RISK LEVEL: (Low / Medium / Critical)
-  3. SECTOR ANALYSIS:
-      - GOVERNANCE: (political / sovereign moves)
-      - LOGISTICS / ECONOMY: (resources / trade / flows)
-      - COGNITIVE: (social sentiment / information control)
-  4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
+Format structure:
+1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
+2. RISK LEVEL: (Low / Medium / Critical)
+3. SECTOR ANALYSIS:
+   - GOVERNANCE: (political / sovereign moves)
+   - LOGISTICS / ECONOMY: (resources / trade / flows)
+   - COGNITIVE: (social sentiment / information control)
+4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
 
-  Treat fictional topics (e.g. Mars Colony) as real, happening now.
-  Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
-  `;
+Treat fictional topics (e.g. Mars Colony) as real, happening now.
+Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
+`.trim();
 
-  /* ==========================================
-     VISUAL ENGINE
-     ========================================== */
   const rawMatrixEl  = document.getElementById('raw-matrix');
   const meterFillEl  = document.getElementById('raw-meter-fill');
   const mainCol      = document.getElementById('col-main');
   const input        = document.getElementById('user-input');
   const netVal       = document.getElementById('net-val');
+
+  let meterInterval = null;
 
   function matrixRain() {
     let text = "";
@@ -433,9 +414,6 @@
     return div;
   }
 
-  /* ==========================================
-     SIGNAL STACK
-     ========================================== */
   function updateSignalStack(aiResponseText) {
     const coherenceEl = document.getElementById('sig-coherence');
     let currentCoherence = parseFloat(coherenceEl.innerText);
@@ -472,23 +450,12 @@
 
     document.getElementById('sig-pulse').innerText =
       (0.70 + Math.random() * 0.29).toFixed(2);
-
-    const load = Math.min(
-      99,
-      Math.floor((text.length / 500) * 100) + Math.floor(Math.random() * 10)
-    );
-    document.getElementById('sig-load').innerText = load + "%";
   }
-
-  /* ==========================================
-     RHEOSTAT ANIMATION
-     ========================================== */
-  let meterInterval  = null;
 
   function startMeterAnimation() {
     if (meterInterval) return;
     meterInterval = setInterval(() => {
-      const h = 20 + Math.random() * 70; // 20–90%
+      const h = 20 + Math.random() * 70;
       meterFillEl.style.height = h + "%";
     }, 220);
   }
@@ -501,18 +468,15 @@
     meterFillEl.style.height = "18%";
   }
 
-  /* ==========================================
-     GEMINI PROXY HELPER (Cloudflare Worker)
-     ========================================== */
   async function generateFromModel(query) {
-    const res = await fetch(COSMOTRON_ENDPOINT, {
+    const payload = {
+      prompt: SYSTEM_PROMPT + "\n\nQUERY: " + query
+    };
+
+    const res = await fetch(COSMOTRON_PROXY_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
-        }]
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) {
@@ -534,9 +498,6 @@
     return { ok: true, text: data.candidates[0].content.parts[0].text };
   }
 
-  /* ==========================================
-     MAIN AI LOGIC
-     ========================================== */
   async function callCosmotron(query) {
     input.disabled = true;
     addLog(`> UPLINK REQUEST: ${query}`, 'user');
@@ -549,7 +510,7 @@
     loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
 
     try {
-      let result = await generateFromModel(query);
+      const result = await generateFromModel(query);
 
       if (!result.ok) {
         console.error("AI error", result.status, result.body);
@@ -557,8 +518,6 @@
         loadingLine.style.color = "red";
       } else {
         let aiText = result.text;
-
-        // Markdown → HTML: **TEXT** / *TEXT* → <b>TEXT</b>, tärnid kaovad
         aiText = aiText
           .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
           .replace(/\*(.+?)\*/g, "<b>$1</b>")
