@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRYONIS // LAZY SUSAN PROTOCOL</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 60px; /* Space for footer */
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Terminal Styles */
+        .log-entry {
+            margin-bottom: 8px;
+            display: none; /* Hidden initially */
+            opacity: 0;
+            transition: opacity 0.1s ease-in;
+            word-wrap: break-word;
+        }
+
+        .highlight { color: #00ff41; text-shadow: 0 0 5px rgba(0,255,65,0.5); } /* Matrix Green */
+        .alert { color: #ff3333; font-weight: bold; }     /* Alert Red */
+        .blue { color: #00ccff; }      /* Sci-Fi Blue */
+        .gold { color: #ffd700; }      /* Value/Money */
+        .dim { color: #666; }
+
+        .box {
+            border: 1px solid #00ff41;
+            padding: 15px;
+            margin: 20px 0;
+            background: rgba(0, 255, 65, 0.05);
+            box-shadow: 0 0 10px rgba(0,255,65,0.1);
+        }
+
+        #start-prompt {
+            color: #00ff41;
+            animation: blink 1s infinite;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Footer Status Bar */
+        #status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #111;
+            border-top: 1px solid #333;
+            padding: 10px 20px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        a { color: inherit; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>KRYONIS INTELLIGENCE STUDIO // V.2.4</h1>
+    
+    <div id="terminal">
+        <div class="log-entry">initializing_core_protocol...</div>
+        <div class="log-entry">connecting_to_satellite_uplink [LINK-774]... <span class="highlight">CONNECTED</span></div>
+        <div class="log-entry">authenticating_user... <span class="blue">AUTHORIZED: ARCHITECT_LEVEL</span></div>
+        <div class="log-entry"><br></div>
+        <div class="log-entry">> LOAD_MODULE: LAZY_SUSAN_PROTOCOL</div>
+        <div class="log-entry">> TARGET: DUBAI_AI_STRATEGY_2040</div>
+        <div class="log-entry">> MODE: SYNTHESIS</div>
+        <div class="log-entry"><br>----------------------------------------</div>
+        <div class="log-entry">SYSTEM READY.</div>
+    </div>
+
+    <div id="start-prompt">[ TAP SCREEN TO INITIATE SIMULATION ]</div>
+</div>
+
+<div id="status-bar">
+    <span>CPU: 4%</span>
+    <span>NODES: 12 ACTIVE</span>
+    <span>GCI: 98.4</span>
+</div>
+
+<script>
+    const terminal = document.getElementById('terminal');
+    const startPrompt = document.getElementById('start-prompt');
+    let simulationStarted = false;
+
+    // The Script of the Simulation
+    const scenario = [
+        { text: "INITIATING 12-NODE RESONANCE...", delay: 500, class: "highlight" },
+        { text: "LOADING AGENT: [STRATEGIC_AWARENESS]... ONLINE", delay: 100 },
+        { text: "LOADING AGENT: [BIO_ECONOMIST]... ONLINE", delay: 100 },
+        { text: "LOADING AGENT: [TOKENOMIST]... ONLINE", delay: 100 },
+        { text: "LOADING AGENT: [ETHICAL_REFLECTOR]... ONLINE", delay: 100 },
+        { text: "<br>", delay: 100 },
+        
+        // Phase 1
+        { text: ">>> PHASE 01: DIVERGENCE (GATHERING SIGNALS)", delay: 800, class: "blue" },
+        { text: "[STRATEGIC_AWARENESS]: Analysis complete. Recommend centralized 'City Brain'. Priority: Security & Efficiency. Humans are variables to be optimized.", delay: 2000 },
+        { text: "[BIO_ECONOMIST]: <span class='alert'>OBJECTION.</span> Centralization creates fragility. Nature uses mycelial networks. Recommend: Edge Computing Nodes.", delay: 2000 },
+        { text: "[NEURO_MODELER]: Validating... Centralized surveillance reduces cognitive output by 30%. The 'Panopticon Effect' kills innovation.", delay: 2000 },
+        
+        // Phase 2
+        { text: "<br>", delay: 500 },
+        { text: ">>> PHASE 02: FRICTION (CALCULATING TRADEOFFS)", delay: 800, class: "blue" },
+        { text: "DETECTED CONFLICT: Security vs. Liberty.", delay: 1000 },
+        { text: "[TOKENOMIST]: Injecting value incentive. Proposal: 'Data Sovereignty'. Citizens own their data patterns. City 'rents' intelligence from citizens.", delay: 2500 },
+        { text: "[ETHICAL_REFLECTOR]: Reviewing... Proposal accepted IF privacy layers are absolute. Code is Law.", delay: 2000 },
+        
+        // Phase 3
+        { text: "<br>", delay: 500 },
+        { text: ">>> PHASE 03: SYNTHESIS (ORCHESTRATION)", delay: 2000, class: "highlight" },
+        { text: "PROCESSING 14,000,000 SIMULATION CYCLES...", delay: 1000, class: "dim" },
+        { text: "ALIGNING VECTORS...", delay: 1000, class: "dim" },
+        { text: "<br>", delay: 200 },
+        
+        // Output
+        { text: "<div class='box'><strong class='highlight'>FINAL DOCTRINE GENERATED: THE INVISIBLE CITY</strong><br><br>1. ARCHITECTURE: Decentralized Mesh (Bio-Mimicry)<br>2. ECONOMY: Citizen Data Ownership (Tokenized)<br>3. GOAL: Augmentation, not Surveillance.<br><br><strong>PROBABILITY OF SUCCESS: 94.2%</strong></div>", delay: 100 },
+        { text: "<br>[ END TRANSMISSION ]", delay: 500, class: "dim" }
+    ];
+
+    function typeWriter(index) {
+        if (index >= scenario.length) return;
+
+        const item = scenario[index];
+        const div = document.createElement('div');
+        div.className = 'log-entry ' + (item.class || '');
+        div.innerHTML = item.text; 
+        terminal.appendChild(div);
+
+        // Reveal animation
+        div.style.display = 'block';
+        // Small timeout to allow display:block to apply before opacity transition
+        setTimeout(() => { 
+            div.style.opacity = 1; 
+            // Auto scroll to bottom
+            window.scrollTo(0, document.body.scrollHeight);
+        }, 10);
+
+        // Trigger next line
+        setTimeout(() => {
+            typeWriter(index + 1);
+        }, item.delay);
+    }
+
+    function startSimulation() {
+        if (!simulationStarted) {
+            simulationStarted = true;
+            startPrompt.style.display = 'none';
+            typeWriter(0);
+        }
+    }
+
+    // Start on Keypress or Click/Touch
+    document.addEventListener('keydown', startSimulation);
+    document.addEventListener('touchstart', startSimulation);
+    document.addEventListener('click', startSimulation);
+</script>
+
+</body>
+</html>
