@@ -544,7 +544,14 @@
         loadingLine.innerText = `ERROR: ${result.status} – LINK FAILURE.`;
         loadingLine.style.color = "red";
       } else {
-        const aiText = result.text;
+        let aiText = result.text;
+
+        // Markdown → HTML: **TEXT** / *TEXT* → <b>TEXT</b>, tärnid kaovad
+        aiText = aiText
+          .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+          .replace(/\*(.+?)\*/g, "<b>$1</b>")
+          .replace(/\*/g, "");
+
         loadingLine.style.display = 'none';
         updateSignalStack(aiText);
 
