@@ -1,495 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PX-Δ1 // LIVE INTELLIGENCE — PRO</title>
-    <style>
-        /* --- PX-Δ1 PRO / MILITARY TERMINAL THEME --- */
-        :root {
-            --term-green: #00ff33;
-            --term-dim: #004411;
-            --term-alert: #ff3300;
-            --term-amber: #ffcc00;
-            --term-bg: #000000;
-            --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PX-Δ1 // LIVE INTELLIGENCE — PRO</title>
+  <style>
+    /* --- KRYONIS PX-Δ1 PRO / BLACK–GOLD–NEON THEME --- */
+    :root {
+      --term-green: #00ff33;
+      --term-dim: #004411;
+      --term-alert: #ff3300;
+      --term-amber: #ffcc00;
+      --term-gold: #d4af37;
+      --term-bg: #050505;
+      --panel-bg: #060606;
+      --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
+    }
 
-        body {
-            background-color: var(--term-bg);
-            color: var(--term-green);
-            font-family: var(--font-stack);
-            font-size: 11px;
-            margin: 0;
-            padding: 0;
-            height: 100dvh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    body {
+      background-color: var(--term-bg);
+      color: var(--term-green);
+      font-family: var(--font-stack);
+      font-size: 11px;
+      margin: 0;
+      padding: 0;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* HEADER */
-        #top-bar {
-            height: 40px;
-            flex-shrink: 0;
-            border-bottom: 1px solid var(--term-green);
-            padding: 0 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #050505;
-            z-index: 10;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+    /* HEADER */
+    #top-bar {
+      height: 44px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--term-gold);
+      padding: 0 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: radial-gradient(circle at top left,#111 0%,#050505 55%,#000 100%);
+      z-index: 10;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: var(--term-gold);
+    }
+    #top-bar span:first-child {
+      text-transform: uppercase;
+    }
+    #top-bar span:last-child {
+      font-size: 9px;
+      color: var(--term-gold);
+    }
 
-        /* GEMINI SIGNAL STACK */
-        #signal-stack {
-            background: #020202;
-            border-bottom: 1px solid var(--term-dim);
-            padding: 8px 10px;
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            white-space: nowrap;
-            align-items: center;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        #signal-stack::-webkit-scrollbar { display: none; }
+    /* GEMINI SIGNAL STACK */
+    #signal-stack {
+      background: #050505;
+      border-bottom: 1px solid #222;
+      padding: 8px 14px;
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      white-space: nowrap;
+      align-items: center;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #signal-stack::-webkit-scrollbar { display: none; }
 
-        .signal-metric {
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--term-dim);
-            padding-right: 15px;
-            min-width: 80px;
-        }
-        .signal-metric:last-child { border-right: none; }
+    .signal-metric {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #252525;
+      padding-right: 18px;
+      min-width: 90px;
+    }
+    .signal-metric:last-child { border-right: none; }
 
-        .sig-label {
-            font-size: 9px;
-            color: #448844;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-        .sig-value {
-            font-size: 12px;
-            font-weight: bold;
-            color: #ccffcc;
-        }
+    .sig-label {
+      font-size: 9px;
+      color: #88896a;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+    .sig-value {
+      font-size: 12px;
+      font-weight: bold;
+      color: #c7ffd2;
+    }
+    .sig-val-high { color: var(--term-alert); }
+    .sig-val-med  { color: var(--term-amber); }
+    .sig-val-low  { color: var(--term-green); }
 
-        .sig-val-high { color: var(--term-alert); }
-        .sig-val-med  { color: var(--term-amber); }
-        .sig-val-low  { color: var(--term-green); }
+    /* MAIN GRID */
+    #main-grid {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: radial-gradient(circle at center,#050b05 0%,#000 70%);
+      border-top: 1px solid #0c0c0c;
+      border-bottom: 1px solid #0c0c0c;
+    }
 
-        /* MAIN GRID */
-        #main-grid {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
+    /* COL 1: RAW / RHEOSTAT */
+    #col-raw {
+      width: 70px;
+      flex-shrink: 0;
+      border-right: 1px solid #181818;
+      background: #020402;
+      padding: 6px 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    #raw-matrix {
+      font-size: 9px;
+      line-height: 1.05;
+      white-space: pre;
+      color: #073c07;
+      opacity: 0.7;
+      user-select: none;
+    }
 
-        /* COL 1: RAW HEX */
-        #col-raw {
-            width: 60px;
-            flex-shrink: 0;
-            border-right: 1px solid var(--term-dim);
-            padding: 5px;
-            overflow: hidden;
-            opacity: 0.6;
-            font-size: 9px;
-            line-height: 1;
-            white-space: pre;
-            color: var(--term-dim);
-            user-select: none;
-        }
+    /* RHEOSTAT METER */
+    #raw-meter {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: calc(100% - 12px);
+      border: 1px solid var(--term-gold);
+      box-shadow: 0 0 8px rgba(212,175,55,0.35);
+      background: radial-gradient(circle at center,#050505 0%,#000 65%);
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    #raw-meter-fill {
+      width: 100%;
+      height: 18%;
+      background: linear-gradient(to top, rgba(0,255,51,0.9), rgba(212,175,55,0.8));
+      box-shadow: 0 0 8px rgba(0,255,51,0.65);
+      transition: height 0.25s ease-out;
+    }
+    #raw-meter-idle {
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 7px;
+      letter-spacing: 0.8px;
+      color: #666045;
+    }
 
-        /* COL 2: INTELLIGENCE FEED */
-        #col-main {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at center, #051105 0%, #000000 120%);
-        }
-        #col-main::-webkit-scrollbar { width: 4px; }
-        #col-main::-webkit-scrollbar-thumb { background: var(--term-green); }
+    /* COL 2: INTELLIGENCE FEED */
+    #col-main {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    #col-main::-webkit-scrollbar { width: 4px; }
+    #col-main::-webkit-scrollbar-thumb { background: #2f6132; }
 
-        /* STATUS SIDEBAR */
-        #col-stat {
-            width: 120px;
-            border-left: 1px solid var(--term-dim);
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #020202;
-        }
-        @media (max-width: 600px) {
-            #col-stat { display: none; }
-            #signal-stack { padding: 10px; gap: 20px; }
-        }
+    /* STATUS SIDEBAR */
+    #col-stat {
+      width: 135px;
+      border-left: 1px solid #181818;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background: #040404;
+    }
+    @media (max-width: 600px) {
+      #col-stat { display: none; }
+      #signal-stack { padding: 10px 12px; gap: 14px; }
+    }
+    .stat-box {
+      border: 1px solid #262626;
+      padding: 6px;
+      background: #050505;
+    }
+    .stat-label {
+      font-size: 8px;
+      color: #747474;
+      display: block;
+      text-transform: uppercase;
+    }
+    .stat-val {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--term-gold);
+    }
 
-        /* CONTROLS */
-        #controls {
-            background: #000;
-            border-top: 1px solid var(--term-green);
-            padding: 10px;
-            padding-bottom: max(10px, env(safe-area-inset-bottom));
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+    /* CONTROLS */
+    #controls {
+      background: #040404;
+      border-top: 1px solid #181818;
+      padding: 10px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-        #chip-rack {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-        #chip-rack::-webkit-scrollbar { height: 3px; }
-        #chip-rack::-webkit-scrollbar-thumb { background: var(--term-green); }
+    #chip-rack {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+    #chip-rack::-webkit-scrollbar { height: 3px; }
+    #chip-rack::-webkit-scrollbar-thumb { background: #444; }
 
-        .chip {
-            background: #111;
-            border: 1px solid #333;
-            color: #888;
-            padding: 8px 12px;
-            font-size: 10px;
-            text-transform: uppercase;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .chip:hover {
-            border-color: var(--term-green);
-            color: #fff;
-            background: #0a2a0a;
-        }
+    .chip {
+      background: #080808;
+      border: 1px solid #333;
+      color: #a5a5a5;
+      padding: 8px 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      border-color: var(--term-gold);
+      color: #fff;
+      box-shadow: 0 0 6px rgba(212,175,55,0.4);
+    }
 
-        .input-row {
-            display: flex;
-            align-items: center;
-            border: 1px solid #333;
-            background: #080808;
-            padding: 10px;
-        }
-        input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            flex: 1;
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            text-transform: uppercase;
-        }
+    .input-row {
+      display: flex;
+      align-items: center;
+      border: 1px solid #333;
+      background: #050505;
+      padding: 10px;
+    }
+    input {
+      background: transparent;
+      border: none;
+      color: #f8f8f8;
+      flex: 1;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      text-transform: uppercase;
+    }
 
-        .log-line { margin-bottom: 6px; word-wrap: break-word; }
-        .sys      { color: #448844; }
-        .user     { color: #fff; font-weight: bold; margin-top: 10px; }
+    .log-line { margin-bottom: 6px; word-wrap: break-word; }
+    .sys      { color: #6b8a6b; }
+    .user     { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-        .report-box {
-            border: 1px solid var(--term-green);
-            background: rgba(0,255,51,0.03);
-            padding: 15px;
-            margin: 10px 0;
-            position: relative;
-            line-height: 1.5;
-            animation: fadeIn 0.5s;
-        }
+    .report-box {
+      border: 1px solid #1f5a26;
+      background: rgba(0, 24, 0, 0.8);
+      padding: 15px;
+      margin: 10px 0;
+      position: relative;
+      line-height: 1.5;
+      color: #d7ffd7;
+      box-shadow: 0 0 16px rgba(0,255,51,0.2);
+      animation: fadeIn 0.5s;
+    }
+    .report-box b { color: #ffffff; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    </style>
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
 </head>
 <body>
 
 <div id="top-bar">
-    <span>PX-Δ1 // LIVE_UPLINK</span>
-    <span style="font-size:9px">
-        GEMINI-2.5-PRO <span style="color:var(--term-alert)">●</span>
-    </span>
+  <span>PX-Δ1 // LIVE_UPLINK</span>
+  <span>GEMINI-2.5-PRO <span style="color:var(--term-alert)">●</span></span>
 </div>
 
 <div id="signal-stack">
-    <div class="signal-metric">
-        <span class="sig-label">COHERENCE VECTOR</span>
-        <span class="sig-value" id="sig-coherence">96.4</span>
-    </div>
-    <div class="signal-metric">
-        <span class="sig-label">PATTERN DRIFT</span>
-        <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
-    </div>
-    <div class="signal-metric">
-        <span class="sig-label">RISK VECTOR</span>
-        <span class="sig-value" id="sig-risk">--</span>
-    </div>
-    <div class="signal-metric">
-        <span class="sig-label">PULSE DENSITY</span>
-        <span class="sig-value" id="sig-pulse">0.84</span>
-    </div>
-    <div class="signal-metric">
-        <span class="sig-label">STRATEGIC LOAD</span>
-        <span class="sig-value" id="sig-load">41%</span>
-    </div>
-    <div class="signal-metric" style="border:none">
-        <span class="sig-label">MODE</span>
-        <span class="sig-value" style="color:var(--term-alert)">SOVEREIGN / ULTRA</span>
-    </div>
+  <div class="signal-metric">
+    <span class="sig-label">Coherence Vector</span>
+    <span class="sig-value" id="sig-coherence">96.4</span>
+  </div>
+  <div class="signal-metric">
+    <span class="sig-label">Pattern Drift</span>
+    <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
+  </div>
+  <div class="signal-metric">
+    <span class="sig-label">Risk Vector</span>
+    <span class="sig-value" id="sig-risk">--</span>
+  </div>
+  <div class="signal-metric">
+    <span class="sig-label">Pulse Density</span>
+    <span class="sig-value" id="sig-pulse">0.84</span>
+  </div>
+  <div class="signal-metric">
+    <span class="sig-label">Strategic Load</span>
+    <span class="sig-value" id="sig-load">41%</span>
+  </div>
+  <div class="signal-metric" style="border:none; min-width:110px;">
+    <span class="sig-label">Mode</span>
+    <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
+  </div>
 </div>
 
 <div id="main-grid">
-    <div id="col-raw"></div>
-
-    <div id="col-main">
-        <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
-        <div class="log-line sys">API HANDSHAKE: STANDBY</div>
-        <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
+  <div id="col-raw">
+    <div id="raw-matrix"></div>
+    <div id="raw-meter">
+      <div id="raw-meter-fill"></div>
     </div>
+    <div id="raw-meter-idle">PX-Δ1</div>
+  </div>
 
-    <div id="col-stat">
-        <div class="stat-box">
-            <span class="stat-label">NET_LOAD</span>
-            <span class="stat-val" id="net-val">0 TB/s</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">ACTIVE NODES</span>
-            <span class="stat-val">14,205</span>
-        </div>
-        <div class="stat-box">
-            <span class="stat-label">THREAT LEVEL</span>
-            <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
-        </div>
+  <div id="col-main">
+    <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
+    <div class="log-line sys">API HANDSHAKE: STANDBY</div>
+    <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
+  </div>
+
+  <div id="col-stat">
+    <div class="stat-box">
+      <span class="stat-label">Net Load</span>
+      <span class="stat-val" id="net-val">0 TB/s</span>
     </div>
+    <div class="stat-box">
+      <span class="stat-label">Active Nodes</span>
+      <span class="stat-val">14,205</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">Threat Level</span>
+      <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
+    </div>
+  </div>
 </div>
 
 <div id="controls">
-    <div id="chip-rack">
-        <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
-        <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
-        <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
-        <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
-        <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
-        <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
-        <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
-        <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
-        <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
-    </div>
-    <div class="input-row">
-        <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-        <input type="text" id="user-input" placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY')..." autofocus>
-    </div>
+  <div id="chip-rack">
+    <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
+    <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
+    <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
+    <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
+    <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
+    <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
+    <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
+    <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
+    <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
+  </div>
+  <div class="input-row">
+    <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
+    <input type="text" id="user-input"
+           placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY')..." autofocus>
+  </div>
 </div>
 
 <script>
-    /* ==========================================
-       CONFIG — API KEY & MODELS
-       ========================================== */
-    const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8";
-    const PRIMARY_MODEL  = "gemini-2.5-pro";
-    const FALLBACK_MODEL = "gemini-1.5-flash";
+  /* ==========================================
+     CONFIG — API KEY & MODELS
+     ========================================== */
+  const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8";
+  const PRIMARY_MODEL  = "gemini-2.5-pro";
+  const FALLBACK_MODEL = "gemini-1.5-flash";
 
-    const SYSTEM_PROMPT = `
-    You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
-    Your output must be a STRATEGIC INTELLIGENCE REPORT.
-    Style: Military, cryptic, high-level. No polite filler words.
+  const SYSTEM_PROMPT = `
+  You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
+  Your output must be a STRATEGIC INTELLIGENCE REPORT.
+  Style: Military, cryptic, high-level. No polite filler words.
 
-    Format structure:
-    1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
-    2. RISK LEVEL: (Low / Medium / Critical)
-    3. SECTOR ANALYSIS:
-        - GOVERNANCE: (political / sovereign moves)
-        - LOGISTICS / ECONOMY: (resources / trade / flows)
-        - COGNITIVE: (social sentiment / information control)
-    4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
+  Format structure:
+  1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
+  2. RISK LEVEL: (Low / Medium / Critical)
+  3. SECTOR ANALYSIS:
+      - GOVERNANCE: (political / sovereign moves)
+      - LOGISTICS / ECONOMY: (resources / trade / flows)
+      - COGNITIVE: (social sentiment / information control)
+  4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
 
-    Treat fictional topics (e.g. Mars Colony) as real, happening now.
-    Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
-    `;
+  Treat fictional topics (e.g. Mars Colony) as real, happening now.
+  Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
+  `;
 
-    /* ==========================================
-       VISUAL ENGINE
-       ========================================== */
-    const rawCol  = document.getElementById('col-raw');
-    const mainCol = document.getElementById('col-main');
-    const input   = document.getElementById('user-input');
-    const netVal  = document.getElementById('net-val');
+  /* ==========================================
+     VISUAL ENGINE
+     ========================================== */
+  const rawMatrixEl  = document.getElementById('raw-matrix');
+  const meterFillEl  = document.getElementById('raw-meter-fill');
+  const mainCol      = document.getElementById('col-main');
+  const input        = document.getElementById('user-input');
+  const netVal       = document.getElementById('net-val');
 
-    function matrixRain() {
-        let text = "";
-        const chars = "01";
-        for (let i = 0; i < 150; i++) {
-            text += chars.charAt(Math.floor(Math.random() * chars.length));
-            if (i % 2 === 0) text += " ";
-            if (i % 6 === 0) text += "\n";
-        }
-        rawCol.innerText = text;
-        netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
+  let meterInterval  = null;
+
+  function matrixRain() {
+    let text = "";
+    const chars = "01";
+    for (let i = 0; i < 150; i++) {
+      text += chars.charAt(Math.floor(Math.random() * chars.length));
+      if (i % 2 === 0) text += " ";
+      if (i % 6 === 0) text += "\n";
     }
-    setInterval(matrixRain, 80);
+    rawMatrixEl.innerText = text;
+    netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
+  }
+  setInterval(matrixRain, 90);
 
-    function addLog(text, type) {
-        const div = document.createElement('div');
-        div.className = "log-line " + type;
-        div.innerHTML = text;
-        mainCol.appendChild(div);
-        mainCol.scrollTop = mainCol.scrollHeight;
-        return div;
-    }
+  function addLog(text, type) {
+    const div = document.createElement('div');
+    div.className = "log-line " + type;
+    div.innerHTML = text;
+    mainCol.appendChild(div);
+    mainCol.scrollTop = mainCol.scrollHeight;
+    return div;
+  }
 
-    /* ==========================================
-       SIGNAL STACK LOGIC
-       ========================================== */
-    function updateSignalStack(aiResponseText) {
-        const coherenceEl = document.getElementById('sig-coherence');
-        let currentCoherence = parseFloat(coherenceEl.innerText);
-        let newCoherence = currentCoherence + (Math.random() * 2 - 1);
-        if (newCoherence > 99.9) newCoherence = 99.9;
-        if (newCoherence < 85.0) newCoherence = 85.0;
-        coherenceEl.innerText = newCoherence.toFixed(1);
+  /* ==========================================
+     SIGNAL STACK
+     ========================================== */
+  function updateSignalStack(aiResponseText) {
+    const coherenceEl = document.getElementById('sig-coherence');
+    let currentCoherence = parseFloat(coherenceEl.innerText);
+    let newCoherence = currentCoherence + (Math.random() * 2 - 1);
+    if (newCoherence > 99.9) newCoherence = 99.9;
+    if (newCoherence < 85.0) newCoherence = 85.0;
+    coherenceEl.innerText = newCoherence.toFixed(1);
 
-        const text = aiResponseText.toUpperCase();
-
-        const driftEl = document.getElementById('sig-drift');
-        if (text.includes("CRITICAL")) {
-            driftEl.innerText = "HIGH";
-            driftEl.className = "sig-value sig-val-high";
-        } else if (text.includes("MEDIUM") || text.includes("WARNING")) {
-            driftEl.innerText = "MED";
-            driftEl.className = "sig-value sig-val-med";
-        } else {
-            driftEl.innerText = "LOW";
-            driftEl.className = "sig-value sig-val-low";
-        }
-
-        const riskEl = document.getElementById('sig-risk');
-        if (text.includes("BIO") || text.includes("PATHOGEN") || text.includes("VIRUS")) {
-            riskEl.innerText = "BIO-SEC";
-        } else if (text.includes("GOVERN") || text.includes("SOVEREIGN") || text.includes("REGIME")) {
-            riskEl.innerText = "GOV-SYS";
-        } else if (text.includes("ECONOM") || text.includes("TRADE") || text.includes("MARKET")) {
-            riskEl.innerText = "ECO-FIN";
-        } else if (text.includes("AI") || text.includes("CYBER") || text.includes("ALGORITHM")) {
-            riskEl.innerText = "AI-COG";
-        } else {
-            riskEl.innerText = "GEN-SYS";
-        }
-
-        document.getElementById('sig-pulse').innerText =
-            (0.70 + Math.random() * 0.29).toFixed(2);
-
-        const load = Math.min(
-            99,
-            Math.floor((text.length / 500) * 100) + Math.floor(Math.random() * 10)
-        );
-        document.getElementById('sig-load').innerText = load + "%";
+    const text = aiResponseText.toUpperCase();
+    const driftEl = document.getElementById('sig-drift');
+    if (text.includes("CRITICAL")) {
+      driftEl.innerText = "HIGH";
+      driftEl.className = "sig-value sig-val-high";
+    } else if (text.includes("MEDIUM") || text.includes("WARNING")) {
+      driftEl.innerText = "MED";
+      driftEl.className = "sig-value sig-val-med";
+    } else {
+      driftEl.innerText = "LOW";
+      driftEl.className = "sig-value sig-val-low";
     }
 
-    /* ==========================================
-       GEMINI CALL HELPERS
-       ========================================== */
-    async function generateFromModel(modelName, query) {
-        const endpoint =
-            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`;
-
-        const res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
-                }]
-            })
-        });
-
-        if (!res.ok) {
-            return { ok: false, status: res.status, body: await res.text() };
-        }
-
-        const data = await res.json();
-        if (
-            !data.candidates ||
-            !data.candidates.length ||
-            !data.candidates[0].content ||
-            !data.candidates[0].content.parts ||
-            !data.candidates[0].content.parts.length ||
-            !data.candidates[0].content.parts[0].text
-        ) {
-            return { ok: false, status: 204, body: "EMPTY" };
-        }
-
-        return {
-            ok: true,
-            text: data.candidates[0].content.parts[0].text
-        };
+    const riskEl = document.getElementById('sig-risk');
+    if (text.includes("BIO") || text.includes("PATHOGEN") || text.includes("VIRUS")) {
+      riskEl.innerText = "BIO-SEC";
+    } else if (text.includes("GOVERN") || text.includes("SOVEREIGN") || text.includes("REGIME")) {
+      riskEl.innerText = "GOV-SYS";
+    } else if (text.includes("ECONOM") || text.includes("TRADE") || text.includes("MARKET")) {
+      riskEl.innerText = "ECO-FIN";
+    } else if (text.includes("AI") || text.includes("CYBER") || text.includes("ALGORITHM")) {
+      riskEl.innerText = "AI-COG";
+    } else {
+      riskEl.innerText = "GEN-SYS";
     }
 
-    /* ==========================================
-       MAIN AI LOGIC
-       ========================================== */
-    async function callGemini(query) {
-        input.disabled = true;
-        addLog(`> UPLINK REQUEST: ${query}`, 'user');
-        const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
+    document.getElementById('sig-pulse').innerText =
+      (0.70 + Math.random() * 0.29).toFixed(2);
 
-        await new Promise(r => setTimeout(r, 800));
-        loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
-        await new Promise(r => setTimeout(r, 700));
-        loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
+    const load = Math.min(
+      99,
+      Math.floor((text.length / 500) * 100) + Math.floor(Math.random() * 10)
+    );
+    document.getElementById('sig-load').innerText = load + "%";
+  }
 
-        try {
-            // 1) Try GEMINI 2.5 PRO
-            let result = await generateFromModel(PRIMARY_MODEL, query);
+  /* ==========================================
+     RHEOSTAT ANIMATION
+     ========================================== */
+  function startMeterAnimation() {
+    if (meterInterval) return;
+    meterInterval = setInterval(() => {
+      const h = 20 + Math.random() * 70; // 20–90%
+      meterFillEl.style.height = h + "%";
+    }, 220);
+  }
 
-            // 2) If PRO not available (404/400/403), fall back to 1.5 FLASH
-            if (!result.ok && (result.status === 404 || result.status === 400 || result.status === 403)) {
-                console.warn("Primary model failed, falling back to FLASH:", result.status);
-                loadingLine.innerText = "PRIMARY CORE OFFLINE — ROUTING TO FLASH NODE...";
-                loadingLine.style.color = "#ffcc00";
-                result = await generateFromModel(FALLBACK_MODEL, query);
-            }
-
-            if (!result.ok) {
-                console.error("AI error", result.status, result.body);
-                loadingLine.innerText = `ERROR: ${result.status} – LINK FAILURE.`;
-                loadingLine.style.color = "red";
-            } else {
-                const aiText = result.text;
-                loadingLine.style.display = 'none';
-
-                // Update Signal Stack
-                updateSignalStack(aiText);
-
-                const reportDiv = document.createElement('div');
-                reportDiv.className = 'report-box';
-                reportDiv.innerHTML = aiText;
-                mainCol.appendChild(reportDiv);
-                mainCol.scrollTop = mainCol.scrollHeight;
-            }
-        } catch (err) {
-            console.error(err);
-            loadingLine.innerText = "CRITICAL ERROR: API UNREACHABLE.";
-            loadingLine.style.color = "red";
-        }
-
-        input.disabled = false;
-        input.value = '';
-        input.focus();
+  function stopMeterAnimation() {
+    if (meterInterval) {
+      clearInterval(meterInterval);
+      meterInterval = null;
     }
+    meterFillEl.style.height = "18%";
+  }
 
-    function askAI(q) {
-        const val = (q || "").trim();
-        if (val) callGemini(val.toUpperCase());
-    }
+  /* ==========================================
+     GEMINI HELPERS
+     ========================================== */
+  async function generateFromModel(modelName, query) {
+    const endpoint =
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`;
 
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const val = input.value.trim();
-            if (val) callGemini(val.toUpperCase());
-        }
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
+        }]
+      })
     });
+
+    if (!res.ok) {
+      return { ok: false, status: res.status, body: await res.text() };
+    }
+
+    const data = await res.json();
+    if (!data.candidates ||
+        !data.candidates.length ||
+        !data.candidates[0].content ||
+        !data.candidates[0].content.parts ||
+        !data.candidates[0].content.parts.length ||
+        !data.candidates[0].content.parts[0].text) {
+      return { ok: false, status: 204, body: "EMPTY" };
+    }
+
+    return { ok: true, text: data.candidates[0].content.parts[0].text };
+  }
+
+  /* ==========================================
+     MAIN AI LOGIC
+     ========================================== */
+  async function callGemini(query) {
+    input.disabled = true;
+    addLog(`> UPLINK REQUEST: ${query}`, 'user');
+    const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
+    startMeterAnimation();
+
+    await new Promise(r => setTimeout(r, 700));
+    loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
+    await new Promise(r => setTimeout(r, 700));
+    loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
+
+    try {
+      let result = await generateFromModel(PRIMARY_MODEL, query);
+
+      if (!result.ok && (result.status === 404 || result.status === 400 || result.status === 403)) {
+        console.warn("Primary model failed, falling back to FLASH:", result.status);
+        loadingLine.innerText = "PRIMARY CORE OFFLINE — ROUTING TO FLASH NODE...";
+        loadingLine.style.color = "#ffcc00";
+        result = await generateFromModel(FALLBACK_MODEL, query);
+      }
+
+      if (!result.ok) {
+        console.error("AI error", result.status, result.body);
+        loadingLine.innerText = `ERROR: ${result.status} – LINK FAILURE.`;
+        loadingLine.style.color = "red";
+      } else {
+        const aiText = result.text;
+        loadingLine.style.display = 'none';
+        updateSignalStack(aiText);
+
+        const reportDiv = document.createElement('div');
+        reportDiv.className = 'report-box';
+        reportDiv.innerHTML = aiText;
+        mainCol.appendChild(reportDiv);
+        mainCol.scrollTop = mainCol.scrollHeight;
+      }
+    } catch (err) {
+      console.error(err);
+      loadingLine.innerText = "CRITICAL ERROR: API UNREACHABLE.";
+      loadingLine.style.color = "red";
+    }
+
+    stopMeterAnimation();
+    input.disabled = false;
+    input.value = '';
+    input.focus();
+  }
+
+  function askAI(q) {
+    const val = (q || "").trim();
+    if (val) callGemini(val.toUpperCase());
+  }
+
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const val = input.value.trim();
+      if (val) callGemini(val.toUpperCase());
+    }
+  });
 </script>
 </body>
 </html>
