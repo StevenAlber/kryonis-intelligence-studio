@@ -3,283 +3,332 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRYONIS // STRATEGIC CORE</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>PX-Δ1 // REALTIME MONITOR</title>
     <style>
+        /* --- MILITARY GRADE TERMINAL STYLE --- */
         :root {
-            --primary: #00ff41;     /* Kryonis Green */
-            --accent: #00ccff;      /* Data Blue */
-            --alert: #ff3333;       /* Alert Red */
-            --gold: #ffd700;        /* Value Gold */
-            --bg: #050505;
-            --panel: #0a0a0a;
-            --border: 1px solid #222;
+            --term-green: #00ff33;
+            --term-dim: #004411;
+            --term-alert: #ff3300;
+            --term-bg: #000000;
+            --font-stack: 'Consolas', 'Monaco', 'Lucida Console', monospace;
         }
-        * { box-sizing: border-box; }
-        
+
         body {
-            background: var(--bg); color: #aaa; margin: 0; height: 100vh;
-            font-family: 'JetBrains Mono', monospace; overflow: hidden;
-            display: flex; flex-direction: column; font-size: 11px;
+            background-color: var(--term-bg);
+            color: var(--term-green);
+            font-family: var(--font-stack);
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* HEADER */
-        header {
-            height: 45px; border-bottom: var(--border); display: flex;
-            align-items: center; justify-content: space-between; padding: 0 15px;
-            background: #000;
+        #top-bar {
+            border-bottom: 1px solid var(--term-green);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            background: #050505;
+            z-index: 10;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
-        .brand { letter-spacing: 2px; color: #fff; font-weight: bold; }
-        .status-light { color: var(--primary); animation: pulse 2s infinite; }
 
         /* MAIN LAYOUT */
-        #main { flex: 1; display: flex; overflow: hidden; }
+        #main-grid { display: flex; flex: 1; overflow: hidden; }
 
-        /* LEFT PANEL (VISUALS) */
-        #left-panel {
-            width: 35%; border-right: var(--border); display: flex; flex-direction: column;
-            background: #020202; min-width: 140px;
+        /* COL 1: RAW DATA */
+        #col-raw {
+            width: 20%; border-right: 1px solid var(--term-dim); padding: 10px;
+            overflow: hidden; opacity: 0.7; font-size: 10px; line-height: 1.2;
+            white-space: pre; color: var(--term-dim);
         }
-        
-        #radar-box {
-            flex: 1; position: relative; overflow: hidden;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            display: flex; align-items: center; justify-content: center;
-        }
-        /* Slow rotating globe grid */
-        .globe-grid {
-            width: 180%; height: 180%; position: absolute;
-            background: linear-gradient(transparent 90%, rgba(0, 255, 65, 0.05) 50%), linear-gradient(90deg, transparent 90%, rgba(0, 255, 65, 0.05) 50%);
-            background-size: 30px 30px;
-            transform: perspective(400px) rotateX(40deg);
-            animation: globeSpin 40s linear infinite;
-            opacity: 0.6;
-        }
-        
-        #progress-box {
-            padding: 15px; border-top: var(--border); height: 120px;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .progress-bar {
-            height: 4px; background: #222; margin-top: 10px; position: relative;
-        }
-        .progress-fill {
-            height: 100%; background: var(--primary); width: 0%; transition: width 0.2s;
-            box-shadow: 0 0 10px var(--primary);
-        }
-        .loading-text { font-size: 9px; color: var(--primary); margin-bottom: 5px; min-height: 12px;}
 
-        /* RIGHT PANEL (LOGS) */
-        #terminal {
-            width: 65%; background: #080808; padding: 20px;
+        /* COL 2: MAIN FEED */
+        #col-main {
+            width: 60%; border-right: 1px solid var(--term-dim); padding: 20px;
             overflow-y: auto; display: flex; flex-direction: column;
+            background: radial-gradient(circle, #051105 0%, #000000 90%);
         }
-        .log-entry {
-            margin-bottom: 12px; display: none; border-left: 2px solid #222; padding-left: 10px;
-            line-height: 1.4; opacity: 0; animation: slideIn 0.5s forwards;
+        #col-main::-webkit-scrollbar { width: 6px; }
+        #col-main::-webkit-scrollbar-thumb { background: var(--term-green); }
+
+        /* COL 3: STATUS */
+        #col-stat {
+            width: 20%; padding: 10px; display: flex; flex-direction: column; gap: 20px;
         }
-        .log-entry.visible { display: block; }
+
+        /* TEXT STYLES */
+        .log-line { margin-bottom: 4px; word-break: break-word; }
+        .log-line.highlight { color: #fff; background: #003311; }
+        .log-line.alert { color: var(--term-alert); font-weight: bold; }
+        .log-line.sys { color: #55aa55; }
         
-        /* COLORS */
-        .c-sys { border-color: #444; color: #666; }
-        .c-blue { border-color: var(--accent); color: #ddd; }
-        .c-green { border-color: var(--primary); color: #ddd; }
-        .c-gold { border-color: var(--gold); color: #ddd; }
-        .c-red { border-color: var(--alert); color: #ddd; }
-
-        /* FINAL BOX */
-        .doctrine-box {
-            border: 1px solid var(--primary); background: rgba(0, 255, 65, 0.03);
-            padding: 20px; margin-top: 20px; margin-bottom: 40px; position: relative;
-            animation: flashBox 1s;
+        /* REPORT BOX */
+        .report-card {
+            border: 1px solid var(--term-green);
+            background: rgba(0, 255, 51, 0.05);
+            padding: 15px; margin: 20px 0; font-size: 12px; line-height: 1.4;
+            animation: flicker 0.1s;
         }
-        .box-label {
-            position: absolute; top: -8px; left: 10px; background: #080808;
-            padding: 0 5px; font-size: 9px; color: var(--primary); letter-spacing: 1px;
+        .report-header {
+            border-bottom: 1px solid var(--term-green); margin-bottom: 10px;
+            padding-bottom: 5px; font-weight: bold;
         }
 
-        /* FOOTER CONTROLS */
-        #footer { height: 140px; background: #000; border-top: var(--border); padding: 15px; display: flex; flex-direction: column; }
-        
-        #chips {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px;
-            -webkit-overflow-scrolling: touch;
-        }
-        #chips::-webkit-scrollbar { height: 2px; background: #222; }
-        #chips::-webkit-scrollbar-thumb { background: var(--primary); }
-
-        .chip {
-            background: #111; border: 1px solid #333; color: #888; padding: 8px 12px;
-            font-size: 10px; cursor: pointer; transition: 0.2s; white-space: nowrap;
-        }
-        .chip:hover { border-color: var(--primary); color: #fff; background: #1a1a1a; }
-
-        .input-row {
-            display: flex; align-items: center; background: #0a0a0a; border: 1px solid #333; padding: 10px;
+        /* INPUT AREA */
+        #input-zone {
+            border-top: 1px solid var(--term-green); padding: 15px; background: #000;
+            display: flex; align-items: center;
         }
         input {
-            background: transparent; border: none; color: #fff; flex: 1; font-family: inherit;
-            font-size: 14px; outline: none; text-transform: uppercase;
+            background: transparent; border: none; color: #fff;
+            font-family: var(--font-stack); font-size: 14px; flex: 1; outline: none;
+            text-transform: uppercase; margin-left: 10px;
         }
 
         /* ANIMATIONS */
-        @keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
-        @keyframes globeSpin { 0%{transform:perspective(400px) rotateX(40deg) translateY(0);} 100%{transform:perspective(400px) rotateX(40deg) translateY(40px);} }
-        @keyframes slideIn { from{opacity:0; transform:translateX(-5px);} to{opacity:1; transform:translateX(0);} }
-        @keyframes flashBox { 0%{background: rgba(0,255,65,0.2);} 100%{background: rgba(0,255,65,0.03);} }
+        @keyframes flicker { 0%{opacity:0.8} 50%{opacity:1} 100%{opacity:0.8} }
+        .blink { animation: blink 1s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+        .mod-box { border: 1px solid var(--term-dim); padding: 5px; }
+        .mod-title { background: var(--term-dim); color: #000; padding: 2px; font-size: 9px; margin-bottom: 5px;}
 
     </style>
 </head>
 <body>
 
-<header>
-    <div class="brand">KRYONIS <span style="color:#555;">// TITAN_v8.0</span></div>
-    <div style="font-size:9px; color:#666;">SECURE UPLINK <span class="status-light">●</span></div>
-</header>
+<div id="top-bar">
+    <span>PX-Δ1 // DEEP_SCAN_CLIENT v9.1</span>
+    <span>STATUS: <span class="blink" style="color:var(--term-alert)">ACTIVE</span> | <span id="live-clock">00:00:00</span></span>
+</div>
 
-<div id="main">
-    <div id="left-panel">
-        <div id="radar-box">
-            <div class="globe-grid"></div>
-            <div style="position:absolute; font-size:10px; color:#333;">GLOBAL<br>SENSOR<br>GRID</div>
-        </div>
-        <div id="progress-box">
-            <div class="loading-text" id="proc-text">SYSTEM IDLE</div>
-            <div class="progress-bar"><div class="progress-fill" id="proc-bar"></div></div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-size:9px; color:#555;">
-                <span>CPU: <span id="cpu">12%</span></span>
-                <span>NODES: 14,205</span>
-            </div>
+<div id="main-grid">
+    <div id="col-raw"></div>
+
+    <div id="col-main">
+        <div class="log-line sys">INITIALIZING PX-Δ1 KERNEL...</div>
+        <div class="log-line sys" id="init-date-line">LOADING CONTEXT...</div>
+        <div class="log-line sys">WAITING FOR TARGET VECTOR...</div>
+        <br>
+        <div class="report-card" style="border-style: dashed; color: #888;">
+            <div class="report-header">SYSTEM DIRECTIVE</div>
+            Target: Structural Activation Patterns<br>
+            Filter: Governance, Logistics, Semantic, Digital<br>
+            Mode: Silent Convergence Detection
         </div>
     </div>
-    
-    <div id="terminal">
-        <div class="log-entry visible c-sys">System Initialized.</div>
-        <div class="log-entry visible c-sys">Connected to Global Sovereign Database (Level 5).</div>
-        <div class="log-entry visible c-sys">Waiting for strategic vector...</div>
+
+    <div id="col-stat">
+        <div class="mod-box">
+            <div class="mod-title">NET_TRAFFIC</div>
+            <div id="net-val">00 KB/s</div>
+        </div>
+        <div class="mod-box">
+            <div class="mod-title">ACTIVE NODES</div>
+            <div id="node-val">14,205</div>
+        </div>
+        <div class="mod-box">
+            <div class="mod-title">GLOBAL THREAT</div>
+            <div style="color:var(--term-alert); font-size:14px; font-weight:bold;">ELEVATED</div>
+        </div>
+        <div style="flex:1; font-size:9px; opacity:0.5; word-break:break-all;">
+            SESSION_HASH:<br>8F4A-2B9C-11X9<br><br>
+            GEO_LOCK:<br>KUALA LUMPUR<br>[SECURE]
+        </div>
     </div>
 </div>
 
-<div id="footer">
-    <div style="font-size:9px; color:#444; margin-bottom:5px;">SELECT TARGET VECTOR:</div>
-    <div id="chips">
-        <div class="chip" onclick="startSeq('USA')">USA</div>
-        <div class="chip" onclick="startSeq('CHINA')">CHINA</div>
-        <div class="chip" onclick="startSeq('RUSSIA')">RUSSIA</div>
-        <div class="chip" onclick="startSeq('SAUDI')">SAUDI (NEOM)</div>
-        <div class="chip" onclick="startSeq('DUBAI')">DUBAI</div>
-        <div class="chip" onclick="startSeq('SINGAPORE')">SINGAPORE</div>
-        <div class="chip" onclick="startSeq('INDIA')">INDIA</div>
-        <div class="chip" onclick="startSeq('BRAZIL')">BRAZIL</div>
-        <div class="chip" onclick="startSeq('ISRAEL')">ISRAEL</div>
-        <div class="chip" onclick="startSeq('UK')">UK</div>
-        
-        <div class="chip" onclick="startSeq('MARS')">MARS COLONY</div>
-        <div class="chip" onclick="startSeq('AION')">AION (150 YRS)</div>
-        <div class="chip" onclick="startSeq('AI_GOV')">AI GOVERNANCE</div>
-        <div class="chip" onclick="startSeq('CLIMATE')">CLIMATE ENG</div>
-        <div class="chip" onclick="startSeq('WATER')">WATER CRISIS</div>
-        <div class="chip" onclick="startSeq('ENERGY')">FUSION POWER</div>
-    </div>
-    
-    <div class="input-row">
-        <span style="color:var(--primary); margin-right:10px; font-weight:bold;">CMD:~$</span>
-        <input type="text" id="user-in" placeholder="ENTER STRATEGIC QUERY..." autofocus>
-    </div>
+<div id="input-zone">
+    <span style="color:var(--term-green)">COMMAND@PX-DELTA:~$</span>
+    <input type="text" id="cmd-input" placeholder="ENTER TARGET (E.G. 'SCAN USA')" autofocus>
 </div>
 
 <script>
-    const term = document.getElementById('terminal');
-    const pBar = document.getElementById('proc-bar');
-    const pText = document.getElementById('proc-text');
-    const cpu = document.getElementById('cpu');
-    const input = document.getElementById('user-in');
+    // --- HELPERS FOR REALTIME DATE ---
+    function getDynamicDateRange() {
+        const end = new Date();
+        const start = new Date();
+        start.setDate(end.getDate() - 5); // 5 days ago
 
-    // Idle animation
-    setInterval(() => {
-        cpu.innerText = Math.floor(Math.random() * 40 + 10) + "%";
-    }, 500);
-
-    function addLog(msg, type='c-sys') {
-        const d = document.createElement('div');
-        d.className = `log-entry ${type}`;
-        d.innerHTML = msg;
-        term.appendChild(d);
-        requestAnimationFrame(() => d.classList.add('visible'));
-        term.scrollTop = term.scrollHeight;
+        const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+        // Convert to uppercase for terminal look (e.g. "NOV 17, 2025")
+        const sStr = start.toLocaleDateString('en-US', opts).toUpperCase();
+        const eStr = end.toLocaleDateString('en-US', opts).toUpperCase();
+        return `${sStr} - ${eStr}`;
     }
 
-    const DB = {
-        'USA': { t:'c-blue', m:"[STRATEGIC]: Innovation high, but Social Coherence is critically low. Internal entropy rising.", d:"COGNITIVE FEDERALISM" },
-        'CHINA': { t:'c-red', m:"[STRATEGIC]: Total Integration. Social Credit optimization maximizes stability but kills outlier innovation.", d:"THE DIGITAL LEVIATHAN" },
-        'RUSSIA': { t:'c-blue', m:"[STRATEGIC]: Northern Sea Route control is the primary asset. Permafrost collapse is the primary threat.", d:"CRYO-SOVEREIGNTY" },
-        'DUBAI': { t:'c-blue', m:"[STRATEGIC]: Transitioning from Oil-State to Mind-State. Centralized AI creates efficiency but fragility.", d:"THE INVISIBLE CITY" },
-        'SAUDI': { t:'c-blue', m:"[STRATEGIC]: NEOM Line Architecture. Exporting solar energy as computational power.", d:"POST-PETROLEUM COGNITION" },
-        'MARS': { t:'c-gold', m:"[STRATEGIC]: Sandbox Governance. No legacy systems. Oxygen is the base currency.", d:"RESOURCE BASED GOVERNANCE" },
-        'AION': { t:'c-green', m:"[BIO]: 150yr Lifespan Target. Health must be priced as a continuous asset, not a repair cost.", d:"THE 7-STAGE LIFECYCLE" },
-        'CLIMATE': { t:'c-red', m:"[BIO]: Geo-engineering risks (Termination Shock) detected. Needs economic incentive to heal.", d:"THE GAIA SHIELD" },
-        'AI_GOV': { t:'c-red', m:"[ETHICS]: A single kill-switch is a point of failure. We need distributed watchdog AIs.", d:"DISTRIBUTED ALIGNMENT" },
-        'WATER': { t:'c-blue', m:"[STRATEGIC]: Aquifer depletion rate critical. Virtual Water Trade protocols required.", d:"HYDRO-DIPLOMACY" }
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-GB'); // 24h format
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Set Initial Date Line
+    document.getElementById('init-date-line').innerText = `LOADING GLOBAL CONTEXT: ${getDynamicDateRange()}`;
+
+
+    // --- CONFIG ---
+    const rawCol = document.getElementById('col-raw');
+    const mainCol = document.getElementById('col-main');
+    const input = document.getElementById('cmd-input');
+    const netVal = document.getElementById('net-val');
+
+    // --- RAW DATA STREAM ---
+    function makeHex() {
+        let text = "";
+        const chars = "ABCDEF0123456789";
+        for (let i = 0; i < 100; i++) {
+            text += chars.charAt(Math.floor(Math.random() * chars.length));
+            if (i % 2 == 0 && i > 0) text += " ";
+            if (i % 16 == 0 && i > 0) text += "\n";
+        }
+        return text;
+    }
+
+    setInterval(() => {
+        rawCol.innerText = makeHex() + "\n" + makeHex() + "\n" + makeHex();
+        netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
+    }, 100);
+
+    // --- LOGIC ENGINE ---
+    function log(text, type="") {
+        const div = document.createElement('div');
+        div.className = "log-line " + type;
+        // Add timestamp to every log
+        const time = new Date().toLocaleTimeString('en-GB');
+        div.innerHTML = `[${time}] ${text}`;
+        mainCol.appendChild(div);
+        mainCol.scrollTop = mainCol.scrollHeight;
+    }
+
+    // --- FLOOD EFFECT ---
+    async function floodData() {
+        const junk = [
+            "Bypassing Firewall...", "Handshake: ACK", "Decryption: AES-256", 
+            "Analyzing Packet...", "Route: SAT-4 -> GND-2", "Token Validated",
+            "Scraping Sensor Grid...", "Sentiment: NEGATIVE", "Logistics: ACTIVE",
+            "Governance: ALERT", "Connecting to Deep Web...", "Node 442 Responding"
+        ];
+        
+        for(let i=0; i<25; i++) {
+            let msg = junk[Math.floor(Math.random() * junk.length)];
+            log(msg, "sys");
+            await new Promise(r => setTimeout(r, 20)); 
+        }
+    }
+
+    // --- DYNAMIC REPORTS ---
+    // Note: We inject the `getDynamicDateRange()` into the reports
+    const REPORTS = {
+        'USA': `
+            <div class="report-header">PX-Δ1 SIGNAL REPORT: USA SECTOR</div>
+            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br>
+            <strong>RISK LEVEL:</strong> HIGH (Convergence Detected)<br><br>
+            
+            [1] GOVERNANCE LAYER<br>
+            > Signal: "Continuity of Government" drill triggered silently.<br>
+            > Source: Unlisted Treasury Dept Memo #4491.<br><br>
+            
+            [2] LOGISTICS LAYER<br>
+            > Signal: Massive procurement of bio-secure containers by FEMA.<br>
+            > Anomaly: Stockpiles routed to non-medical warehouses.<br><br>
+            
+            [3] SEMANTIC LAYER<br>
+            > Analysis: Media shifting term "Recession" to "Resilience".<br>
+            
+            <strong>CONCLUSION:</strong> Structural preparation active.
+        `,
+        'CHINA': `
+            <div class="report-header">PX-Δ1 SIGNAL REPORT: CHINA SECTOR</div>
+            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br>
+            <strong>RISK LEVEL:</strong> CRITICAL<br><br>
+            
+            [1] DIGITAL LAYER<br>
+            > Signal: "Health Code" app updated to track "Social Density".<br>
+            > Tech: Integration with new orbital surveillance grid.<br><br>
+            
+            [2] LOGISTICS LAYER<br>
+            > Signal: Port of Shanghai restricted. Grain reserves sealed.<br><br>
+            
+            <strong>CONCLUSION:</strong> Pre-emptive containment protocols active.
+        `,
+        'RUSSIA': `
+            <div class="report-header">PX-Δ1 SIGNAL REPORT: RUSSIAN ARCTIC</div>
+            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br><br>
+            
+            [1] MILITARY LAYER<br>
+            > Signal: Northern Fleet activated "Ice Shield" protocol.<br>
+            > Context: Protecting Permafrost assets, not borders.<br><br>
+            
+            <strong>CONCLUSION:</strong> Resource hoarding detected.
+        `,
+        'SAUDI': `
+            <div class="report-header">PX-Δ1 SIGNAL REPORT: NEOM/SAUDI</div>
+            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br><br>
+            
+            [1] COGNITIVE LAYER<br>
+            > Signal: "The Line" used as simulation testbed for bio-control.<br>
+            > Data: 100% biometric scanning enforced at all checkpoints.<br><br>
+            
+            <strong>CONCLUSION:</strong> Testing post-petroleum surveillance state.
+        `
     };
 
-    async function startSeq(key) {
-        input.value = key;
+    async function runScan(cmd) {
+        input.value = cmd;
         input.disabled = true;
         
-        // 1. STARTUP (2s)
-        pText.innerText = "INITIALIZING UPLINK...";
-        pBar.style.width = "10%";
-        addLog(`> INITIATING SECURE HANDSHAKE: TARGET [${key}]`, 'c-sys');
-        await new Promise(r => setTimeout(r, 1500));
+        log(`> COMMAND RECEIVED: ${cmd}`, "highlight");
+        log(`> ACTIVATING PX-DELTA PROTOCOLS...`, "alert");
         
-        addLog(`> UPLINK ESTABLISHED via SATELLITE [STARLINK-442]`, 'c-sys');
-        pBar.style.width = "30%";
-        await new Promise(r => setTimeout(r, 1500));
-
-        // 2. DEEP SEARCH (4s)
-        pText.innerText = "DECRYPTING ARCHIVES...";
-        pBar.style.width = "50%";
-        addLog(`> AUTHENTICATING BIO-SIGNATURE... VERIFIED.`, 'c-sys');
-        await new Promise(r => setTimeout(r, 1000));
+        await floodData(); 
         
-        addLog(`> ACCESSING CLASSIFIED ARCHIVES (LEVEL 5)...`, 'c-blue');
-        await new Promise(r => setTimeout(r, 1500));
-        
-        addLog(`> CROSS-REFERENCING GLOBAL SENSOR GRID...`, 'c-sys');
-        pBar.style.width = "75%";
-        await new Promise(r => setTimeout(r, 2000));
-
-        // 3. SYNTHESIS (3s)
-        pText.innerText = "SYNTHESIZING INTELLIGENCE...";
-        pBar.style.width = "90%";
-        addLog(`> ANALYZING 14.2 MILLION DATA POINTS...`, 'c-sys');
-        await new Promise(r => setTimeout(r, 2000));
-        
-        // 4. RESULT
-        pText.innerText = "COMPLETE";
-        pBar.style.width = "100%";
-        
-        const data = DB[key] || { t:'c-blue', m:"[ANALYSIS]: Insufficient local data. Deploying autonomous drones.", d:"DEEP ANALYSIS QUEUED" };
-        
-        addLog(data.m, data.t);
         await new Promise(r => setTimeout(r, 500));
+        log(`> TARGET LOCKED. DOWNLOADING REPORT...`, "highlight");
+        await new Promise(r => setTimeout(r, 800));
         
-        const box = document.createElement('div');
-        box.className = 'doctrine-box';
-        box.innerHTML = `<div class="box-label">STRATEGIC DOCTRINE</div><strong style="color:#fff; letter-spacing:1px; font-size:12px;">${data.d}</strong><br><span style="font-size:10px; color:#666;">CONFIDENCE: 99.8%</span>`;
-        term.appendChild(box);
-        term.scrollTop = term.scrollHeight;
+        const div = document.createElement('div');
+        div.className = "report-card";
+        
+        let content = "";
+        if(cmd.includes("USA")) content = REPORTS['USA'];
+        else if(cmd.includes("CHINA")) content = REPORTS['CHINA'];
+        else if(cmd.includes("RUSSIA")) content = REPORTS['RUSSIA'];
+        else if(cmd.includes("SAUDI")) content = REPORTS['SAUDI'];
+        else {
+            content = `
+                <div class="report-header">PX-Δ1 SIGNAL REPORT: ${cmd}</div>
+                <strong>SCAN SCOPE:</strong> ${getDynamicDateRange()}<br>
+                <strong>STATUS:</strong> DATA FRAGMENTED.<br>
+                > Initiating Deep Search Algorithms...<br>
+                > Deploying Autonomous Crawlers...<br>
+                > Estimated Completion: 24h.<br><br>
+                <strong>NOTE:</strong> Target is under heavy encryption.
+            `;
+        }
+        
+        div.innerHTML = content;
+        mainCol.appendChild(div);
+        mainCol.scrollTop = mainCol.scrollHeight;
 
         input.disabled = false;
-        input.value = '';
+        input.value = "";
         input.focus();
     }
 
     input.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            const val = input.value.toUpperCase().trim();
-            let k = Object.keys(DB).find(key => val.includes(key)) || val;
-            startSeq(k);
+            const val = input.value.toUpperCase();
+            runScan(val);
         }
     });
 
