@@ -231,7 +231,7 @@
     .chip:hover {
       border-color: var(--term-gold);
       color: #fff;
-      box-shadow: 0 0 6px rgba(212,175,55,0.4);
+      box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
     }
 
     /* PROMPT HELP */
@@ -384,7 +384,7 @@
      ========================================== */
   const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8";
   const PRIMARY_MODEL  = "gemini-2.5-pro";
-  const FALLBACK_MODEL = "gemini-1.5-flash";
+  const FALLBACK_MODEL = "gemini-2.5-flash";
 
   const SYSTEM_PROMPT = `
   You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
@@ -508,7 +508,7 @@
      ========================================== */
   async function generateFromModel(modelName, query) {
     const endpoint =
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`;
+      `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${API_KEY}`;
 
     const res = await fetch(endpoint, {
       method: 'POST',
