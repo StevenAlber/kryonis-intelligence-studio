@@ -30,6 +30,7 @@
       flex-direction: column;
     }
 
+    /* HEADER */
     #top-bar {
       height: 44px;
       flex-shrink: 0;
@@ -52,6 +53,7 @@
       color: var(--term-gold);
     }
 
+    /* SIGNAL STACK */
     #signal-stack {
       background: #050505;
       border-bottom: 1px solid #222;
@@ -91,6 +93,7 @@
     .sig-val-med  { color: var(--term-amber); }
     .sig-val-low  { color: var(--term-green); }
 
+    /* MAIN GRID */
     #main-grid {
       display: flex;
       flex: 1;
@@ -101,6 +104,7 @@
       border-bottom: 1px solid #0c0c0c;
     }
 
+    /* LEFT COLUMN: MATRIX + RHEOSTAT */
     #col-raw {
       width: 70px;
       flex-shrink: 0;
@@ -118,7 +122,6 @@
       opacity: 0.7;
       user-select: none;
     }
-
     #raw-meter {
       position: absolute;
       bottom: 6px;
@@ -150,6 +153,7 @@
       color: #666045;
     }
 
+    /* CENTER COLUMN: LOG + REPORT */
     #col-main {
       flex: 1;
       padding: 15px;
@@ -160,6 +164,7 @@
     #col-main::-webkit-scrollbar { width: 4px; }
     #col-main::-webkit-scrollbar-thumb { background: #2f6132; }
 
+    /* RIGHT COLUMN: STATUS BOXES */
     #col-stat {
       width: 135px;
       border-left: 1px solid #181818;
@@ -189,6 +194,7 @@
       color: var(--term-gold);
     }
 
+    /* CONTROLS */
     #controls {
       background: #040404;
       border-top: 1px solid #181818;
@@ -198,7 +204,6 @@
       flex-direction: column;
       gap: 8px;
     }
-
     #chip-rack {
       display: flex;
       gap: 8px;
@@ -207,7 +212,6 @@
     }
     #chip-rack::-webkit-scrollbar { height: 3px; }
     #chip-rack::-webkit-scrollbar-thumb { background: #444; }
-
     .chip {
       background: #080808;
       border: 1px solid #333;
@@ -223,7 +227,6 @@
       color: #fff;
       box-shadow: 0 0 6px rgba(212,175,55,0.4);
     }
-
     #prompt-help {
       font-size: 9px;
       color: #848484;
@@ -232,9 +235,7 @@
       border-left: 2px solid #333;
       padding-left: 8px;
     }
-    #prompt-help span {
-      color: var(--term-gold);
-    }
+    #prompt-help span { color: var(--term-gold); }
 
     .input-row {
       display: flex;
@@ -255,8 +256,8 @@
     }
 
     .log-line { margin-bottom: 6px; word-wrap: break-word; }
-    .sys      { color: #6b8a6b; }
-    .user     { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
+    .sys  { color: #6b8a6b; }
+    .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
     .report-box {
       border: 1px solid #1f5a26;
@@ -390,7 +391,7 @@ Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
   const input        = document.getElementById('user-input');
   const netVal       = document.getElementById('net-val');
 
-  let meterInterval = null;
+  let meterInterval  = null;
 
   function matrixRain() {
     let text = "";
@@ -447,9 +448,6 @@ Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
     } else {
       riskEl.innerText = "GEN-SYS";
     }
-
-    document.getElementById('sig-pulse').innerText =
-      (0.70 + Math.random() * 0.29).toFixed(2);
   }
 
   function startMeterAnimation() {
