@@ -3,120 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRYONIS // TITAN GOD MODE</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet">
+    <title>KRYONIS // STRATEGIC CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-green: #00ff41;
-            --neon-blue: #00f3ff;
-            --neon-red: #ff003c;
-            --neon-gold: #ffd700;
+            --primary: #00ff41;     /* Kryonis Green */
+            --accent: #00ccff;      /* Data Blue */
+            --alert: #ff3333;       /* Alert Red */
+            --gold: #ffd700;        /* Value Gold */
             --bg: #050505;
             --panel: #0a0a0a;
-            --scan-speed: 4s;
+            --border: 1px solid #222;
         }
         * { box-sizing: border-box; }
+        
         body {
             background: var(--bg); color: #aaa; margin: 0; height: 100vh;
             font-family: 'JetBrains Mono', monospace; overflow: hidden;
             display: flex; flex-direction: column; font-size: 11px;
         }
 
-        /* --- HEADER --- */
+        /* HEADER */
         header {
-            height: 40px; border-bottom: 1px solid #333; display: flex;
+            height: 45px; border-bottom: var(--border); display: flex;
             align-items: center; justify-content: space-between; padding: 0 15px;
-            background: #000; z-index: 10;
+            background: #000;
         }
-        .brand { letter-spacing: 3px; font-weight: 800; color: #fff; font-size: 14px; }
-        .status { font-size: 9px; color: #666; text-transform: uppercase; }
-        .live-dot { color: var(--neon-green); animation: blink 1s infinite; }
+        .brand { letter-spacing: 2px; color: #fff; font-weight: bold; }
+        .status-light { color: var(--primary); animation: pulse 2s infinite; }
 
-        /* --- LAYOUT --- */
-        #main { flex: 1; display: flex; border-bottom: 1px solid #333; position: relative; }
+        /* MAIN LAYOUT */
+        #main { flex: 1; display: flex; overflow: hidden; }
+
+        /* LEFT PANEL (VISUALS) */
+        #left-panel {
+            width: 35%; border-right: var(--border); display: flex; flex-direction: column;
+            background: #020202; min-width: 140px;
+        }
         
-        /* CRT EFFECT */
-        #main::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 5; background-size: 100% 2px, 3px 100%; pointer-events: none;
-        }
-
-        /* LEFT VISUALS */
-        #vis-panel {
-            width: 30%; border-right: 1px solid #333; display: flex; flex-direction: column;
-            background: #020202; min-width: 120px;
-        }
-        #globe-zone {
-            flex: 2; position: relative; overflow: hidden;
-            background: radial-gradient(circle, #111 0%, #000 100%);
+        #radar-box {
+            flex: 1; position: relative; overflow: hidden;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
             display: flex; align-items: center; justify-content: center;
         }
-        /* Rotating Grid */
-        .wireframe {
-            width: 200%; height: 200%; position: absolute;
-            background: linear-gradient(#003311 1px, transparent 1px), linear-gradient(90deg, #003311 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: perspective(300px) rotateX(60deg) translateY(0);
-            animation: gridRun 10s linear infinite;
-            opacity: 0.5;
+        /* Slow rotating globe grid */
+        .globe-grid {
+            width: 180%; height: 180%; position: absolute;
+            background: linear-gradient(transparent 90%, rgba(0, 255, 65, 0.05) 50%), linear-gradient(90deg, transparent 90%, rgba(0, 255, 65, 0.05) 50%);
+            background-size: 30px 30px;
+            transform: perspective(400px) rotateX(40deg);
+            animation: globeSpin 40s linear infinite;
+            opacity: 0.6;
         }
-        .wireframe.fast { animation: gridRun 0.5s linear infinite; opacity: 1; background-size: 60px 60px; border: 1px solid var(--neon-red); }
-
-        #metrics-zone {
-            flex: 1; border-top: 1px solid #333; padding: 10px;
-            display: flex; flex-direction: column; justify-content: flex-end;
-        }
-        .bar-graph { display: flex; gap: 2px; height: 50px; align-items: flex-end; }
-        .bar { flex: 1; background: #333; transition: height 0.05s; }
-        .bar.active { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
-        .bar.critical { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
-
-        /* RIGHT TERMINAL */
-        #terminal-zone {
-            flex: 1; background: #050505; padding: 15px; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: flex-end;
-        }
-        #terminal-output {
-            overflow-y: hidden; /* We force scroll via JS */
-            display: flex; flex-direction: column; justify-content: flex-end;
-            max-height: 100%;
-        }
-        .log { font-size: 11px; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .log.dim { color: #444; }
-        .log.highlight { color: #fff; background: rgba(255,255,255,0.1); }
-        .log.error { color: var(--neon-red); }
-        .log.success { color: var(--neon-green); }
-        .log.info { color: var(--neon-blue); }
         
-        /* RESULT BOX */
-        .result-card {
-            border: 1px solid var(--neon-green); background: rgba(0,255,65,0.05);
-            padding: 15px; margin-top: 10px; margin-bottom: 20px;
-            animation: flashEntry 0.2s; position: relative;
+        #progress-box {
+            padding: 15px; border-top: var(--border); height: 120px;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .result-card::before { content: "STRATEGIC DOCTRINE"; position: absolute; top: -8px; left: 10px; background: #000; padding: 0 5px; color: var(--neon-green); font-size: 9px; }
+        .progress-bar {
+            height: 4px; background: #222; margin-top: 10px; position: relative;
+        }
+        .progress-fill {
+            height: 100%; background: var(--primary); width: 0%; transition: width 0.2s;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .loading-text { font-size: 9px; color: var(--primary); margin-bottom: 5px; min-height: 12px;}
 
-        /* --- CONTROLS --- */
-        #controls { height: 150px; background: #000; padding: 10px; display: flex; flex-direction: column; }
+        /* RIGHT PANEL (LOGS) */
+        #terminal {
+            width: 65%; background: #080808; padding: 20px;
+            overflow-y: auto; display: flex; flex-direction: column;
+        }
+        .log-entry {
+            margin-bottom: 12px; display: none; border-left: 2px solid #222; padding-left: 10px;
+            line-height: 1.4; opacity: 0; animation: slideIn 0.5s forwards;
+        }
+        .log-entry.visible { display: block; }
+        
+        /* COLORS */
+        .c-sys { border-color: #444; color: #666; }
+        .c-blue { border-color: var(--accent); color: #ddd; }
+        .c-green { border-color: var(--primary); color: #ddd; }
+        .c-gold { border-color: var(--gold); color: #ddd; }
+        .c-red { border-color: var(--alert); color: #ddd; }
+
+        /* FINAL BOX */
+        .doctrine-box {
+            border: 1px solid var(--primary); background: rgba(0, 255, 65, 0.03);
+            padding: 20px; margin-top: 20px; margin-bottom: 40px; position: relative;
+            animation: flashBox 1s;
+        }
+        .box-label {
+            position: absolute; top: -8px; left: 10px; background: #080808;
+            padding: 0 5px; font-size: 9px; color: var(--primary); letter-spacing: 1px;
+        }
+
+        /* FOOTER CONTROLS */
+        #footer { height: 140px; background: #000; border-top: var(--border); padding: 15px; display: flex; flex-direction: column; }
         
         #chips {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px;
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px;
+            -webkit-overflow-scrolling: touch;
         }
-        #chips::-webkit-scrollbar { height: 2px; }
-        #chips::-webkit-scrollbar-thumb { background: #444; }
+        #chips::-webkit-scrollbar { height: 2px; background: #222; }
+        #chips::-webkit-scrollbar-thumb { background: var(--primary); }
 
         .chip {
-            background: #111; border: 1px solid #333; color: #666; padding: 8px 12px;
-            font-size: 10px; text-transform: uppercase; cursor: pointer; white-space: nowrap;
-            transition: 0.1s;
+            background: #111; border: 1px solid #333; color: #888; padding: 8px 12px;
+            font-size: 10px; cursor: pointer; transition: 0.2s; white-space: nowrap;
         }
-        .chip:hover { border-color: var(--neon-blue); color: #fff; background: #222; }
-        .chip:active { background: var(--neon-blue); color: #000; }
+        .chip:hover { border-color: var(--primary); color: #fff; background: #1a1a1a; }
 
-        #input-area {
-            display: flex; align-items: center; border: 1px solid #333; padding: 10px;
-            background: #080808; margin-top: auto;
+        .input-row {
+            display: flex; align-items: center; background: #0a0a0a; border: 1px solid #333; padding: 10px;
         }
         input {
             background: transparent; border: none; color: #fff; flex: 1; font-family: inherit;
@@ -124,195 +123,151 @@
         }
 
         /* ANIMATIONS */
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes gridRun { 0%{transform:perspective(300px) rotateX(60deg) translateY(0);} 100%{transform:perspective(300px) rotateX(60deg) translateY(40px);} }
-        @keyframes flashEntry { 0%{background: var(--neon-green);} 100%{background: rgba(0,255,65,0.05);} }
+        @keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
+        @keyframes globeSpin { 0%{transform:perspective(400px) rotateX(40deg) translateY(0);} 100%{transform:perspective(400px) rotateX(40deg) translateY(40px);} }
+        @keyframes slideIn { from{opacity:0; transform:translateX(-5px);} to{opacity:1; transform:translateX(0);} }
+        @keyframes flashBox { 0%{background: rgba(0,255,65,0.2);} 100%{background: rgba(0,255,65,0.03);} }
 
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">TITAN_OS <span style="color:#444;">// GOD_MODE</span></div>
-    <div class="status"><span class="live-dot">●</span> NET_ACTIVE | 402 PB/s</div>
+    <div class="brand">KRYONIS <span style="color:#555;">// TITAN_v8.0</span></div>
+    <div style="font-size:9px; color:#666;">SECURE UPLINK <span class="status-light">●</span></div>
 </header>
 
 <div id="main">
-    <div id="vis-panel">
-        <div id="globe-zone">
-            <div class="wireframe" id="grid-mesh"></div>
-            <div style="position: absolute; color: var(--neon-red); font-size: 40px; opacity: 0; font-weight: bold;" id="big-alert">ANALYZING</div>
+    <div id="left-panel">
+        <div id="radar-box">
+            <div class="globe-grid"></div>
+            <div style="position:absolute; font-size:10px; color:#333;">GLOBAL<br>SENSOR<br>GRID</div>
         </div>
-        <div id="metrics-zone">
-            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:9px; color:#555;">
-                <span>CPU_THREAD_01</span>
-                <span id="cpu-val">12%</span>
+        <div id="progress-box">
+            <div class="loading-text" id="proc-text">SYSTEM IDLE</div>
+            <div class="progress-bar"><div class="progress-fill" id="proc-bar"></div></div>
+            <div style="display:flex; justify-content:space-between; margin-top:5px; font-size:9px; color:#555;">
+                <span>CPU: <span id="cpu">12%</span></span>
+                <span>NODES: 14,205</span>
             </div>
-            <div class="bar-graph" id="bars">
-                </div>
         </div>
     </div>
-
-    <div id="terminal-zone">
-        <div id="terminal-output">
-            <div class="log dim">System Initialized.</div>
-            <div class="log dim">Waiting for strategic vector...</div>
-        </div>
+    
+    <div id="terminal">
+        <div class="log-entry visible c-sys">System Initialized.</div>
+        <div class="log-entry visible c-sys">Connected to Global Sovereign Database (Level 5).</div>
+        <div class="log-entry visible c-sys">Waiting for strategic vector...</div>
     </div>
 </div>
 
-<div id="controls">
-    <div style="color:#444; font-size:9px; margin-bottom:5px;">SELECT VECTOR:</div>
+<div id="footer">
+    <div style="font-size:9px; color:#444; margin-bottom:5px;">SELECT TARGET VECTOR:</div>
     <div id="chips">
-        <div class="chip" onclick="run('USA')">USA</div>
-        <div class="chip" onclick="run('CHINA')">CHINA</div>
-        <div class="chip" onclick="run('RUSSIA')">RUSSIA</div>
-        <div class="chip" onclick="run('INDIA')">INDIA</div>
-        <div class="chip" onclick="run('BRAZIL')">BRAZIL</div>
-        <div class="chip" onclick="run('SAUDI')">SAUDI</div>
-        <div class="chip" onclick="run('DUBAI')">DUBAI</div>
-        <div class="chip" onclick="run('ISRAEL')">ISRAEL</div>
-        <div class="chip" onclick="run('SINGAPORE')">SINGAPORE</div>
+        <div class="chip" onclick="startSeq('USA')">USA</div>
+        <div class="chip" onclick="startSeq('CHINA')">CHINA</div>
+        <div class="chip" onclick="startSeq('RUSSIA')">RUSSIA</div>
+        <div class="chip" onclick="startSeq('SAUDI')">SAUDI (NEOM)</div>
+        <div class="chip" onclick="startSeq('DUBAI')">DUBAI</div>
+        <div class="chip" onclick="startSeq('SINGAPORE')">SINGAPORE</div>
+        <div class="chip" onclick="startSeq('INDIA')">INDIA</div>
+        <div class="chip" onclick="startSeq('BRAZIL')">BRAZIL</div>
+        <div class="chip" onclick="startSeq('ISRAEL')">ISRAEL</div>
+        <div class="chip" onclick="startSeq('UK')">UK</div>
         
-        <div class="chip" onclick="run('CLIMATE')">CLIMATE ENG</div>
-        <div class="chip" onclick="run('AI_GOV')">AI CONTROL</div>
-        <div class="chip" onclick="run('MARS')">MARS COLONY</div>
-        <div class="chip" onclick="run('AION')">AION (150Y)</div>
-        
-        <div class="chip" onclick="run('GERMANY')">GERMANY</div>
-        <div class="chip" onclick="run('ESTONIA')">ESTONIA</div>
+        <div class="chip" onclick="startSeq('MARS')">MARS COLONY</div>
+        <div class="chip" onclick="startSeq('AION')">AION (150 YRS)</div>
+        <div class="chip" onclick="startSeq('AI_GOV')">AI GOVERNANCE</div>
+        <div class="chip" onclick="startSeq('CLIMATE')">CLIMATE ENG</div>
+        <div class="chip" onclick="startSeq('WATER')">WATER CRISIS</div>
+        <div class="chip" onclick="startSeq('ENERGY')">FUSION POWER</div>
     </div>
-
-    <div id="input-area">
-        <span style="color:var(--neon-green); margin-right:10px;">CMD:~$</span>
-        <input type="text" id="cmd-input" placeholder="ENTER QUERY..." autofocus>
+    
+    <div class="input-row">
+        <span style="color:var(--primary); margin-right:10px; font-weight:bold;">CMD:~$</span>
+        <input type="text" id="user-in" placeholder="ENTER STRATEGIC QUERY..." autofocus>
     </div>
 </div>
 
 <script>
-    // --- CONFIG ---
-    const term = document.getElementById('terminal-output');
-    const input = document.getElementById('cmd-input');
-    const grid = document.getElementById('grid-mesh');
-    const alertBox = document.getElementById('big-alert');
-    const barContainer = document.getElementById('bars');
-    const cpuDisplay = document.getElementById('cpu-val');
+    const term = document.getElementById('terminal');
+    const pBar = document.getElementById('proc-bar');
+    const pText = document.getElementById('proc-text');
+    const cpu = document.getElementById('cpu');
+    const input = document.getElementById('user-in');
 
-    // Generate Bars
-    for(let i=0; i<12; i++) {
-        let b = document.createElement('div');
-        b.className = 'bar';
-        barContainer.appendChild(b);
-    }
-    const bars = document.querySelectorAll('.bar');
-
-    // --- IDLE ANIMATION ---
-    let isProcessing = false;
+    // Idle animation
     setInterval(() => {
-        if(!isProcessing) {
-            // Idle noise
-            bars.forEach(b => {
-                b.style.height = Math.random() * 30 + "%";
-                b.classList.remove('critical');
-                b.classList.add('active');
-            });
-            cpuDisplay.innerText = Math.floor(Math.random() * 20 + 5) + "%";
-            cpuDisplay.style.color = "#666";
-        } else {
-            // CHAOS MODE
-            bars.forEach(b => {
-                b.style.height = Math.random() * 100 + "%";
-                b.classList.remove('active');
-                b.classList.add('critical');
-            });
-            cpuDisplay.innerText = Math.floor(Math.random() * 30 + 70) + "%";
-            cpuDisplay.style.color = "#ff003c";
-        }
-    }, 100);
+        cpu.innerText = Math.floor(Math.random() * 40 + 10) + "%";
+    }, 500);
 
-    // --- DUMMY DATA FOR "FLOOD" EFFECT ---
-    const dummyLogs = [
-        "Accessing Node: ", "Decrypting SHA-256 hash...", "Bypassing Firewall...",
-        "Ping: 4ms", "Packet Loss: 0%", "Routing via Satellite LINK-7...",
-        "Scraping Global Sensor Grid...", "Cross-referencing CIA Factbook...",
-        "Analyzing Sentiment...", "Tokenizing Assets...", "Verifying Blockchain...",
-        "Translating Vector...", "Optimizing Path...", "Handshake Accepted."
-    ];
-
-    // --- LOGIC ENGINE ---
-    function print(txt, type="") {
-        let div = document.createElement('div');
-        div.className = "log " + type;
-        div.innerText = txt;
-        term.appendChild(div);
+    function addLog(msg, type='c-sys') {
+        const d = document.createElement('div');
+        d.className = `log-entry ${type}`;
+        d.innerHTML = msg;
+        term.appendChild(d);
+        requestAnimationFrame(() => d.classList.add('visible'));
         term.scrollTop = term.scrollHeight;
-        // Keep DOM light
-        if(term.childElementCount > 50) term.firstChild.remove();
     }
 
-    async function floodTerminal() {
-        // THIS IS THE "NIGHTCLUB" EFFECT
-        isProcessing = true;
-        grid.classList.add('fast'); // Speed up grid
-        alertBox.style.opacity = 1;
-        
-        // Fast scroll loop
-        for(let i=0; i<40; i++) {
-            let rndLog = dummyLogs[Math.floor(Math.random() * dummyLogs.length)];
-            let rndHex = "0x" + Math.random().toString(16).substr(2, 8).toUpperCase();
-            print(`[${rndHex}] ${rndLog}`, "dim");
-            await new Promise(r => setTimeout(r, 15)); // 15ms = SUPER FAST
-        }
-    }
-
-    async function stopFlood() {
-        isProcessing = false;
-        grid.classList.remove('fast');
-        alertBox.style.opacity = 0;
-    }
-
-    // --- DATA ---
     const DB = {
-        'USA': { t:'blue', m:"[STRATEGIC]: Innovation high, Social Coherence critical. Debt Cycle accelerating.", d:"COGNITIVE FEDERALISM" },
-        'RUSSIA': { t:'red', m:"[STRATEGIC]: Northern Sea Route militarization. Permafrost collapse imminent.", d:"CRYO-SOVEREIGNTY" },
-        'CHINA': { t:'red', m:"[STRATEGIC]: Total Integration. Social Credit optimization at max.", d:"DIGITAL LEVIATHAN" },
-        'DUBAI': { t:'blue', m:"[STRATEGIC]: Transitioning to Mind-State. Centralized AI Core active.", d:"THE INVISIBLE CITY" },
-        'SAUDI': { t:'blue', m:"[STRATEGIC]: NEOM Linear Efficiency. Post-Oil Computation export.", d:"POST-PETROLEUM COGNITION" },
-        'ESTONIA': { t:'blue', m:"[STRATEGIC]: State as a Service. Digital redundancy high.", d:"DIGITAL IMMORTALITY" },
-        'MARS': { t:'gold', m:"[STRATEGIC]: Sandbox Governance. Oxygen as Currency.", d:"RESOURCE BASED GOVERNANCE" },
-        'AION': { t:'gold', m:"[BIO]: 150yr Lifespan Target. Health as Asset Class.", d:"THE 7-STAGE LIFECYCLE" },
-        'CLIMATE': { t:'green', m:"[BIO]: Geo-engineering risks high. Carbon Currency required.", d:"THE GAIA SHIELD" },
-        'AI_GOV': { t:'red', m:"[ETHICS]: Alignment Drift detected. Decentralized Watchdogs needed.", d:"DISTRIBUTED ALIGNMENT" }
+        'USA': { t:'c-blue', m:"[STRATEGIC]: Innovation high, but Social Coherence is critically low. Internal entropy rising.", d:"COGNITIVE FEDERALISM" },
+        'CHINA': { t:'c-red', m:"[STRATEGIC]: Total Integration. Social Credit optimization maximizes stability but kills outlier innovation.", d:"THE DIGITAL LEVIATHAN" },
+        'RUSSIA': { t:'c-blue', m:"[STRATEGIC]: Northern Sea Route control is the primary asset. Permafrost collapse is the primary threat.", d:"CRYO-SOVEREIGNTY" },
+        'DUBAI': { t:'c-blue', m:"[STRATEGIC]: Transitioning from Oil-State to Mind-State. Centralized AI creates efficiency but fragility.", d:"THE INVISIBLE CITY" },
+        'SAUDI': { t:'c-blue', m:"[STRATEGIC]: NEOM Line Architecture. Exporting solar energy as computational power.", d:"POST-PETROLEUM COGNITION" },
+        'MARS': { t:'c-gold', m:"[STRATEGIC]: Sandbox Governance. No legacy systems. Oxygen is the base currency.", d:"RESOURCE BASED GOVERNANCE" },
+        'AION': { t:'c-green', m:"[BIO]: 150yr Lifespan Target. Health must be priced as a continuous asset, not a repair cost.", d:"THE 7-STAGE LIFECYCLE" },
+        'CLIMATE': { t:'c-red', m:"[BIO]: Geo-engineering risks (Termination Shock) detected. Needs economic incentive to heal.", d:"THE GAIA SHIELD" },
+        'AI_GOV': { t:'c-red', m:"[ETHICS]: A single kill-switch is a point of failure. We need distributed watchdog AIs.", d:"DISTRIBUTED ALIGNMENT" },
+        'WATER': { t:'c-blue', m:"[STRATEGIC]: Aquifer depletion rate critical. Virtual Water Trade protocols required.", d:"HYDRO-DIPLOMACY" }
     };
 
-    async function run(cmd) {
-        input.value = cmd;
+    async function startSeq(key) {
+        input.value = key;
         input.disabled = true;
         
-        print(`> INITIALIZING SEQUENCE: ${cmd}`, "highlight");
+        // 1. STARTUP (2s)
+        pText.innerText = "INITIALIZING UPLINK...";
+        pBar.style.width = "10%";
+        addLog(`> INITIATING SECURE HANDSHAKE: TARGET [${key}]`, 'c-sys');
+        await new Promise(r => setTimeout(r, 1500));
         
-        // 1. THE CHAOS
-        await floodTerminal();
-        
-        // 2. THE STOP
-        await stopFlood();
-        
-        // 3. THE RESULT
-        print("TARGET ACQUIRED.", "success");
-        await new Promise(r => setTimeout(r, 200));
+        addLog(`> UPLINK ESTABLISHED via SATELLITE [STARLINK-442]`, 'c-sys');
+        pBar.style.width = "30%";
+        await new Promise(r => setTimeout(r, 1500));
 
-        let data = DB[cmd] || { t:'blue', m:"[ANALYSIS]: Analyzing Global Datasets for patterns...", d:"DEEP SEARCH QUEUED" };
+        // 2. DEEP SEARCH (4s)
+        pText.innerText = "DECRYPTING ARCHIVES...";
+        pBar.style.width = "50%";
+        addLog(`> AUTHENTICATING BIO-SIGNATURE... VERIFIED.`, 'c-sys');
+        await new Promise(r => setTimeout(r, 1000));
         
-        print("DECRYPTING STRATEGIC ARCHIVE...", "info");
-        await new Promise(r => setTimeout(r, 400));
+        addLog(`> ACCESSING CLASSIFIED ARCHIVES (LEVEL 5)...`, 'c-blue');
+        await new Promise(r => setTimeout(r, 1500));
         
-        print(data.m, data.t === 'red' ? 'error' : (data.t === 'gold' ? 'info' : 'info'));
+        addLog(`> CROSS-REFERENCING GLOBAL SENSOR GRID...`, 'c-sys');
+        pBar.style.width = "75%";
+        await new Promise(r => setTimeout(r, 2000));
+
+        // 3. SYNTHESIS (3s)
+        pText.innerText = "SYNTHESIZING INTELLIGENCE...";
+        pBar.style.width = "90%";
+        addLog(`> ANALYZING 14.2 MILLION DATA POINTS...`, 'c-sys');
+        await new Promise(r => setTimeout(r, 2000));
         
-        // HTML Result Card
-        let card = document.createElement('div');
-        card.className = 'result-card';
-        card.innerHTML = `<strong style="color:#fff; letter-spacing:1px;">${data.d}</strong><br><span style="font-size:9px; color:#666;">PROBABILITY: 98.4% | CONFIDENCE: HIGH</span>`;
-        term.appendChild(card);
+        // 4. RESULT
+        pText.innerText = "COMPLETE";
+        pBar.style.width = "100%";
+        
+        const data = DB[key] || { t:'c-blue', m:"[ANALYSIS]: Insufficient local data. Deploying autonomous drones.", d:"DEEP ANALYSIS QUEUED" };
+        
+        addLog(data.m, data.t);
+        await new Promise(r => setTimeout(r, 500));
+        
+        const box = document.createElement('div');
+        box.className = 'doctrine-box';
+        box.innerHTML = `<div class="box-label">STRATEGIC DOCTRINE</div><strong style="color:#fff; letter-spacing:1px; font-size:12px;">${data.d}</strong><br><span style="font-size:10px; color:#666;">CONFIDENCE: 99.8%</span>`;
+        term.appendChild(box);
         term.scrollTop = term.scrollHeight;
 
         input.disabled = false;
@@ -320,13 +275,11 @@
         input.focus();
     }
 
-    // Input Handler
     input.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            let val = input.value.toUpperCase().trim();
-            // Simple mapping or direct run
-            let key = Object.keys(DB).find(k => val.includes(k)) || val;
-            run(key);
+            const val = input.value.toUpperCase().trim();
+            let k = Object.keys(DB).find(key => val.includes(key)) || val;
+            startSeq(k);
         }
     });
 
