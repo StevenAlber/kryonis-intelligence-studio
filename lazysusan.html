@@ -3,257 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KRYONIS // LAZY SUSAN PROTOCOL</title>
+    <title>KRYONIS // VISUAL CORE</title>
     <style>
         body {
-            background-color: #000000;
-            color: #e0e0e0;
+            background-color: #020202;
+            color: #ccc;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
-            font-size: 13px;
-            line-height: 1.4;
+            padding: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
-        
-        .container {
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-            flex-grow: 1;
+
+        /* --- VISUAL CORE (The 12 Nodes) --- */
+        #visual-core {
+            height: 180px;
+            background: #0a0a0a;
+            border-bottom: 1px solid #333;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        h1 {
-            color: #fff;
-            font-size: 16px;
-            font-weight: normal;
-            letter-spacing: 3px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+        .grid-label {
+            font-size: 10px;
+            color: #555;
             margin-bottom: 15px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            display: flex;
-            justify-content: space-between;
         }
 
-        /* Terminal Styles */
+        .node-grid {
+            display: flex;
+            gap: 12px;
+        }
+
+        .node {
+            width: 16px;
+            height: 40px; /* Vertical bars like Grok/Equalizer */
+            background: #222;
+            border: 1px solid #444;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .node::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 8px;
+            color: #444;
+        }
+
+        /* Active States */
+        .node.thinking {
+            animation: pulse 0.5s infinite alternate;
+            background: #555;
+        }
+
+        .node.active-blue { background: #00ccff; box-shadow: 0 0 15px #00ccff; border-color: #fff; height: 60px; margin-top: -10px; }
+        .node.active-green { background: #00ff41; box-shadow: 0 0 15px #00ff41; border-color: #fff; height: 60px; margin-top: -10px; }
+        .node.active-gold { background: #ffd700; box-shadow: 0 0 15px #ffd700; border-color: #fff; height: 60px; margin-top: -10px; }
+        .node.active-red { background: #ff3333; box-shadow: 0 0 15px #ff3333; border-color: #fff; height: 60px; margin-top: -10px; }
+
+        @keyframes pulse { from { opacity: 0.4; } to { opacity: 1; } }
+
+        /* --- TERMINAL --- */
         #terminal {
             flex-grow: 1;
+            padding: 20px;
             overflow-y: auto;
-            padding-bottom: 60px;
+            font-size: 13px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .log-entry {
-            margin-bottom: 6px;
-            display: none; 
-            opacity: 0;
-            transition: opacity 0.1s ease-in;
-            word-wrap: break-word;
-        }
+        .log-entry { margin-bottom: 8px; display: none; padding-left: 10px; border-left: 2px solid transparent; }
+        .log-entry.blue-line { border-left: 2px solid #00ccff; }
+        .log-entry.green-line { border-left: 2px solid #00ff41; }
+        .log-entry.gold-line { border-left: 2px solid #ffd700; }
+        .log-entry.red-line { border-left: 2px solid #ff3333; }
 
-        .highlight { color: #00ff41; text-shadow: 0 0 5px rgba(0,255,65,0.3); }
-        .alert { color: #ff3333; font-weight: bold; }
+        .highlight { color: #00ff41; }
+        .alert { color: #ff3333; }
         .blue { color: #00ccff; }
-        .gold { color: #ffd700; }
+        .gold { color: #d4af37; }
         .dim { color: #555; }
 
-        .box {
-            border: 1px solid #00ff41;
-            padding: 15px;
-            margin: 15px 0;
-            background: rgba(0, 255, 65, 0.05);
-            box-shadow: 0 0 10px rgba(0,255,65,0.05);
-        }
+        .box { border: 1px solid #444; background: #111; padding: 15px; margin: 15px 0; }
 
-        /* Input Area */
+        /* --- INPUT --- */
         #input-area {
-            border-top: 1px solid #333;
-            padding: 15px 0;
             background: #000;
-            position: fixed;
-            bottom: 40px;
-            width: 100%;
-            max-width: 800px;
+            padding: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: center;
         }
-
+        .input-wrap {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
         input {
             background: transparent;
             border: none;
-            color: #00ff41;
+            color: #fff;
             font-family: 'Courier New', Courier, monospace;
             font-size: 16px;
-            width: 80%;
+            width: 100%;
             outline: none;
+            margin-left: 10px;
         }
 
-        /* Footer Status Bar */
-        #status-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #111;
-            border-top: 1px solid #333;
-            padding: 8px 20px;
-            font-size: 10px;
-            display: flex;
-            justify-content: space-between;
-            color: #666;
-            box-sizing: border-box;
-            z-index: 100;
-            text-transform: uppercase;
-        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>
-        <span>KRYONIS // LAZY SUSAN</span>
-        <span style="font-size: 10px; color: #555;">SECURE_CONN_ESTABLISHED</span>
-    </h1>
-    
-    <div id="terminal">
-        <div class="log-entry dim">System initialized...</div>
-        <div class="log-entry dim">Node lattice: 12/12 Active</div>
-        <div class="log-entry dim">Waiting for input...</div>
-        <div class="log-entry"><br></div>
-    </div>
-
-    <div id="input-area">
-        <span class="highlight">COMMAND_NODE_01:~$</span>
-        <input type="text" id="user-input" placeholder="Enter strategic query..." autocomplete="off" autofocus>
+<div id="visual-core">
+    <div class="grid-label">KRYONIS NEURAL LATTICE (12 NODES)</div>
+    <div class="node-grid">
+        <div class="node" id="n0"></div>
+        <div class="node" id="n1"></div>
+        <div class="node" id="n2"></div>
+        <div class="node" id="n3"></div>
+        <div class="node" id="n4"></div>
+        <div class="node" id="n5"></div>
+        <div class="node" id="n6"></div>
+        <div class="node" id="n7"></div>
+        <div class="node" id="n8"></div>
+        <div class="node" id="n9"></div>
+        <div class="node" id="n10"></div>
+        <div class="node" id="n11"></div>
     </div>
 </div>
 
-<div id="status-bar">
-    <span>CPU: <span id="cpu-val">4%</span></span>
-    <span>COST: <span id="cost-val">0.00 USD</span></span>
-    <span>PROTOCOL: HYBRID_SYNTHESIS</span>
+<div id="terminal">
+    <div class="log-entry" style="display:block; color: #555;">System Idle. Neural Lattice Ready.</div>
+    <div class="log-entry" style="display:block; color: #555;">Available Protocols: ARCTIC, DUBAI, AION, ENERGY</div>
+</div>
+
+<div id="input-area">
+    <div class="input-wrap">
+        <span class="highlight">COMMAND:~$</span>
+        <input type="text" id="user-input" placeholder="Enter protocol..." autocomplete="off" autofocus>
+    </div>
 </div>
 
 <script>
     const terminal = document.getElementById('terminal');
     const inputField = document.getElementById('user-input');
-    const inputArea = document.getElementById('input-area');
-    const costVal = document.getElementById('cost-val');
-    const cpuVal = document.getElementById('cpu-val');
+    const nodes = document.querySelectorAll('.node');
+
+    // HELPER: Reset nodes to idle
+    function resetNodes() {
+        nodes.forEach(n => n.className = 'node');
+    }
+
+    // HELPER: Animate thinking (Random flashing)
+    let thinkingInterval;
+    function startThinking() {
+        clearInterval(thinkingInterval);
+        thinkingInterval = setInterval(() => {
+            nodes.forEach(n => {
+                if (Math.random() > 0.7) n.classList.add('thinking');
+                else n.classList.remove('thinking');
+            });
+        }, 100);
+    }
+
+    function stopThinking() {
+        clearInterval(thinkingInterval);
+        resetNodes();
+    }
+
+    // HELPER: Activate specific node
+    function activateNode(index, colorClass) {
+        resetNodes();
+        if(nodes[index]) nodes[index].classList.add(colorClass);
+    }
+
+    // SCENARIO DATA
+    // nodeIndex: 0-11 (0=Strat, 4=Ethic, 7=Bio, 10=Token)
     
-    let cost = 0;
-
-    // 1. SCENARIO: AI & SURVEILLANCE (Default/AI Keywords)
-    const scenario_ai = [
-        { text: "PARSING QUERY: 'DUBAI AI STRATEGY'...", delay: 500, class: "blue" },
-        { text: "LOADING 12 AGENTS...", delay: 800 },
-        { text: "<br>", delay: 100 },
-        { text: ">>> PHASE 01: DIVERGENCE", delay: 500, class: "highlight" },
-        { text: "[STRATEGIC_AWARENESS]: Objective: Total Security. Recommend 'City Brain' centralized architecture. Efficiency is priority.", delay: 1500 },
-        { text: "[BIO_ECONOMIST]: <span class='alert'>OBJECTION.</span> Centralization is fragile. Nature uses distributed networks. Use Edge Computing.", delay: 1500 },
-        { text: "<br>", delay: 500 },
-        { text: ">>> PHASE 02: FRICTION", delay: 500, class: "highlight" },
-        { text: "[TOKENOMIST]: Citizens generate data. They must be compensated. Proposal: 'Data Sovereignty Wallet'.", delay: 1500 },
-        { text: "[ETHICAL_REFLECTOR]: Validating... Accepted only if privacy is absolute.", delay: 1000 },
-        { text: "<br>", delay: 500 },
-        { text: "<div class='box'><strong class='highlight'>OUTPUT: THE INVISIBLE CITY</strong><br>Architecture: Decentralized Mesh<br>Economy: Tokenized Data Ownership<br>Value: High Trust / High Innovation</div>", delay: 100 }
+    const sc_arctic = [
+        { text: "INITIALIZING ARCTIC PROTOCOLS...", delay: 1000, node: -1 },
+        { text: "[STRATEGIC_AWARENESS]: Analysis. Melting ice opens Northern Sea Route. Vital for logistics.", delay: 2000, node: 0, color: 'active-blue', style: 'blue-line' },
+        { text: "[BIO_ECONOMIST]: <span class='alert'>WARNING.</span> Infrastructure built on permafrost is collapsing. We are losing ground.", delay: 2500, node: 7, color: 'active-green', style: 'green-line' },
+        { text: "[TOKENOMIST]: Splicing logic. Create 'Cryo-Bonds'. Investment vehicles that pay yield ONLY if permafrost temperature remains stable.", delay: 3000, node: 10, color: 'active-gold', style: 'gold-line' },
+        { text: "<div class='box'><strong class='highlight'>OUTPUT: THE COLD SHIELD</strong><br>Protecting Ice as a Strategic Asset via Financial Instruments.</div>", delay: 500, node: -1 }
     ];
 
-    // 2. SCENARIO: CLEAN ENERGY (Keywords: Energy, Sun, Oil, Power)
-    const scenario_energy = [
-        { text: "PARSING QUERY: 'POST-CARBON ENERGY ARCHITECTURE'...", delay: 500, class: "blue" },
-        { text: "ACCESSING PHYSICS DATABASE...", delay: 800 },
-        { text: "<br>", delay: 100 },
-        { text: ">>> PHASE 01: DIVERGENCE", delay: 500, class: "highlight" },
-        { text: "[SYSTEM_ARCHITECT]: Solar is insufficient for heavy industry. We need Nuclear baseload.", delay: 1500 },
-        { text: "[BIO_ECONOMIST]: <span class='alert'>CRITICAL ERROR.</span> Nuclear waste violates circular principles. Look at Hydrogen Metabolism.", delay: 1500 },
-        { text: "<br>", delay: 500 },
-        { text: ">>> PHASE 02: FRICTION", delay: 500, class: "highlight" },
-        { text: "[STRATEGIC_AWARENESS]: The world runs on Oil-pegged currency. If we switch, we lose leverage.", delay: 1500 },
-        { text: "[TOKENOMIST]: Counter-proposal. Create 'Kryonis Energy Credit' (KEC). Backed by Joule-output, not oil. The first currency based on Physics, not Politics.", delay: 2000 },
-        { text: "<br>", delay: 500 },
-        { text: "<div class='box'><strong class='highlight'>OUTPUT: THE HYDROGEN SOVEREIGN</strong><br>Core: Green Hydrogen Export<br>Finance: Joule-Backed Currency<br>Geopolitics: Energy Independence</div>", delay: 100 }
+    const sc_dubai = [
+        { text: "INITIALIZING CITY OS...", delay: 1000, node: -1 },
+        { text: "[STRATEGIC_NODE]: Security is paramount. Deploy centralized surveillance grid.", delay: 2000, node: 0, color: 'active-blue', style: 'blue-line' },
+        { text: "[ETHICAL_REFLECTOR]: <span class='alert'>DENIED.</span> Total surveillance crushes human spirit and innovation.", delay: 2000, node: 4, color: 'active-red', style: 'red-line' },
+        { text: "[BIO_ECONOMIST]: Alternative: Distributed Intelligence. Like a nervous system, not a camera.", delay: 2500, node: 7, color: 'active-green', style: 'green-line' },
+        { text: "<div class='box'><strong class='highlight'>OUTPUT: THE INVISIBLE CITY</strong><br>Decentralized AI Mesh with Privacy Core.</div>", delay: 500, node: -1 }
     ];
 
-    // 3. SCENARIO: AION SENTIA / LONGEVITY (Keywords: Life, Aion, Health, Age)
-    const scenario_life = [
-        { text: "PARSING QUERY: 'RADICAL LIFE EXTENSION (150+)'...", delay: 500, class: "blue" },
-        { text: "CONNECTING TO AION SENTIA PROTOCOLS...", delay: 800 },
-        { text: "<br>", delay: 100 },
-        { text: ">>> PHASE 01: DIVERGENCE", delay: 500, class: "highlight" },
-        { text: "[NEURO_MODELER]: If humans live to 150, society stagnates. 'Death' drives innovation.", delay: 1500 },
-        { text: "[ANTHROPOLOGIST]: Incorrect. Elders carry wisdom. We need to redesign the 'Lifecycle' from 3 stages to 7 stages.", delay: 1500 },
-        { text: "<br>", delay: 500 },
-        { text: ">>> PHASE 02: FRICTION", delay: 500, class: "highlight" },
-        { text: "[ETHICAL_REFLECTOR]: Access cannot be for the rich only. That creates a biological caste system.", delay: 1500 },
-        { text: "[BIO_ECONOMIST]: The body is a ledger. Health = Coherence. We pay people to stay healthy. Preventative maintenance is cheaper than repair.", delay: 2000 },
-        { text: "<br>", delay: 500 },
-        { text: "<div class='box'><strong class='highlight'>OUTPUT: THE AION PROTOCOL</strong><br>Philosophy: Health as Capital<br>Social: 7-Stage Lifecycle<br>Tech: Biological Digital Twins</div>", delay: 100 }
+    const sc_aion = [
+        { text: "LOADING AION LONGEVITY MODELS...", delay: 1000, node: -1 },
+        { text: "[NEURO_MODELER]: If lifespan = 150 years, career structures must change. Retirement at 65 is obsolete.", delay: 2000, node: 2, color: 'active-blue', style: 'blue-line' },
+        { text: "[BIO_ECONOMIST]: The body is a continuous asset. Maintenance is cheaper than replacement.", delay: 2500, node: 7, color: 'active-green', style: 'green-line' },
+        { text: "[TOKENOMIST]: Proposal: Health-Backed Currency. Your vitality is your wallet.", delay: 2500, node: 10, color: 'active-gold', style: 'gold-line' },
+        { text: "<div class='box'><strong class='highlight'>OUTPUT: 7-STAGE LIFECYCLE</strong><br>Redesigning society for the 150-year human.</div>", delay: 500, node: -1 }
     ];
 
-    function runScenario(scenarioData) {
-        inputArea.style.display = 'none'; // Hide input during run
+    // RUNNER
+    function runScenario(data) {
+        inputField.value = '';
+        inputField.disabled = true; // Lock input
+        startThinking(); // Visual chaos
+
         let i = 0;
-
-        function nextStep() {
-            if (i >= scenarioData.length) {
-                inputArea.style.display = 'block'; // Show input again
-                inputField.value = '';
+        function step() {
+            if (i >= data.length) {
+                stopThinking();
+                inputField.disabled = false;
                 inputField.focus();
-                
-                // Update Cost at end
-                cost += 12500;
-                costVal.innerHTML = cost.toLocaleString('en-US') + " USD";
-                
                 return;
             }
+            const item = data[i];
+            
+            // Update Visuals
+            if (item.node >= 0) {
+                activateNode(item.node, item.color);
+            } else {
+                resetNodes(); // System msg
+                if (i < data.length -1) startThinking(); // Keep thinking between msgs
+            }
 
-            const item = scenarioData[i];
+            // Update Text
             const div = document.createElement('div');
-            div.className = 'log-entry ' + (item.class || '');
+            div.className = 'log-entry ' + (item.style || '');
             div.innerHTML = item.text;
             terminal.appendChild(div);
-
-            // CPU Spikes
-            cpuVal.innerText = Math.floor(Math.random() * 60 + 20) + "%";
-
             div.style.display = 'block';
-            setTimeout(() => { 
-                div.style.opacity = 1; 
-                window.scrollTo(0, document.body.scrollHeight);
-            }, 10);
+            window.scrollTo(0, document.body.scrollHeight);
 
             i++;
-            setTimeout(nextStep, item.delay);
+            setTimeout(step, item.delay);
         }
-
-        nextStep();
+        
+        // Start first step after a brief "processing" pause
+        setTimeout(step, 1500);
     }
 
     inputField.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
-            const query = inputField.value.toLowerCase();
-            const userDiv = document.createElement('div');
-            userDiv.className = 'log-entry';
-            userDiv.innerHTML = `> USER_INPUT: "${inputField.value}"`;
-            userDiv.style.display = 'block';
-            userDiv.style.opacity = 1;
-            userDiv.style.color = '#fff';
-            terminal.appendChild(userDiv);
+            const val = inputField.value.toLowerCase();
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `> USER: ${inputField.value.toUpperCase()}`;
+            div.style.color = '#fff';
+            div.style.display = 'block';
+            terminal.appendChild(div);
 
-            if (query.includes('energy') || query.includes('oil') || query.includes('sun') || query.includes('power')) {
-                runScenario(scenario_energy);
-            } else if (query.includes('life') || query.includes('age') || query.includes('aion') || query.includes('health')) {
-                runScenario(scenario_life);
-            } else {
-                runScenario(scenario_ai); // Default to AI scenario
+            if (val.includes('arctic') || val.includes('russia')) runScenario(sc_arctic);
+            else if (val.includes('dubai') || val.includes('ai')) runScenario(sc_dubai);
+            else if (val.includes('aion') || val.includes('life')) runScenario(sc_aion);
+            else {
+                 // Fallback thinking effect then error
+                 startThinking();
+                 setTimeout(() => {
+                     stopThinking();
+                     const err = document.createElement('div');
+                     err.className = 'log-entry alert';
+                     err.innerHTML = 'UNKNOWN PROTOCOL. TRY: ARCTIC, DUBAI, AION';
+                     err.style.display = 'block';
+                     terminal.appendChild(err);
+                     inputField.value = '';
+                 }, 2000);
             }
         }
     });
 </script>
-
 </body>
 </html>
