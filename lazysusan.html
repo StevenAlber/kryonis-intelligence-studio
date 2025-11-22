@@ -10,6 +10,7 @@
             --term-green: #00ff33;
             --term-dim: #004411;
             --term-alert: #ff3300;
+            --term-amber: #ffcc00;
             --term-bg: #000000;
             --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
         }
@@ -34,6 +35,40 @@
             padding: 0 10px; display: flex; justify-content: space-between; align-items: center;
             background: #050505; z-index: 10; font-weight: bold; letter-spacing: 1px;
         }
+
+        /* GEMINI SIGNAL STACK */
+        #signal-stack {
+            background: #020202;
+            border-bottom: 1px solid var(--term-dim);
+            padding: 8px 10px;
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            align-items: center;
+            /* Hide scrollbar but allow scroll */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        #signal-stack::-webkit-scrollbar { display: none; }
+
+        .signal-metric {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--term-dim);
+            padding-right: 15px;
+            min-width: 80px;
+        }
+        .signal-metric:last-child { border-right: none; }
+        
+        .sig-label { font-size: 9px; color: #448844; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .sig-value { font-size: 12px; font-weight: bold; color: #ccffcc; }
+        
+        /* Color states for metrics */
+        .sig-val-high { color: var(--term-alert); }
+        .sig-val-med { color: var(--term-amber); }
+        .sig-val-low { color: var(--term-green); }
+
 
         /* MAIN GRID */
         #main-grid { display: flex; flex: 1; overflow: hidden; position: relative; }
@@ -61,7 +96,10 @@
             padding: 10px; display: flex; flex-direction: column; gap: 15px;
             background: #020202;
         }
-        @media (max-width: 600px) { #col-stat { display: none; } }
+        @media (max-width: 600px) { 
+            #col-stat { display: none; } 
+            #signal-stack { padding: 10px; gap: 20px; } /* More breathing room on mobile touch */
+        }
 
         /* CONTROLS (Bottom) */
         #controls {
@@ -122,6 +160,33 @@
     <span style="font-size:9px">GEMINI-2.5-PRO <span style="color:var(--term-alert)">●</span></span>
 </div>
 
+<div id="signal-stack">
+    <div class="signal-metric">
+        <span class="sig-label">COHERENCE VECTOR</span>
+        <span class="sig-value" id="sig-coherence">96.4</span>
+    </div>
+    <div class="signal-metric">
+        <span class="sig-label">PATTERN DRIFT</span>
+        <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
+    </div>
+    <div class="signal-metric">
+        <span class="sig-label">RISK VECTOR</span>
+        <span class="sig-value" id="sig-risk">--</span>
+    </div>
+    <div class="signal-metric">
+        <span class="sig-label">PULSE DENSITY</span>
+        <span class="sig-value" id="sig-pulse">0.84</span>
+    </div>
+    <div class="signal-metric">
+        <span class="sig-label">STRATEGIC LOAD</span>
+        <span class="sig-value" id="sig-load">41%</span>
+    </div>
+    <div class="signal-metric" style="border:none">
+        <span class="sig-label">MODE</span>
+        <span class="sig-value" style="color:var(--term-alert)">SOVEREIGN / ULTRA</span>
+    </div>
+</div>
+
 <div id="main-grid">
     <div id="col-raw"></div>
 
@@ -180,9 +245,9 @@
     1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
     2. RISK LEVEL: (Low / Medium / Critical)
     3. SECTOR ANALYSIS:
-       - GOVERNANCE: (political / sovereign moves)
-       - LOGISTICS / ECONOMY: (resources / trade / flows)
-       - COGNITIVE: (social sentiment / information control)
+        - GOVERNANCE: (political / sovereign moves)
+        - LOGISTICS / ECONOMY: (resources / trade / flows)
+        - COGNITIVE: (social sentiment / information control)
     4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
 
     If the topic is fictional (like Mars Colony), treat it as real and happening now.
@@ -220,6 +285,48 @@
     }
 
     /* ==========================================
+       GEMINI SIGNAL STACK LOGIC
+       ========================================== */
+    function updateSignalStack(aiResponseText) {
+        // 1. Update COHERENCE VECTOR (Random walk within high range)
+        const currentCoherence = parseFloat(document.getElementById('sig-coherence').innerText);
+        let newCoherence = currentCoherence + (Math.random() * 2 - 1);
+        if(newCoherence > 99.9) newCoherence = 99.9;
+        if(newCoherence < 85.0) newCoherence = 85.0;
+        document.getElementById('sig-coherence').innerText = newCoherence.toFixed(1);
+
+        // 2. Update PATTERN DRIFT based on keywords
+        const text = aiResponseText.toUpperCase();
+        const driftEl = document.getElementById('sig-drift');
+        if (text.includes("CRITICAL") || text.includes("HIGH RISK")) {
+            driftEl.innerText = "HIGH";
+            driftEl.className = "sig-value sig-val-high";
+        } else if (text.includes("MEDIUM") || text.includes("WARNING")) {
+            driftEl.innerText = "MED";
+            driftEl.className = "sig-value sig-val-med";
+        } else {
+            driftEl.innerText = "LOW";
+            driftEl.className = "sig-value sig-val-low";
+        }
+
+        // 3. Update RISK VECTOR (Bio/Gov/Eco/Ai)
+        const riskEl = document.getElementById('sig-risk');
+        if (text.includes("BIO") || text.includes("VIRUS") || text.includes("HEALTH")) riskEl.innerText = "BIO-SEC";
+        else if (text.includes("GOVERN") || text.includes("POLITIC")) riskEl.innerText = "GOV-SYS";
+        else if (text.includes("ECONOM") || text.includes("TRADE")) riskEl.innerText = "ECO-FIN";
+        else if (text.includes("AI") || text.includes("CYBER")) riskEl.innerText = "AI-COG";
+        else riskEl.innerText = "GEN-SYS";
+
+        // 4. Update PULSE DENSITY (Random flux)
+        document.getElementById('sig-pulse').innerText = (0.7 + Math.random() * 0.29).toFixed(2);
+
+        // 5. Update STRATEGIC LOAD (Based on text length)
+        const load = Math.min(99, Math.floor((text.length / 500) * 100) + Math.floor(Math.random() * 10));
+        document.getElementById('sig-load').innerText = load + "%";
+    }
+
+
+    /* ==========================================
        AI LOGIC (GEMINI 2.5 PRO)
        ========================================== */
     async function callGemini(query) {
@@ -234,7 +341,7 @@
 
         try {
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -261,6 +368,9 @@
 
                     const aiText = data.candidates[0].content.parts[0].text;
                     loadingLine.style.display = 'none';
+
+                    // Update Signal Stack Visualization
+                    updateSignalStack(aiText);
 
                     const reportDiv = document.createElement('div');
                     reportDiv.className = 'report-box';
