@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PX-Δ1 // REALTIME MONITOR</title>
+    <title>PX-Δ1 // LIVE INTELLIGENCE</title>
     <style>
-        /* --- MILITARY GRADE TERMINAL STYLE --- */
+        /* --- MILITARY TERMINAL THEME --- */
         :root {
             --term-green: #00ff33;
             --term-dim: #004411;
             --term-alert: #ff3300;
             --term-bg: #000000;
-            --font-stack: 'Consolas', 'Monaco', 'Lucida Console', monospace;
+            --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
         }
 
         body {
@@ -21,7 +21,7 @@
             font-size: 11px;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height fix */
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -29,306 +29,264 @@
 
         /* HEADER */
         #top-bar {
+            height: 40px; flex-shrink: 0;
             border-bottom: 1px solid var(--term-green);
-            padding: 5px 10px;
-            display: flex;
-            justify-content: space-between;
-            background: #050505;
-            z-index: 10;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
+            padding: 0 10px; display: flex; justify-content: space-between; align-items: center;
+            background: #050505; z-index: 10; font-weight: bold; letter-spacing: 1px;
         }
 
-        /* MAIN LAYOUT */
-        #main-grid { display: flex; flex: 1; overflow: hidden; }
+        /* MAIN GRID */
+        #main-grid { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* COL 1: RAW DATA */
+        /* COL 1: RAW HEX (The Matrix) */
         #col-raw {
-            width: 20%; border-right: 1px solid var(--term-dim); padding: 10px;
-            overflow: hidden; opacity: 0.7; font-size: 10px; line-height: 1.2;
-            white-space: pre; color: var(--term-dim);
+            width: 60px; flex-shrink: 0;
+            border-right: 1px solid var(--term-dim); padding: 5px;
+            overflow: hidden; opacity: 0.6; font-size: 9px; line-height: 1;
+            white-space: pre; color: var(--term-dim); user-select: none;
         }
 
-        /* COL 2: MAIN FEED */
+        /* COL 2: INTELLIGENCE FEED */
         #col-main {
-            width: 60%; border-right: 1px solid var(--term-dim); padding: 20px;
-            overflow-y: auto; display: flex; flex-direction: column;
-            background: radial-gradient(circle, #051105 0%, #000000 90%);
+            flex: 1; padding: 15px; overflow-y: auto;
+            display: flex; flex-direction: column;
+            background: radial-gradient(circle at center, #051105 0%, #000000 120%);
         }
-        #col-main::-webkit-scrollbar { width: 6px; }
+        #col-main::-webkit-scrollbar { width: 4px; }
         #col-main::-webkit-scrollbar-thumb { background: var(--term-green); }
 
-        /* COL 3: STATUS */
+        /* STATUS SIDEBAR (Desktop/Tablet only, hidden on small mobile to save space) */
         #col-stat {
-            width: 20%; padding: 10px; display: flex; flex-direction: column; gap: 20px;
+            width: 120px; border-left: 1px solid var(--term-dim);
+            padding: 10px; display: flex; flex-direction: column; gap: 15px;
+            background: #020202;
+        }
+        @media (max-width: 600px) { #col-stat { display: none; } }
+
+        /* CONTROLS (Bottom) */
+        #controls {
+            background: #000; border-top: 1px solid var(--term-green);
+            padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); /* iPhone fix */
+            display: flex; flex-direction: column; gap: 10px;
         }
 
-        /* TEXT STYLES */
-        .log-line { margin-bottom: 4px; word-break: break-word; }
-        .log-line.highlight { color: #fff; background: #003311; }
-        .log-line.alert { color: var(--term-alert); font-weight: bold; }
-        .log-line.sys { color: #55aa55; }
-        
-        /* REPORT BOX */
-        .report-card {
-            border: 1px solid var(--term-green);
-            background: rgba(0, 255, 51, 0.05);
-            padding: 15px; margin: 20px 0; font-size: 12px; line-height: 1.4;
-            animation: flicker 0.1s;
+        /* CHIPS */
+        #chip-rack {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px;
         }
-        .report-header {
-            border-bottom: 1px solid var(--term-green); margin-bottom: 10px;
-            padding-bottom: 5px; font-weight: bold;
+        .chip {
+            background: #111; border: 1px solid #333; color: #888; padding: 8px 12px;
+            font-size: 10px; text-transform: uppercase; cursor: pointer; white-space: nowrap;
         }
+        .chip:hover { border-color: var(--term-green); color: #fff; background: #0a2a0a; }
 
-        /* INPUT AREA */
-        #input-zone {
-            border-top: 1px solid var(--term-green); padding: 15px; background: #000;
-            display: flex; align-items: center;
+        /* INPUT */
+        .input-row {
+            display: flex; align-items: center; border: 1px solid #333; background: #080808; padding: 10px;
         }
         input {
-            background: transparent; border: none; color: #fff;
-            font-family: var(--font-stack); font-size: 14px; flex: 1; outline: none;
-            text-transform: uppercase; margin-left: 10px;
+            background: transparent; border: none; color: #fff; flex: 1;
+            font-family: inherit; font-size: 14px; outline: none; text-transform: uppercase;
         }
 
-        /* ANIMATIONS */
-        @keyframes flicker { 0%{opacity:0.8} 50%{opacity:1} 100%{opacity:0.8} }
-        .blink { animation: blink 1s infinite; }
+        /* VISUAL ELEMENTS */
+        .log-line { margin-bottom: 6px; word-wrap: break-word; }
+        .sys { color: #448844; }
+        .user { color: #fff; font-weight: bold; margin-top: 10px; }
+        .ai-response { color: var(--term-green); margin-top: 5px; line-height: 1.5; }
+        
+        /* AI REPORT BOX STYLE */
+        .report-box {
+            border: 1px solid var(--term-green); background: rgba(0,255,51,0.03);
+            padding: 15px; margin: 10px 0; position: relative;
+            animation: fadeIn 0.5s;
+        }
+        .report-header {
+            border-bottom: 1px dashed var(--term-dim); margin-bottom: 8px; padding-bottom: 5px;
+            font-weight: bold; display: flex; justify-content: space-between;
+        }
+        
+        .typing-cursor::after { content: '█'; animation: blink 1s infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
-        .mod-box { border: 1px solid var(--term-dim); padding: 5px; }
-        .mod-title { background: var(--term-dim); color: #000; padding: 2px; font-size: 9px; margin-bottom: 5px;}
+        .stat-box { border: 1px solid #222; padding: 5px; }
+        .stat-label { font-size: 8px; color: #666; display: block; }
+        .stat-val { font-size: 12px; font-weight: bold; color: #fff; }
 
     </style>
 </head>
 <body>
 
 <div id="top-bar">
-    <span>PX-Δ1 // DEEP_SCAN_CLIENT v9.1</span>
-    <span>STATUS: <span class="blink" style="color:var(--term-alert)">ACTIVE</span> | <span id="live-clock">00:00:00</span></span>
+    <span>PX-Δ1 // LIVE_UPLINK</span>
+    <span style="font-size:9px">GEMINI-1.5-FLASH <span style="color:var(--term-alert)">●</span></span>
 </div>
 
 <div id="main-grid">
     <div id="col-raw"></div>
 
     <div id="col-main">
-        <div class="log-line sys">INITIALIZING PX-Δ1 KERNEL...</div>
-        <div class="log-line sys" id="init-date-line">LOADING CONTEXT...</div>
-        <div class="log-line sys">WAITING FOR TARGET VECTOR...</div>
-        <br>
-        <div class="report-card" style="border-style: dashed; color: #888;">
-            <div class="report-header">SYSTEM DIRECTIVE</div>
-            Target: Structural Activation Patterns<br>
-            Filter: Governance, Logistics, Semantic, Digital<br>
-            Mode: Silent Convergence Detection
-        </div>
+        <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
+        <div class="log-line sys">API HANDSHAKE: SECURE</div>
+        <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
     </div>
 
     <div id="col-stat">
-        <div class="mod-box">
-            <div class="mod-title">NET_TRAFFIC</div>
-            <div id="net-val">00 KB/s</div>
+        <div class="stat-box">
+            <span class="stat-label">NET_LOAD</span>
+            <span class="stat-val" id="net-val">0 TB/s</span>
         </div>
-        <div class="mod-box">
-            <div class="mod-title">ACTIVE NODES</div>
-            <div id="node-val">14,205</div>
+        <div class="stat-box">
+            <span class="stat-label">ACTIVE NODES</span>
+            <span class="stat-val">14,205</span>
         </div>
-        <div class="mod-box">
-            <div class="mod-title">GLOBAL THREAT</div>
-            <div style="color:var(--term-alert); font-size:14px; font-weight:bold;">ELEVATED</div>
-        </div>
-        <div style="flex:1; font-size:9px; opacity:0.5; word-break:break-all;">
-            SESSION_HASH:<br>8F4A-2B9C-11X9<br><br>
-            GEO_LOCK:<br>KUALA LUMPUR<br>[SECURE]
+        <div class="stat-box">
+            <span class="stat-label">THREAT LEVEL</span>
+            <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
         </div>
     </div>
 </div>
 
-<div id="input-zone">
-    <span style="color:var(--term-green)">COMMAND@PX-DELTA:~$</span>
-    <input type="text" id="cmd-input" placeholder="ENTER TARGET (E.G. 'SCAN USA')" autofocus>
+<div id="controls">
+    <div id="chip-rack">
+        <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
+        <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
+        <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
+        <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
+        <div class="chip" onclick="askAI('ANALYZE DUBAI STRATEGY')">DUBAI</div>
+        <div class="chip" onclick="askAI('ANALYZE MARS COLONY')">MARS</div>
+        <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
+        <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
+        <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
+    </div>
+    <div class="input-row">
+        <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
+        <input type="text" id="user-input" placeholder="ENTER TARGET (E.G. 'ESTONIA ENERGY')..." autofocus>
+    </div>
 </div>
 
 <script>
-    // --- HELPERS FOR REALTIME DATE ---
-    function getDynamicDateRange() {
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - 5); // 5 days ago
+    /* ==========================================
+       CONFIGURATION - PANE OMA API VÕTI SIIA!
+       ========================================== */
+    const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8"; 
+    
+    // See on Kryonise "Aju" seadistus. See sunnib Gemini rääkima nagu sõjaväearvuti.
+    const SYSTEM_PROMPT = `
+    You are PX-Δ1, a Sovereign Global Monitoring AI used by Kryonis.
+    Your output must be a STRATEGIC INTELLIGENCE REPORT.
+    Style: Military, Cryptic, High-Level, No polite filler words.
+    
+    Format structure:
+    1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
+    2. RISK LEVEL: (Low/Medium/Critical)
+    3. SECTOR ANALYSIS:
+       - GOVERNANCE: (Analyze political/sovereign moves)
+       - LOGISTICS/ECONOMY: (Analyze resources/trade)
+       - COGNITIVE: (Analyze social sentiment/control)
+    4. STRATEGIC DOCTRINE: (A short, punchy conclusion phrase)
 
-        const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-        // Convert to uppercase for terminal look (e.g. "NOV 17, 2025")
-        const sStr = start.toLocaleDateString('en-US', opts).toUpperCase();
-        const eStr = end.toLocaleDateString('en-US', opts).toUpperCase();
-        return `${sStr} - ${eStr}`;
-    }
+    If the topic is fictional (like Mars Colony), treat it as real and happening now.
+    Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
+    `;
 
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-GB'); // 24h format
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Set Initial Date Line
-    document.getElementById('init-date-line').innerText = `LOADING GLOBAL CONTEXT: ${getDynamicDateRange()}`;
-
-
-    // --- CONFIG ---
+    /* ==========================================
+       VISUAL ENGINE
+       ========================================== */
     const rawCol = document.getElementById('col-raw');
     const mainCol = document.getElementById('col-main');
-    const input = document.getElementById('cmd-input');
+    const input = document.getElementById('user-input');
     const netVal = document.getElementById('net-val');
 
-    // --- RAW DATA STREAM ---
-    function makeHex() {
+    // Hex Matrix Effect
+    function matrixRain() {
         let text = "";
-        const chars = "ABCDEF0123456789";
-        for (let i = 0; i < 100; i++) {
+        const chars = "01";
+        for (let i=0; i<150; i++) {
             text += chars.charAt(Math.floor(Math.random() * chars.length));
-            if (i % 2 == 0 && i > 0) text += " ";
-            if (i % 16 == 0 && i > 0) text += "\n";
+            if (i%2===0) text += " ";
+            if (i%6===0) text += "\n";
         }
-        return text;
-    }
-
-    setInterval(() => {
-        rawCol.innerText = makeHex() + "\n" + makeHex() + "\n" + makeHex();
+        rawCol.innerText = text;
         netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
-    }, 100);
+    }
+    setInterval(matrixRain, 80);
 
-    // --- LOGIC ENGINE ---
-    function log(text, type="") {
+    // Helper to add lines
+    function addLog(text, type) {
         const div = document.createElement('div');
         div.className = "log-line " + type;
-        // Add timestamp to every log
-        const time = new Date().toLocaleTimeString('en-GB');
-        div.innerHTML = `[${time}] ${text}`;
+        div.innerHTML = text;
         mainCol.appendChild(div);
         mainCol.scrollTop = mainCol.scrollHeight;
+        return div;
     }
 
-    // --- FLOOD EFFECT ---
-    async function floodData() {
-        const junk = [
-            "Bypassing Firewall...", "Handshake: ACK", "Decryption: AES-256", 
-            "Analyzing Packet...", "Route: SAT-4 -> GND-2", "Token Validated",
-            "Scraping Sensor Grid...", "Sentiment: NEGATIVE", "Logistics: ACTIVE",
-            "Governance: ALERT", "Connecting to Deep Web...", "Node 442 Responding"
-        ];
-        
-        for(let i=0; i<25; i++) {
-            let msg = junk[Math.floor(Math.random() * junk.length)];
-            log(msg, "sys");
-            await new Promise(r => setTimeout(r, 20)); 
-        }
-    }
-
-    // --- DYNAMIC REPORTS ---
-    // Note: We inject the `getDynamicDateRange()` into the reports
-    const REPORTS = {
-        'USA': `
-            <div class="report-header">PX-Δ1 SIGNAL REPORT: USA SECTOR</div>
-            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br>
-            <strong>RISK LEVEL:</strong> HIGH (Convergence Detected)<br><br>
-            
-            [1] GOVERNANCE LAYER<br>
-            > Signal: "Continuity of Government" drill triggered silently.<br>
-            > Source: Unlisted Treasury Dept Memo #4491.<br><br>
-            
-            [2] LOGISTICS LAYER<br>
-            > Signal: Massive procurement of bio-secure containers by FEMA.<br>
-            > Anomaly: Stockpiles routed to non-medical warehouses.<br><br>
-            
-            [3] SEMANTIC LAYER<br>
-            > Analysis: Media shifting term "Recession" to "Resilience".<br>
-            
-            <strong>CONCLUSION:</strong> Structural preparation active.
-        `,
-        'CHINA': `
-            <div class="report-header">PX-Δ1 SIGNAL REPORT: CHINA SECTOR</div>
-            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br>
-            <strong>RISK LEVEL:</strong> CRITICAL<br><br>
-            
-            [1] DIGITAL LAYER<br>
-            > Signal: "Health Code" app updated to track "Social Density".<br>
-            > Tech: Integration with new orbital surveillance grid.<br><br>
-            
-            [2] LOGISTICS LAYER<br>
-            > Signal: Port of Shanghai restricted. Grain reserves sealed.<br><br>
-            
-            <strong>CONCLUSION:</strong> Pre-emptive containment protocols active.
-        `,
-        'RUSSIA': `
-            <div class="report-header">PX-Δ1 SIGNAL REPORT: RUSSIAN ARCTIC</div>
-            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br><br>
-            
-            [1] MILITARY LAYER<br>
-            > Signal: Northern Fleet activated "Ice Shield" protocol.<br>
-            > Context: Protecting Permafrost assets, not borders.<br><br>
-            
-            <strong>CONCLUSION:</strong> Resource hoarding detected.
-        `,
-        'SAUDI': `
-            <div class="report-header">PX-Δ1 SIGNAL REPORT: NEOM/SAUDI</div>
-            <strong>SCAN SCOPE:</strong> <span style="color:#fff">${getDynamicDateRange()}</span><br><br>
-            
-            [1] COGNITIVE LAYER<br>
-            > Signal: "The Line" used as simulation testbed for bio-control.<br>
-            > Data: 100% biometric scanning enforced at all checkpoints.<br><br>
-            
-            <strong>CONCLUSION:</strong> Testing post-petroleum surveillance state.
-        `
-    };
-
-    async function runScan(cmd) {
-        input.value = cmd;
+    /* ==========================================
+       AI LOGIC (GEMINI API)
+       ========================================== */
+    async function callGemini(query) {
+        // 1. User UI Feedback
         input.disabled = true;
+        addLog(`> UPLINK REQUEST: ${query}`, 'user');
+        const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
         
-        log(`> COMMAND RECEIVED: ${cmd}`, "highlight");
-        log(`> ACTIVATING PX-DELTA PROTOCOLS...`, "alert");
-        
-        await floodData(); 
-        
-        await new Promise(r => setTimeout(r, 500));
-        log(`> TARGET LOCKED. DOWNLOADING REPORT...`, "highlight");
+        // 2. Fake processing delay (for impact)
+        await new Promise(r => setTimeout(r, 1000));
+        loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
         await new Promise(r => setTimeout(r, 800));
-        
-        const div = document.createElement('div');
-        div.className = "report-card";
-        
-        let content = "";
-        if(cmd.includes("USA")) content = REPORTS['USA'];
-        else if(cmd.includes("CHINA")) content = REPORTS['CHINA'];
-        else if(cmd.includes("RUSSIA")) content = REPORTS['RUSSIA'];
-        else if(cmd.includes("SAUDI")) content = REPORTS['SAUDI'];
-        else {
-            content = `
-                <div class="report-header">PX-Δ1 SIGNAL REPORT: ${cmd}</div>
-                <strong>SCAN SCOPE:</strong> ${getDynamicDateRange()}<br>
-                <strong>STATUS:</strong> DATA FRAGMENTED.<br>
-                > Initiating Deep Search Algorithms...<br>
-                > Deploying Autonomous Crawlers...<br>
-                > Estimated Completion: 24h.<br><br>
-                <strong>NOTE:</strong> Target is under heavy encryption.
-            `;
+        loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
+
+        try {
+            // 3. Real API Call
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            
+            // 4. Parse Response
+            if (data.candidates && data.candidates.length > 0) {
+                const aiText = data.candidates[0].content.parts[0].text;
+                loadingLine.style.display = 'none'; // Hide loading text
+                
+                // Typewriter Effect for the report
+                const reportDiv = document.createElement('div');
+                reportDiv.className = 'report-box';
+                mainCol.appendChild(reportDiv);
+                
+                // Simple HTML rendering
+                reportDiv.innerHTML = aiText; 
+                mainCol.scrollTop = mainCol.scrollHeight;
+            } else {
+                loadingLine.innerText = "ERROR: SECURE CONNECTION FAILED.";
+                loadingLine.style.color = "red";
+            }
+
+        } catch (error) {
+            console.error(error);
+            loadingLine.innerText = "CRITICAL ERROR: API UNREACHABLE.";
+            loadingLine.style.color = "red";
         }
-        
-        div.innerHTML = content;
-        mainCol.appendChild(div);
-        mainCol.scrollTop = mainCol.scrollHeight;
 
         input.disabled = false;
-        input.value = "";
+        input.value = '';
         input.focus();
     }
 
+    function askAI(q) { callGemini(q); }
+
     input.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            const val = input.value.toUpperCase();
-            runScan(val);
+            const val = input.value.trim().toUpperCase();
+            if(val) callGemini(val);
         }
     });
 
