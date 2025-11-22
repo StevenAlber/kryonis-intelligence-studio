@@ -113,14 +113,13 @@
         .stat-box { border: 1px solid #222; padding: 5px; }
         .stat-label { font-size: 8px; color: #666; display: block; }
         .stat-val { font-size: 12px; font-weight: bold; color: #fff; }
-
     </style>
 </head>
 <body>
 
 <div id="top-bar">
     <span>PX-Δ1 // LIVE_UPLINK</span>
-    <span style="font-size:9px">GEMINI-1.5-FLASH <span style="color:var(--term-alert)">●</span></span>
+    <span style="font-size:9px">GEMINI-2.5-PRO <span style="color:var(--term-alert)">●</span></span>
 </div>
 
 <div id="main-grid">
@@ -128,7 +127,7 @@
 
     <div id="col-main">
         <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
-        <div class="log-line sys">API HANDSHAKE: SECURE</div>
+        <div class="log-line sys">API HANDSHAKE: STANDBY</div>
         <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
     </div>
 
@@ -154,38 +153,37 @@
         <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
         <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
         <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
-        <div class="chip" onclick="askAI('ANALYZE DUBAI STRATEGY')">DUBAI</div>
-        <div class="chip" onclick="askAI('ANALYZE MARS COLONY')">MARS</div>
+        <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
+        <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
         <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
         <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
         <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
     </div>
     <div class="input-row">
         <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-        <input type="text" id="user-input" placeholder="ENTER TARGET (E.G. 'ESTONIA ENERGY')..." autofocus>
+        <input type="text" id="user-input" placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY')..." autofocus>
     </div>
 </div>
 
 <script>
     /* ==========================================
-       CONFIGURATION - PANE OMA API VÕTI SIIA!
+       CONFIGURATION - API KEY
        ========================================== */
-    const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8"; 
-    
-    // See on Kryonise "Aju" seadistus. See sunnib Gemini rääkima nagu sõjaväearvuti.
+    const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8";
+
     const SYSTEM_PROMPT = `
-    You are PX-Δ1, a Sovereign Global Monitoring AI used by Kryonis.
+    You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
     Your output must be a STRATEGIC INTELLIGENCE REPORT.
-    Style: Military, Cryptic, High-Level, No polite filler words.
-    
+    Style: Military, cryptic, high-level. No polite filler words.
+
     Format structure:
     1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
-    2. RISK LEVEL: (Low/Medium/Critical)
+    2. RISK LEVEL: (Low / Medium / Critical)
     3. SECTOR ANALYSIS:
-       - GOVERNANCE: (Analyze political/sovereign moves)
-       - LOGISTICS/ECONOMY: (Analyze resources/trade)
-       - COGNITIVE: (Analyze social sentiment/control)
-    4. STRATEGIC DOCTRINE: (A short, punchy conclusion phrase)
+       - GOVERNANCE: (political / sovereign moves)
+       - LOGISTICS / ECONOMY: (resources / trade / flows)
+       - COGNITIVE: (social sentiment / information control)
+    4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
 
     If the topic is fictional (like Mars Colony), treat it as real and happening now.
     Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
@@ -199,21 +197,19 @@
     const input = document.getElementById('user-input');
     const netVal = document.getElementById('net-val');
 
-    // Hex Matrix Effect
     function matrixRain() {
         let text = "";
         const chars = "01";
-        for (let i=0; i<150; i++) {
+        for (let i = 0; i < 150; i++) {
             text += chars.charAt(Math.floor(Math.random() * chars.length));
-            if (i%2===0) text += " ";
-            if (i%6===0) text += "\n";
+            if (i % 2 === 0) text += " ";
+            if (i % 6 === 0) text += "\n";
         }
         rawCol.innerText = text;
         netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
     }
     setInterval(matrixRain, 80);
 
-    // Helper to add lines
     function addLog(text, type) {
         const div = document.createElement('div');
         div.className = "log-line " + type;
@@ -224,52 +220,58 @@
     }
 
     /* ==========================================
-       AI LOGIC (GEMINI API)
+       AI LOGIC (GEMINI 2.5 PRO)
        ========================================== */
     async function callGemini(query) {
-        // 1. User UI Feedback
         input.disabled = true;
         addLog(`> UPLINK REQUEST: ${query}`, 'user');
         const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
-        
-        // 2. Fake processing delay (for impact)
+
         await new Promise(r => setTimeout(r, 1000));
         loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
         await new Promise(r => setTimeout(r, 800));
         loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
 
         try {
-            // 3. Real API Call
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
-                    }]
-                })
-            });
+            const response = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${API_KEY}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
+                        }]
+                    })
+                }
+            );
 
-            const data = await response.json();
-            
-            // 4. Parse Response
-            if (data.candidates && data.candidates.length > 0) {
-                const aiText = data.candidates[0].content.parts[0].text;
-                loadingLine.style.display = 'none'; // Hide loading text
-                
-                // Typewriter Effect for the report
-                const reportDiv = document.createElement('div');
-                reportDiv.className = 'report-box';
-                mainCol.appendChild(reportDiv);
-                
-                // Simple HTML rendering
-                reportDiv.innerHTML = aiText; 
-                mainCol.scrollTop = mainCol.scrollHeight;
-            } else {
-                loadingLine.innerText = "ERROR: SECURE CONNECTION FAILED.";
+            if (!response.ok) {
+                console.error("HTTP error", response.status, await response.text());
+                loadingLine.innerText = `ERROR: ${response.status} – LINK FAILURE.`;
                 loadingLine.style.color = "red";
-            }
+            } else {
+                const data = await response.json();
 
+                if (data.candidates &&
+                    data.candidates.length > 0 &&
+                    data.candidates[0].content &&
+                    data.candidates[0].content.parts &&
+                    data.candidates[0].content.parts[0].text) {
+
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    loadingLine.style.display = 'none';
+
+                    const reportDiv = document.createElement('div');
+                    reportDiv.className = 'report-box';
+                    reportDiv.innerHTML = aiText;
+                    mainCol.appendChild(reportDiv);
+                    mainCol.scrollTop = mainCol.scrollHeight;
+                } else {
+                    loadingLine.innerText = "ERROR: EMPTY PAYLOAD FROM CORE.";
+                    loadingLine.style.color = "red";
+                }
+            }
         } catch (error) {
             console.error(error);
             loadingLine.innerText = "CRITICAL ERROR: API UNREACHABLE.";
@@ -281,15 +283,17 @@
         input.focus();
     }
 
-    function askAI(q) { callGemini(q); }
+    function askAI(q) {
+        const val = (q || "").trim();
+        if (val) callGemini(val.toUpperCase());
+    }
 
     input.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') {
-            const val = input.value.trim().toUpperCase();
-            if(val) callGemini(val);
+        if (e.key === 'Enter') {
+            const val = input.value.trim();
+            if (val) callGemini(val.toUpperCase());
         }
     });
-
 </script>
 </body>
 </html>
