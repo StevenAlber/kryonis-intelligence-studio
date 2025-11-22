@@ -3,488 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KRYONIS // TITAN GLOBAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>KRYONIS // TITAN GOD MODE</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet">
     <style>
-        /* --- CORE ARCHITECTURE --- */
         :root {
             --neon-green: #00ff41;
-            --neon-blue: #00ccff;
+            --neon-blue: #00f3ff;
+            --neon-red: #ff003c;
             --neon-gold: #ffd700;
-            --neon-red: #ff3333;
-            --neon-purple: #bd00ff;
-            --bg-color: #000000;
-            --panel-bg: #0a0a0a;
-            --border: 1px solid #222;
+            --bg: #050505;
+            --panel: #0a0a0a;
+            --scan-speed: 4s;
         }
-
         * { box-sizing: border-box; }
-
         body {
-            background-color: var(--bg-color);
-            color: #a0a0a0;
-            font-family: 'JetBrains Mono', monospace;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            font-size: 11px;
+            background: var(--bg); color: #aaa; margin: 0; height: 100vh;
+            font-family: 'JetBrains Mono', monospace; overflow: hidden;
+            display: flex; flex-direction: column; font-size: 11px;
         }
 
         /* --- HEADER --- */
         header {
-            height: 45px;
-            border-bottom: var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            background: #050505;
-            z-index: 10;
+            height: 40px; border-bottom: 1px solid #333; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 15px;
+            background: #000; z-index: 10;
         }
-        .brand { color: #fff; letter-spacing: 3px; font-weight: bold; font-size: 14px; }
-        .sys-status { font-size: 9px; color: #555; text-transform: uppercase; }
-        .blink { animation: blink 2s infinite; color: var(--neon-green); }
+        .brand { letter-spacing: 3px; font-weight: 800; color: #fff; font-size: 14px; }
+        .status { font-size: 9px; color: #666; text-transform: uppercase; }
+        .live-dot { color: var(--neon-green); animation: blink 1s infinite; }
 
-        /* --- WORKSPACE --- */
-        #workspace {
-            flex-grow: 1;
-            display: flex;
-            padding: 10px;
-            gap: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        /* CRT Scanline Effect Overlay */
-        #workspace::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
-
-        /* LEFT: VISUAL CORE */
-        #left-vis {
-            width: 30%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 130px; 
-        }
-
-        .vis-box {
-            background: var(--panel-bg);
-            border: var(--border);
-            flex-grow: 1;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+        /* --- LAYOUT --- */
+        #main { flex: 1; display: flex; border-bottom: 1px solid #333; position: relative; }
         
-        #global-scan {
-            height: 60%;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            position: relative;
+        /* CRT EFFECT */
+        #main::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 5; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
-        /* Fake Globe Grid */
-        .grid-lines {
-            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
-            background: 
-                linear-gradient(transparent 95%, rgba(0, 255, 65, 0.1) 50%),
-                linear-gradient(90deg, transparent 95%, rgba(0, 255, 65, 0.1) 50%);
+
+        /* LEFT VISUALS */
+        #vis-panel {
+            width: 30%; border-right: 1px solid #333; display: flex; flex-direction: column;
+            background: #020202; min-width: 120px;
+        }
+        #globe-zone {
+            flex: 2; position: relative; overflow: hidden;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* Rotating Grid */
+        .wireframe {
+            width: 200%; height: 200%; position: absolute;
+            background: linear-gradient(#003311 1px, transparent 1px), linear-gradient(90deg, #003311 1px, transparent 1px);
             background-size: 40px 40px;
-            transform: perspective(500px) rotateX(60deg);
-            animation: gridMove 20s linear infinite;
+            transform: perspective(300px) rotateX(60deg) translateY(0);
+            animation: gridRun 10s linear infinite;
+            opacity: 0.5;
         }
+        .wireframe.fast { animation: gridRun 0.5s linear infinite; opacity: 1; background-size: 60px 60px; border: 1px solid var(--neon-red); }
 
-        /* RIGHT: TERMINAL */
-        #terminal {
-            width: 70%;
-            background: #050505;
-            border: var(--border);
-            padding: 20px;
-            overflow-y: auto;
-            font-size: 12px;
-            line-height: 1.5;
-            position: relative;
-            padding-bottom: 60px;
+        #metrics-zone {
+            flex: 1; border-top: 1px solid #333; padding: 10px;
+            display: flex; flex-direction: column; justify-content: flex-end;
         }
-        #terminal::-webkit-scrollbar { width: 4px; }
-        #terminal::-webkit-scrollbar-thumb { background: #333; }
+        .bar-graph { display: flex; gap: 2px; height: 50px; align-items: flex-end; }
+        .bar { flex: 1; background: #333; transition: height 0.05s; }
+        .bar.active { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .bar.critical { background: var(--neon-red); box-shadow: 0 0 10px var(--neon-red); }
 
-        .log-row { margin-bottom: 10px; display: none; padding-left: 12px; border-left: 2px solid #222; opacity: 0; }
-        .log-row.visible { display: block; animation: slideIn 0.3s forwards; }
+        /* RIGHT TERMINAL */
+        #terminal-zone {
+            flex: 1; background: #050505; padding: 15px; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        #terminal-output {
+            overflow-y: hidden; /* We force scroll via JS */
+            display: flex; flex-direction: column; justify-content: flex-end;
+            max-height: 100%;
+        }
+        .log { font-size: 11px; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .log.dim { color: #444; }
+        .log.highlight { color: #fff; background: rgba(255,255,255,0.1); }
+        .log.error { color: var(--neon-red); }
+        .log.success { color: var(--neon-green); }
+        .log.info { color: var(--neon-blue); }
         
-        .blue-msg { border-left-color: var(--neon-blue); color: #e0e0e0; }
-        .green-msg { border-left-color: var(--neon-green); color: #e0e0e0; }
-        .gold-msg { border-left-color: var(--neon-gold); color: #e0e0e0; }
-        .red-msg { border-left-color: var(--neon-red); color: #e0e0e0; }
-        .purple-msg { border-left-color: var(--neon-purple); color: #e0e0e0; }
-        .sys-msg { border-left-color: transparent; color: #666; font-style: italic; font-size: 11px; }
+        /* RESULT BOX */
+        .result-card {
+            border: 1px solid var(--neon-green); background: rgba(0,255,65,0.05);
+            padding: 15px; margin-top: 10px; margin-bottom: 20px;
+            animation: flashEntry 0.2s; position: relative;
+        }
+        .result-card::before { content: "STRATEGIC DOCTRINE"; position: absolute; top: -8px; left: 10px; background: #000; padding: 0 5px; color: var(--neon-green); font-size: 9px; }
 
         /* --- CONTROLS --- */
-        #controls {
-            height: 160px;
-            background: #020202;
-            border-top: var(--border);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        #controls { height: 150px; background: #000; padding: 10px; display: flex; flex-direction: column; }
+        
+        #chips {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px;
         }
-
-        #chip-rack {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 15px;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-        #chip-rack::-webkit-scrollbar { height: 2px; }
-        #chip-rack::-webkit-scrollbar-thumb { background: var(--neon-green); }
+        #chips::-webkit-scrollbar { height: 2px; }
+        #chips::-webkit-scrollbar-thumb { background: #444; }
 
         .chip {
-            background: #0a0a0a;
-            border: 1px solid #333;
-            color: #777;
-            padding: 8px 14px;
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            background: #111; border: 1px solid #333; color: #666; padding: 8px 12px;
+            font-size: 10px; text-transform: uppercase; cursor: pointer; white-space: nowrap;
+            transition: 0.1s;
         }
-        .chip:hover { border-color: var(--neon-green); color: #fff; background: #111; box-shadow: 0 0 10px rgba(0,255,65,0.1); }
-        .chip.active { border-color: var(--neon-blue); color: #fff; }
+        .chip:hover { border-color: var(--neon-blue); color: #fff; background: #222; }
+        .chip:active { background: var(--neon-blue); color: #000; }
 
-        .input-wrapper {
-            display: flex;
-            align-items: center;
-            border: 1px solid #333;
-            background: #080808;
-            padding: 12px;
+        #input-area {
+            display: flex; align-items: center; border: 1px solid #333; padding: 10px;
+            background: #080808; margin-top: auto;
         }
-        .prompt { color: var(--neon-green); margin-right: 12px; font-weight: bold; }
         input {
-            background: transparent; border: none; color: #fff; font-family: inherit;
-            flex-grow: 1; outline: none; font-size: 14px; text-transform: uppercase;
+            background: transparent; border: none; color: #fff; flex: 1; font-family: inherit;
+            font-size: 14px; outline: none; text-transform: uppercase;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-        @keyframes gridMove { 0%{transform: perspective(500px) rotateX(60deg) translateY(0);} 100%{transform: perspective(500px) rotateX(60deg) translateY(40px);} }
-        @keyframes slideIn { from{opacity:0; transform:translateX(-10px)} to{opacity:1; transform:translateX(0)} }
-        @keyframes scanline { 0%{top:0%} 100%{top:100%} }
-
-        /* RESULT BOX STYLING */
-        .result-box {
-            border: 1px solid var(--neon-green);
-            background: rgba(0, 255, 65, 0.02);
-            padding: 15px;
-            margin-top: 10px;
-            position: relative;
-        }
-        .result-label {
-            position: absolute; top: -9px; left: 10px; background: #050505;
-            padding: 0 5px; color: var(--neon-green); font-size: 9px; letter-spacing: 1px;
-        }
-        .scan-overlay {
-            position: absolute; top:0; left:0; width:100%; height:2px; background:var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green);
-            opacity: 0;
-        }
-        .scanning .scan-overlay { opacity: 0.5; animation: scanline 1.5s infinite linear; }
-
-        /* Visual Nodes */
-        #node-vis {
-            display: flex; gap: 3px; align-items: flex-end; height: 40px; padding: 0 10px 10px 10px;
-        }
-        .v-bar { width: 100%; background: #222; height: 10%; transition: height 0.1s; }
+        /* ANIMATIONS */
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes gridRun { 0%{transform:perspective(300px) rotateX(60deg) translateY(0);} 100%{transform:perspective(300px) rotateX(60deg) translateY(40px);} }
+        @keyframes flashEntry { 0%{background: var(--neon-green);} 100%{background: rgba(0,255,65,0.05);} }
 
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">KRYONIS <span style="color:#444;">// TITAN_OS_v6.0</span></div>
-    <div class="sys-status"><span class="blink">●</span> CONNECTED | NODE_LATTICE: ACTIVE</div>
+    <div class="brand">TITAN_OS <span style="color:#444;">// GOD_MODE</span></div>
+    <div class="status"><span class="live-dot">●</span> NET_ACTIVE | 402 PB/s</div>
 </header>
 
-<div id="workspace">
-    <div id="left-vis">
-        <div class="vis-box">
-            <div id="global-scan">
-                <div class="grid-lines"></div>
-                <div class="scan-overlay" id="scanner"></div>
-                <div style="position:absolute; bottom:10px; left:10px; font-size:10px; color:#444;">
-                    GLOBAL_SENSOR_GRID<br>LAT: 25.2048 N<br>LON: 55.2708 E
-                </div>
+<div id="main">
+    <div id="vis-panel">
+        <div id="globe-zone">
+            <div class="wireframe" id="grid-mesh"></div>
+            <div style="position: absolute; color: var(--neon-red); font-size: 40px; opacity: 0; font-weight: bold;" id="big-alert">ANALYZING</div>
+        </div>
+        <div id="metrics-zone">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:9px; color:#555;">
+                <span>CPU_THREAD_01</span>
+                <span id="cpu-val">12%</span>
             </div>
-            <div style="padding:15px; border-top:1px solid #222; font-size:10px; color:#666; display:flex; flex-direction:column; justify-content:space-between; flex-grow:1;">
-                <div>
-                    CPU LOAD: <span id="cpu-val" style="color:#fff;">12%</span><br>
-                    NET_HASH: <span id="hash-val">...</span>
+            <div class="bar-graph" id="bars">
                 </div>
-                <div id="node-vis">
-                    <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-                    <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-                    <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-                    <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <div id="terminal">
-        <div class="log-row visible sys-msg">System Initialized. Architecture: Sovereign.</div>
-        <div class="log-row visible sys-msg">Accessing Kryonis Global Database (Level 5 Clearance)...</div>
-        <div class="log-row visible sys-msg">Ready for strategic simulation.</div>
+    <div id="terminal-zone">
+        <div id="terminal-output">
+            <div class="log dim">System Initialized.</div>
+            <div class="log dim">Waiting for strategic vector...</div>
+        </div>
     </div>
 </div>
 
 <div id="controls">
-    <div style="font-size:9px; color:#444; margin-bottom:5px; letter-spacing:1px;">SELECT TARGET VECTOR:</div>
-    <div id="chip-rack">
-        <div class="chip" onclick="runCmd('ESTONIA')">ESTONIA</div>
-        <div class="chip" onclick="runCmd('DUBAI')">DUBAI</div>
-        <div class="chip" onclick="runCmd('SAUDI')">SAUDI (NEOM)</div>
-        <div class="chip" onclick="runCmd('SINGAPORE')">SINGAPORE</div>
-        <div class="chip" onclick="runCmd('RUSSIA')">RUSSIA (ARCTIC)</div>
-        <div class="chip" onclick="runCmd('CHINA')">CHINA</div>
-        <div class="chip" onclick="runCmd('USA')">USA (FED)</div>
-        <div class="chip" onclick="runCmd('JAPAN')">JAPAN (AUTO)</div>
-        <div class="chip" onclick="runCmd('GERMANY')">GERMANY (IND4.0)</div>
-        <div class="chip" onclick="runCmd('BRAZIL')">BRAZIL (AMAZON)</div>
-        <div class="chip" onclick="runCmd('INDIA')">INDIA (STACK)</div>
-        <div class="chip" onclick="runCmd('ISRAEL')">ISRAEL (CYBER)</div>
-        <div class="chip" onclick="runCmd('NORWAY')">NORWAY (FUND)</div>
-        <div class="chip" onclick="runCmd('UK')">UK (FINANCE)</div>
-        <div class="chip" onclick="runCmd('SWISS')">SWISS (VAULT)</div>
-        <div class="chip" onclick="runCmd('EL_SALVADOR')">EL SALVADOR (BTC)</div>
-        <div class="chip" onclick="runCmd('ANTARCTICA')">ANTARCTICA</div>
-        <div class="chip" onclick="runCmd('MARS')">MARS COLONY</div>
-        <div class="chip" onclick="runCmd('MOON')">MOON (HELIUM-3)</div>
-        <div class="chip" onclick="runCmd('OCEAN')">OCEAN CLEANUP</div>
-        <div class="chip" onclick="runCmd('CLIMATE')">CLIMATE ENG</div>
-        <div class="chip" onclick="runCmd('AI_GOV')">AI GOVERNANCE</div>
-        <div class="chip" onclick="runCmd('AION')">AION (150YRS)</div>
-        <div class="chip" onclick="runCmd('WATER')">WATER CRISIS</div>
-        <div class="chip" onclick="runCmd('FOOD')">SYNTHETIC FOOD</div>
-        <div class="chip" onclick="runCmd('ENERGY')">FUSION POWER</div>
-        <div class="chip" onclick="runCmd('QUANTUM')">Q-COMPUTING</div>
-        <div class="chip" onclick="runCmd('GENETICS')">CRISPR ETHICS</div>
+    <div style="color:#444; font-size:9px; margin-bottom:5px;">SELECT VECTOR:</div>
+    <div id="chips">
+        <div class="chip" onclick="run('USA')">USA</div>
+        <div class="chip" onclick="run('CHINA')">CHINA</div>
+        <div class="chip" onclick="run('RUSSIA')">RUSSIA</div>
+        <div class="chip" onclick="run('INDIA')">INDIA</div>
+        <div class="chip" onclick="run('BRAZIL')">BRAZIL</div>
+        <div class="chip" onclick="run('SAUDI')">SAUDI</div>
+        <div class="chip" onclick="run('DUBAI')">DUBAI</div>
+        <div class="chip" onclick="run('ISRAEL')">ISRAEL</div>
+        <div class="chip" onclick="run('SINGAPORE')">SINGAPORE</div>
+        
+        <div class="chip" onclick="run('CLIMATE')">CLIMATE ENG</div>
+        <div class="chip" onclick="run('AI_GOV')">AI CONTROL</div>
+        <div class="chip" onclick="run('MARS')">MARS COLONY</div>
+        <div class="chip" onclick="run('AION')">AION (150Y)</div>
+        
+        <div class="chip" onclick="run('GERMANY')">GERMANY</div>
+        <div class="chip" onclick="run('ESTONIA')">ESTONIA</div>
     </div>
 
-    <div class="input-wrapper">
-        <span class="prompt">COMMAND:~$</span>
-        <input type="text" id="input-line" placeholder="ENTER STRATEGIC QUERY OR SELECT VECTOR..." autocomplete="off" autofocus>
+    <div id="input-area">
+        <span style="color:var(--neon-green); margin-right:10px;">CMD:~$</span>
+        <input type="text" id="cmd-input" placeholder="ENTER QUERY..." autofocus>
     </div>
 </div>
 
 <script>
-    const term = document.getElementById('terminal');
-    const input = document.getElementById('input-line');
-    const scanner = document.getElementById('scanner');
-    const cpuVal = document.getElementById('cpu-val');
-    const hashVal = document.getElementById('hash-val');
-    const vBars = document.querySelectorAll('.v-bar');
+    // --- CONFIG ---
+    const term = document.getElementById('terminal-output');
+    const input = document.getElementById('cmd-input');
+    const grid = document.getElementById('grid-mesh');
+    const alertBox = document.getElementById('big-alert');
+    const barContainer = document.getElementById('bars');
+    const cpuDisplay = document.getElementById('cpu-val');
 
-    // --- ANIMATION LOOP ---
+    // Generate Bars
+    for(let i=0; i<12; i++) {
+        let b = document.createElement('div');
+        b.className = 'bar';
+        barContainer.appendChild(b);
+    }
+    const bars = document.querySelectorAll('.bar');
+
+    // --- IDLE ANIMATION ---
+    let isProcessing = false;
     setInterval(() => {
-        cpuVal.innerText = Math.floor(Math.random() * 60 + 20) + "%";
-        hashVal.innerText = Math.random().toString(36).substring(7).toUpperCase();
-        vBars.forEach(b => {
-            b.style.height = Math.random() * 100 + "%";
-            b.style.background = Math.random() > 0.8 ? '#00ff41' : '#333';
-        });
-    }, 150);
+        if(!isProcessing) {
+            // Idle noise
+            bars.forEach(b => {
+                b.style.height = Math.random() * 30 + "%";
+                b.classList.remove('critical');
+                b.classList.add('active');
+            });
+            cpuDisplay.innerText = Math.floor(Math.random() * 20 + 5) + "%";
+            cpuDisplay.style.color = "#666";
+        } else {
+            // CHAOS MODE
+            bars.forEach(b => {
+                b.style.height = Math.random() * 100 + "%";
+                b.classList.remove('active');
+                b.classList.add('critical');
+            });
+            cpuDisplay.innerText = Math.floor(Math.random() * 30 + 70) + "%";
+            cpuDisplay.style.color = "#ff003c";
+        }
+    }, 100);
 
-    // --- MASSIVE DATABASE ---
-    const DB = {
-        'ESTONIA': [
-            { msg: "Querying: X-Road Infrastructure & e-Residency Logs...", type: 'sys' },
-            { msg: "[STRATEGIC]: The first 'Country as a Service'. Sovereignty is decoupled from physical soil via Data Embassies.", type: 'blue' },
-            { msg: "[BIO_ECONOMIST]: Warning. Digital purity ignores biological reality. Needs 'Biometric Soil' integration.", type: 'green' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>DIGITAL IMMORTALITY</strong><br>State continuity guaranteed via distributed ledger technology.</div>" }
-        ],
-        'DUBAI': [
-            { msg: "Accessing: Dubai Future Foundation & Museum of Future protocols...", type: 'sys' },
-            { msg: "[STRATEGIC]: Transitioning from Oil-State to Mind-State. 'City Brain' centralization maximizes efficiency.", type: 'blue' },
-            { msg: "[ETHICS]: Centralized AI risks creating a Panopticon. Recommend: Decentralized Privacy Layers.", type: 'red' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE INVISIBLE CITY</strong><br>AI architecture that augments human capacity rather than policing it.</div>" }
-        ],
-        'SAUDI': [
-            { msg: "Scanning: NEOM Telemetry & The Line Architecture...", type: 'sys' },
-            { msg: "[STRATEGIC]: 'The Line' is not a city; it is a cognitive machine. Linear efficiency vs organic chaos.", type: 'blue' },
-            { msg: "[BIO_ECONOMIST]: Nature does not build in straight lines. Risk of psychological sterility. Introduce fractal zones.", type: 'green' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>POST-PETROLEUM COGNITION</strong><br>Exporting solar energy converted into computational power (Data Centers).</div>" }
-        ],
-        'SINGAPORE': [
-            { msg: "Connecting: Smart Nation Sensor Grid...", type: 'sys' },
-            { msg: "[STRATEGIC]: Total awareness. Every tree and vehicle is a digital twin. The ultimate feedback loop.", type: 'blue' },
-            { msg: "[TOKENOMIST]: High efficiency, but high fragility. Risk of algorithmic rigidity.", type: 'gold' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>ALGORITHMIC GOVERNANCE</strong><br>Legislating via real-time data streams instead of static laws.</div>" }
-        ],
-        'RUSSIA': [
-            { msg: "Analyzing: Northern Sea Route & Permafrost Stability...", type: 'sys' },
-            { msg: "[STRATEGIC]: Melting ice creates the world's most valuable new trade route. Militarization inevitable.", type: 'blue' },
-            { msg: "[BIO_ECONOMIST]: Critical failure. Infrastructure built on permafrost is collapsing. Methane release loop.", type: 'green' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>CRYO-SOVEREIGNTY</strong><br>Monetizing 'Cold' as a strategic asset via Global Preservation Credits.</div>" }
-        ],
-        'CHINA': [
-            { msg: "Accessing: Social Credit System & Belt and Road Initiative...", type: 'sys' },
-            { msg: "[STRATEGIC]: Civilization-State model. Collective stability valued over individual agency.", type: 'blue' },
-            { msg: "[ETHICS]: Predictive policing algorithms risk preemptive punishment. Coherence vs Freedom.", type: 'red' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE DIGITAL LEVIATHAN</strong><br>Total societal integration via trusted data layers.</div>" }
-        ],
-        'USA': [
-            { msg: "Analyzing: Federal Reserve Latency & Debt Cycles...", type: 'sys' },
-            { msg: "[TOKENOMIST]: The Dollar is weaponized. Sanctions create incentives for alternative systems (BRICS).", type: 'gold' },
-            { msg: "[STRATEGIC]: Innovation power is high, but social coherence is critically low. High internal entropy.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>COGNITIVE FEDERALISM</strong><br>Restoring trust via mathematical verification (Blockchain) rather than institutional authority.</div>" }
-        ],
-        'JAPAN': [
-            { msg: "Scanning: Demographics & Automation Corps...", type: 'sys' },
-            { msg: "[BIO_ECONOMIST]: Population collapse is not a crisis; it is a pioneer species event. Japan is the lab.", type: 'green' },
-            { msg: "[STRATEGIC]: Society 5.0. Robots as citizens. Radical integration of synthetic labor.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>AUTOMATED HARMONY</strong><br>Symbiosis between aging biological population and youthful synthetic workforce.</div>" }
-        ],
-        'GERMANY': [
-            { msg: "Connecting: Industry 4.0 Grid...", type: 'sys' },
-            { msg: "[STRATEGIC]: Energy transition (Energiewende) failed to account for baseload physics. Industrial base at risk.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE HYDROGEN PIVOT</strong><br>Transitioning heavy industry from molecules (gas) to electrons and hydrogen.</div>" }
-        ],
-        'BRAZIL': [
-            { msg: "Satellite Scan: Amazon Carbon Sink Capacity...", type: 'sys' },
-            { msg: "[BIO_ECONOMIST]: The Amazon is not 'woods'. It is a biological planetary cooling engine. It must be priced as a utility.", type: 'green' },
-            { msg: "[TOKENOMIST]: Proposal: 'Biosphere Bonds'. World pays rent for the oxygen service.", type: 'gold' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>NATURAL CAPITAL SOVEREIGNTY</strong><br>Bio-assets valued higher than extraction assets.</div>" }
-        ],
-        'INDIA': [
-            { msg: "Analyzing: India Stack & UPI Transactions...", type: 'sys' },
-            { msg: "[STRATEGIC]: Digital Public Goods (DPG) at scale. 1.4 billion people onboarded to digital ID.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>DEMOGRAPHIC DIVIDEND</strong><br>Exporting digital architecture to the Global South.</div>" }
-        ],
-        'ISRAEL': [
-            { msg: "Accessing: Unit 8200 Cybersecurity Protocols...", type: 'sys' },
-            { msg: "[STRATEGIC]: The 'Startup Nation' is evolving into the 'Fortress Nation'. Iron Dome for Digital Threats.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>DEFENSIVE ASYMMETRY</strong><br>Intelligence superiority as the primary survival strategy.</div>" }
-        ],
-        'EL_SALVADOR': [
-            { msg: "Querying: Bitcoin Reserve & Volcano Bonds...", type: 'sys' },
-            { msg: "[TOKENOMIST]: First nation to decouple from fiat hegemony. High risk, infinite upside.", type: 'gold' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>CRYPTOGRAPHIC SOVEREIGNTY</strong><br>Money based on physics (Energy/PoW), not politics.</div>" }
-        ],
-        'ANTARCTICA': [
-            { msg: "Scanning: Ice Sheet Thickness & Treaty Status...", type: 'sys' },
-            { msg: "[STRATEGIC]: Treaty expires 2048. Resource rush preparation detected.", type: 'blue' },
-            { msg: "[BIO_ECONOMIST]: This is the planet's heat sink. Mining it is suicide.", type: 'green' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>GLOBAL COMMONS ZERO</strong><br>Absolute preservation enforced by orbital surveillance.</div>" }
-        ],
-        'MARS': [
-            { msg: "Uplink: Interplanetary Transfer Orbit...", type: 'sys' },
-            { msg: "[STRATEGIC]: Mars is not a backup; it is a governance sandbox. No legacy systems.", type: 'blue' },
-            { msg: "[TOKENOMIST]: Oxygen is currency. If you don't work, you don't breathe? New social contracts needed.", type: 'gold' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>RESOURCE BASED GOVERNANCE</strong><br>Politics replaced by Thermodynamics.</div>" }
-        ],
-        'MOON': [
-            { msg: "Scanning: Lunar South Pole (Helium-3)...", type: 'sys' },
-            { msg: "[STRATEGIC]: The ultimate high ground. Whoever controls the Moon, monitors Earth.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>CISLUNAR ECONOMY</strong><br>Off-world manufacturing and energy generation.</div>" }
-        ],
-        'CLIMATE': [
-            { msg: "Simulating: Stratospheric Aerosol Injection (SAI)...", type: 'sys' },
-            { msg: "[BIO_ECONOMIST]: Blocking the sun treats the symptom, not the disease. Risk of termination shock.", type: 'green' },
-            { msg: "[STRATEGIC]: It buys time. Deployment is likely by rogue actor or desperate nation.", type: 'blue' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE GAIA SHIELD</strong><br>Industrial-scale ecological restoration funded by carbon currency.</div>" }
-        ],
-        'AI_GOV': [
-            { msg: "Analyzing: Superintelligence Alignment...", type: 'sys' },
-            { msg: "[STRATEGIC]: A single global kill-switch is a single point of failure.", type: 'blue' },
-            { msg: "[ETHICS]: We cannot align AI if we are not aligned ourselves.", type: 'red' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>DISTRIBUTED ALIGNMENT</strong><br>Network of 'Watchdog AIs' checking each other.</div>" }
-        ],
-        'AION': [
-            { msg: "Loading: Aion Sentia Protocols (150+ Years)...", type: 'sys' },
-            { msg: "[BIO_ECONOMIST]: Health is a continuous asset, not a repair cost. Preventative maintenance.", type: 'green' },
-            { msg: "[TOKENOMIST]: 'Vitality Credits'. You earn value by maintaining biological coherence.", type: 'gold' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE 7-STAGE LIFECYCLE</strong><br>Society redesigned for multi-century active lifespans.</div>" }
-        ],
-        'OCEAN': [
-            { msg: "Scanning: Deep Sea Mining Vectors...", type: 'sys' },
-            { msg: "[BIO_ECONOMIST]: The seabed is the biological pump of the ocean. Disturbing it releases sequestered carbon.", type: 'green' },
-            { msg: "<div class='result-box'><span class='result-label'>DOCTRINE</span><strong>THE BLUE LEDGER</strong><br>Oceanic protection valued higher than mineral extraction.</div>" }
-        ]
-    };
+    // --- DUMMY DATA FOR "FLOOD" EFFECT ---
+    const dummyLogs = [
+        "Accessing Node: ", "Decrypting SHA-256 hash...", "Bypassing Firewall...",
+        "Ping: 4ms", "Packet Loss: 0%", "Routing via Satellite LINK-7...",
+        "Scraping Global Sensor Grid...", "Cross-referencing CIA Factbook...",
+        "Analyzing Sentiment...", "Tokenizing Assets...", "Verifying Blockchain...",
+        "Translating Vector...", "Optimizing Path...", "Handshake Accepted."
+    ];
 
-    // --- CORE ENGINE ---
-    function log(txt, type='sys') {
-        const div = document.createElement('div');
-        div.className = `log-row ${type}-msg`;
-        div.innerHTML = txt;
+    // --- LOGIC ENGINE ---
+    function print(txt, type="") {
+        let div = document.createElement('div');
+        div.className = "log " + type;
+        div.innerText = txt;
         term.appendChild(div);
-        requestAnimationFrame(() => div.classList.add('visible'));
         term.scrollTop = term.scrollHeight;
+        // Keep DOM light
+        if(term.childElementCount > 50) term.firstChild.remove();
     }
 
-    async function runDeepSequence(key) {
-        scanner.classList.add('scanning'); 
-        input.disabled = true;
-        input.value = key;
-
-        // "Waiting" sequence
-        log("Initializing Secure Handshake...", 'sys');
-        await new Promise(r => setTimeout(r, 600));
-        log(`Target Acquired: [${key}]`, 'sys');
-        await new Promise(r => setTimeout(r, 800));
-        log("Decrypting Strategic Archives...", 'sys');
-        await new Promise(r => setTimeout(r, 1000));
-
-        scanner.classList.remove('scanning');
-
-        if (DB[key]) {
-            for (let entry of DB[key]) {
-                await new Promise(r => setTimeout(r, 900));
-                log(entry.msg, entry.type);
-            }
-        } else {
-            // Fallback for generic query
-            log(`ANALYZING '${key}' AGAINST GLOBAL DATASETS...`, 'sys');
-            await new Promise(r => setTimeout(r, 1500));
-            log("[STRATEGIC]: Insufficient local data. Dispatching autonomous agents.", 'red');
-            log("<div class='result-box'><span class='result-label'>STATUS</span><strong>QUEUED FOR DEEP ANALYSIS</strong><br>Priority assigned. Estimating 24h for synthesis.</div>");
+    async function floodTerminal() {
+        // THIS IS THE "NIGHTCLUB" EFFECT
+        isProcessing = true;
+        grid.classList.add('fast'); // Speed up grid
+        alertBox.style.opacity = 1;
+        
+        // Fast scroll loop
+        for(let i=0; i<40; i++) {
+            let rndLog = dummyLogs[Math.floor(Math.random() * dummyLogs.length)];
+            let rndHex = "0x" + Math.random().toString(16).substr(2, 8).toUpperCase();
+            print(`[${rndHex}] ${rndLog}`, "dim");
+            await new Promise(r => setTimeout(r, 15)); // 15ms = SUPER FAST
         }
+    }
+
+    async function stopFlood() {
+        isProcessing = false;
+        grid.classList.remove('fast');
+        alertBox.style.opacity = 0;
+    }
+
+    // --- DATA ---
+    const DB = {
+        'USA': { t:'blue', m:"[STRATEGIC]: Innovation high, Social Coherence critical. Debt Cycle accelerating.", d:"COGNITIVE FEDERALISM" },
+        'RUSSIA': { t:'red', m:"[STRATEGIC]: Northern Sea Route militarization. Permafrost collapse imminent.", d:"CRYO-SOVEREIGNTY" },
+        'CHINA': { t:'red', m:"[STRATEGIC]: Total Integration. Social Credit optimization at max.", d:"DIGITAL LEVIATHAN" },
+        'DUBAI': { t:'blue', m:"[STRATEGIC]: Transitioning to Mind-State. Centralized AI Core active.", d:"THE INVISIBLE CITY" },
+        'SAUDI': { t:'blue', m:"[STRATEGIC]: NEOM Linear Efficiency. Post-Oil Computation export.", d:"POST-PETROLEUM COGNITION" },
+        'ESTONIA': { t:'blue', m:"[STRATEGIC]: State as a Service. Digital redundancy high.", d:"DIGITAL IMMORTALITY" },
+        'MARS': { t:'gold', m:"[STRATEGIC]: Sandbox Governance. Oxygen as Currency.", d:"RESOURCE BASED GOVERNANCE" },
+        'AION': { t:'gold', m:"[BIO]: 150yr Lifespan Target. Health as Asset Class.", d:"THE 7-STAGE LIFECYCLE" },
+        'CLIMATE': { t:'green', m:"[BIO]: Geo-engineering risks high. Carbon Currency required.", d:"THE GAIA SHIELD" },
+        'AI_GOV': { t:'red', m:"[ETHICS]: Alignment Drift detected. Decentralized Watchdogs needed.", d:"DISTRIBUTED ALIGNMENT" }
+    };
+
+    async function run(cmd) {
+        input.value = cmd;
+        input.disabled = true;
+        
+        print(`> INITIALIZING SEQUENCE: ${cmd}`, "highlight");
+        
+        // 1. THE CHAOS
+        await floodTerminal();
+        
+        // 2. THE STOP
+        await stopFlood();
+        
+        // 3. THE RESULT
+        print("TARGET ACQUIRED.", "success");
+        await new Promise(r => setTimeout(r, 200));
+
+        let data = DB[cmd] || { t:'blue', m:"[ANALYSIS]: Analyzing Global Datasets for patterns...", d:"DEEP SEARCH QUEUED" };
+        
+        print("DECRYPTING STRATEGIC ARCHIVE...", "info");
+        await new Promise(r => setTimeout(r, 400));
+        
+        print(data.m, data.t === 'red' ? 'error' : (data.t === 'gold' ? 'info' : 'info'));
+        
+        // HTML Result Card
+        let card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `<strong style="color:#fff; letter-spacing:1px;">${data.d}</strong><br><span style="font-size:9px; color:#666;">PROBABILITY: 98.4% | CONFIDENCE: HIGH</span>`;
+        term.appendChild(card);
+        term.scrollTop = term.scrollHeight;
 
         input.disabled = false;
         input.value = '';
         input.focus();
     }
 
-    function runCmd(cmd) { runDeepSequence(cmd); }
-
+    // Input Handler
     input.addEventListener('keypress', (e) => {
         if(e.key === 'Enter') {
-            const val = input.value.toUpperCase().trim();
-            // Try to find partial match
-            let found = false;
-            for(let k in DB) {
-                if (val.includes(k) || k.includes(val)) {
-                    runDeepSequence(k);
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) runDeepSequence(val);
+            let val = input.value.toUpperCase().trim();
+            // Simple mapping or direct run
+            let key = Object.keys(DB).find(k => val.includes(k)) || val;
+            run(key);
         }
     });
+
 </script>
 </body>
 </html>
