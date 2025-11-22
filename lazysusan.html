@@ -231,7 +231,7 @@
     .chip:hover {
       border-color: var(--term-gold);
       color: #fff;
-      box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+      box-shadow: 0 0 6px rgba(212,175,55,0.4);
     }
 
     /* PROMPT HELP */
@@ -380,11 +380,9 @@
 
 <script>
   /* ==========================================
-     CONFIG — API KEY & MODELS
+     CONFIG — SYSTEM PROMPT (PX-Δ1 DOCTRINE)
      ========================================== */
-  const API_KEY = "AIzaSyAXELeZWjjAkZS4bDzPrNFEfz9t0CpKGB8";
-  const PRIMARY_MODEL  = "gemini-2.5-pro";
-  const FALLBACK_MODEL = "gemini-2.5-flash";
+  const COSMOTRON_ENDPOINT = "https://cosmotron-proxy.stevenalber.workers.dev";
 
   const SYSTEM_PROMPT = `
   You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
@@ -412,8 +410,6 @@
   const mainCol      = document.getElementById('col-main');
   const input        = document.getElementById('user-input');
   const netVal       = document.getElementById('net-val');
-
-  let meterInterval  = null;
 
   function matrixRain() {
     let text = "";
@@ -487,6 +483,8 @@
   /* ==========================================
      RHEOSTAT ANIMATION
      ========================================== */
+  let meterInterval  = null;
+
   function startMeterAnimation() {
     if (meterInterval) return;
     meterInterval = setInterval(() => {
@@ -504,15 +502,12 @@
   }
 
   /* ==========================================
-     GEMINI HELPERS
+     GEMINI PROXY HELPER (Cloudflare Worker)
      ========================================== */
-  async function generateFromModel(modelName, query) {
-    const endpoint =
-      `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${API_KEY}`;
-
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  async function generateFromModel(query) {
+    const res = await fetch(COSMOTRON_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{
           parts: [{ text: SYSTEM_PROMPT + "\n\nQUERY: " + query }]
@@ -521,10 +516,12 @@
     });
 
     if (!res.ok) {
-      return { ok: false, status: res.status, body: await res.text() };
+      const body = await res.text();
+      return { ok: false, status: res.status, body };
     }
 
     const data = await res.json();
+
     if (!data.candidates ||
         !data.candidates.length ||
         !data.candidates[0].content ||
@@ -552,14 +549,7 @@
     loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
 
     try {
-      let result = await generateFromModel(PRIMARY_MODEL, query);
-
-      if (!result.ok && (result.status === 404 || result.status === 400 || result.status === 403)) {
-        console.warn("Primary model failed, falling back to FLASH:", result.status);
-        loadingLine.innerText = "PRIMARY CORE OFFLINE — ROUTING TO AUXILIARY NODE...";
-        loadingLine.style.color = "#ffcc00";
-        result = await generateFromModel(FALLBACK_MODEL, query);
-      }
+      let result = await generateFromModel(query);
 
       if (!result.ok) {
         console.error("AI error", result.status, result.body);
