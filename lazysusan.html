@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PX-Δ1 // LIVE INTELLIGENCE — PRO</title>
+  <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
   <style>
     /* --- KRYONIS PX-Δ1 PRO / BLACK–GOLD–NEON THEME --- */
     :root {
@@ -206,14 +206,14 @@
       padding-bottom: max(10px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     #chip-rack {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 5px;
+      padding-bottom: 4px;
     }
     #chip-rack::-webkit-scrollbar { height: 3px; }
     #chip-rack::-webkit-scrollbar-thumb { background: #444; }
@@ -232,6 +232,19 @@
       border-color: var(--term-gold);
       color: #fff;
       box-shadow: 0 0 6px rgba(212,175,55,0.4);
+    }
+
+    /* PROMPT HELP */
+    #prompt-help {
+      font-size: 9px;
+      color: #848484;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      border-left: 2px solid #333;
+      padding-left: 8px;
+    }
+    #prompt-help span {
+      color: var(--term-gold);
     }
 
     .input-row {
@@ -276,7 +289,7 @@
 
 <div id="top-bar">
   <span>PX-Δ1 // LIVE_UPLINK</span>
-  <span>GEMINI-2.5-PRO <span style="color:var(--term-alert)">●</span></span>
+  <span>COSMOTRON-Δ1 <span style="color:var(--term-alert)">●</span></span>
 </div>
 
 <div id="signal-stack">
@@ -349,10 +362,19 @@
     <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
     <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
   </div>
+
+  <div id="prompt-help">
+    <span>FORMAT:</span> TARGET + CONTEXT + YEAR (OPTIONAL) ·
+    <span>EXAMPLES:</span>
+    "SIBERIA BIOECONOMY SIGNAL REPORT" ·
+    "AION SENTIA COGNITIVE CITY ANALYSIS" ·
+    "ARCTIC BIOSECURITY MODEL 2035"
+  </div>
+
   <div class="input-row">
     <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
     <input type="text" id="user-input"
-           placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY')..." autofocus>
+           placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
   </div>
 </div>
 
@@ -518,7 +540,7 @@
   /* ==========================================
      MAIN AI LOGIC
      ========================================== */
-  async function callGemini(query) {
+  async function callCosmotron(query) {
     input.disabled = true;
     addLog(`> UPLINK REQUEST: ${query}`, 'user');
     const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
@@ -534,7 +556,7 @@
 
       if (!result.ok && (result.status === 404 || result.status === 400 || result.status === 403)) {
         console.warn("Primary model failed, falling back to FLASH:", result.status);
-        loadingLine.innerText = "PRIMARY CORE OFFLINE — ROUTING TO FLASH NODE...";
+        loadingLine.innerText = "PRIMARY CORE OFFLINE — ROUTING TO AUXILIARY NODE...";
         loadingLine.style.color = "#ffcc00";
         result = await generateFromModel(FALLBACK_MODEL, query);
       }
@@ -563,7 +585,7 @@
       }
     } catch (err) {
       console.error(err);
-      loadingLine.innerText = "CRITICAL ERROR: API UNREACHABLE.";
+      loadingLine.innerText = "CRITICAL ERROR: CORE LINK UNREACHABLE.";
       loadingLine.style.color = "red";
     }
 
@@ -575,13 +597,13 @@
 
   function askAI(q) {
     const val = (q || "").trim();
-    if (val) callGemini(val.toUpperCase());
+    if (val) callCosmotron(val.toUpperCase());
   }
 
   input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       const val = input.value.trim();
-      if (val) callGemini(val.toUpperCase());
+      if (val) callCosmotron(val.toUpperCase());
     }
   });
 </script>
