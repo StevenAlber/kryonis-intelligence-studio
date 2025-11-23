@@ -274,8 +274,8 @@
 
     /* LICENSE BAR */
     #license-bar {
-      margin-top: 6px;
-      padding-top: 6px;
+      margin-top: 10px;
+      padding-top: 8px;
       border-top: 1px solid #222;
       display: flex;
       flex-direction: column;
@@ -284,10 +284,10 @@
     }
 
     #license-btn {
-      background: #111;
-      border: 1px solid var(--term-gold);
+      background: #080808;
+      border: 1px solid #333;
       color: var(--term-gold);
-      padding: 8px 16px;
+      padding: 8px 18px;
       font-size: 10px;
       cursor: pointer;
       border-radius: 4px;
@@ -296,8 +296,8 @@
     }
 
     #license-btn:hover {
-      background: #222;
-      box-shadow: 0 0 8px rgba(212,175,55,0.5);
+      border-color: var(--term-gold);
+      box-shadow: 0 0 6px rgba(212,175,55,0.3);
     }
 
     .license-note {
@@ -305,6 +305,7 @@
       color: #c8a96c;
       text-transform: uppercase;
       letter-spacing: 0.6px;
+      margin-top: 2px;
     }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -524,14 +525,26 @@ Always deliver all 5 parts in order.
       body: JSON.stringify(payload)
     });
 
+    // Kui server vastab veakoodiga, aga annab teksti, näitame seda raportina
+    const rawText = await res.text();
+
     if (!res.ok) {
-      const body = await res.text();
-      return { ok: false, status: res.status, body };
+      return (
+        "[PX-Δ1 // LINK LAYER NOTICE]<br>" +
+        "Upstream responded with status " + res.status + ".<br><br>" +
+        "<b>RAW PAYLOAD:</b><br>" +
+        rawText.replace(/\n/g, "<br>")
+      );
     }
 
-    const data = await res.json();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      // Kui pole JSON, näitame toorteksti
+      return rawText.replace(/\n/g, "<br>");
+    }
 
-    // Make parsing robust – avoid 204 EMPTY error
     let text = "";
 
     try {
@@ -549,14 +562,18 @@ Always deliver all 5 parts in order.
         text = data.output_text.trim();
       }
     } catch (e) {
-      // ignore, handled below
+      // ignore, fallback all
     }
 
     if (!text) {
-      return { ok: false, status: 204, body: JSON.stringify(data) };
+      return (
+        "[PX-Δ1 // WARNING]<br>" +
+        "Model returned no direct text content. Raw response:<br><br>" +
+        JSON.stringify(data).replace(/\n/g, "<br>")
+      );
     }
 
-    return { ok: true, text };
+    return text;
   }
 
   async function callCosmotron(query) {
@@ -571,28 +588,23 @@ Always deliver all 5 parts in order.
     loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
 
     try {
-      const result = await generateFromModel(query);
+      const aiRaw = await generateFromModel(query);
 
-      if (!result.ok) {
-        console.error("AI error", result.status, result.body);
-        loadingLine.innerText = `ERROR: ${result.status} – LINK FAILURE.`;
-        loadingLine.style.color = "red";
-      } else {
-        let aiText = result.text;
-        aiText = aiText
-          .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-          .replace(/\*(.+?)\*/g, "<b>$1</b>")
-          .replace(/\*/g, "");
+      loadingLine.style.display = 'none';
+      updateSignalStack(aiRaw);
 
-        loadingLine.style.display = 'none';
-        updateSignalStack(aiText);
+      let aiText = aiRaw;
+      aiText = aiText
+        .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+        .replace(/\*(.+?)\*/g, "<b>$1</b>")
+        .replace(/\*/g, "");
 
-        const reportDiv = document.createElement('div');
-        reportDiv.className = 'report-box';
-        reportDiv.innerHTML = aiText;
-        mainCol.appendChild(reportDiv);
-        mainCol.scrollTop = mainCol.scrollHeight;
-      }
+      const reportDiv = document.createElement('div');
+      reportDiv.className = 'report-box';
+      reportDiv.innerHTML = aiText;
+      mainCol.appendChild(reportDiv);
+      mainCol.scrollTop = mainCol.scrollHeight;
+
     } catch (err) {
       console.error(err);
       loadingLine.innerText = "CRITICAL ERROR: CORE LINK UNREACHABLE.";
@@ -616,6 +628,9 @@ Always deliver all 5 parts in order.
       if (val) callCosmotron(val.toUpperCase());
     }
   });
+
+  // matrix init
+  matrixRain();
 </script>
 </body>
 </html>
