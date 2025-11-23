@@ -45,13 +45,8 @@
       letter-spacing: 1px;
       color: var(--term-gold);
     }
-    #top-bar span:first-child {
-      text-transform: uppercase;
-    }
-    #top-bar span:last-child {
-      font-size: 9px;
-      color: var(--term-gold);
-    }
+    #top-bar span:first-child { text-transform: uppercase; }
+    #top-bar span:last-child  { font-size: 9px; color: var(--term-gold); }
 
     /* SIGNAL STACK */
     #signal-stack {
@@ -265,12 +260,19 @@
       padding: 13px;
       margin: 8px 0 4px;
       position: relative;
-      line-height: 1.35;
+      line-height: 1.33;
       color: #d7ffd7;
       box-shadow: 0 0 12px rgba(0,255,51,0.18);
       animation: fadeIn 0.5s;
     }
     .report-box b { color: #ffffff; }
+
+    .sector-sep {
+      height: 1px;
+      background: #16351a;
+      margin: 6px 0 4px;
+      opacity: 0.9;
+    }
 
     .narrative-box {
       border: 1px solid #132b16;
@@ -306,7 +308,6 @@
       text-transform: uppercase;
       letter-spacing: 1px;
     }
-
     #license-btn:hover {
       border-color: var(--term-gold);
       box-shadow: 0 0 6px rgba(212,175,55,0.3);
@@ -583,9 +584,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       if (!text && typeof data.output_text === "string") {
         text = data.output_text.trim();
       }
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
 
     if (!text) {
       return (
@@ -601,18 +600,28 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
   function formatText(str) {
     let t = str;
 
-    // Eemalda võimalikud numbrilised prefiksid 1. 2. 3. jne
+    // eemaldame võimalikud 1. HEADER jne
     t = t.replace(/^\s*\d+\.\s*(HEADER:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(RISK LEVEL:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(SECTOR ANALYSIS:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(STRATEGIC DOCTRINE:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(NARRATIVE SYNTHESIS:)/gim, "$1");
 
-    // Teeme olulisemad labelid automaatselt boldiks
+    // sektorijooned + bold label
+    t = t.replace(/- *GOVERNANCE:/i, "- GOVERNANCE:");
+    t = t.replace(/- *LOGISTICS *\/ *ECONOMY:/i, "- LOGISTICS / ECONOMY:");
+    t = t.replace(/- *COGNITIVE:/i, "- COGNITIVE:");
+
     t = t.replace(/\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
       "<b>$1</b>");
 
-    // Markdown tärnid → <b>
+    // lisame separatorid enne LOGISTICS ja COGNITIVE
+    t = t.replace(/- <b>LOGISTICS \/ ECONOMY:<\/b>/i,
+      "<div class='sector-sep'></div>- <b>LOGISTICS / ECONOMY:</b>");
+    t = t.replace(/- <b>COGNITIVE:<\/b>/i,
+      "<div class='sector-sep'></div>- <b>COGNITIVE:</b>");
+
+    // markdown tärnid → <b>
     t = t
       .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
       .replace(/\*(.+?)\*/g, "<b>$1</b>")
@@ -638,7 +647,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       loadingLine.style.display = 'none';
       updateSignalStack(aiRaw);
 
-      // Narrative eraldus
       let mainRaw = aiRaw;
       let narrativeRaw = "";
 
@@ -650,8 +658,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
         const lines = after.split(/\n/);
-        // Esimene rida on "NARRATIVE SYNTHESIS:", selle me jätame vahele
-        lines.shift();
+        lines.shift(); // drop "NARRATIVE SYNTHESIS" line
         mainRaw = before.trim();
         narrativeRaw = lines.join("\n").trim();
       }
@@ -694,10 +701,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
     }
   });
 
-  // init
-  (function init() {
-    matrixRain();
-  })();
+  (function init() { matrixRain(); })();
 </script>
 </body>
 </html>
