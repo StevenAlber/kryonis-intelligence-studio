@@ -267,11 +267,16 @@
     }
     .report-box b { color: #ffffff; }
 
+    /* gradient sector separator (Variant C) */
     .sector-sep {
       height: 1px;
-      background: #16351a;
       margin: 6px 0 4px;
-      opacity: 0.9;
+      background: linear-gradient(
+        to right,
+        rgba(0, 255, 120, 0.0),
+        rgba(0, 255, 120, 0.45),
+        rgba(0, 255, 120, 0.0)
+      );
     }
 
     .narrative-box {
@@ -542,9 +547,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
   }
 
   async function generateFromModel(query) {
-    const payload = {
-      prompt: SYSTEM_PROMPT + "\n\nQUERY: " + query
-    };
+    const payload = { prompt: SYSTEM_PROMPT + "\n\nQUERY: " + query };
 
     const res = await fetch(COSMOTRON_PROXY_URL, {
       method: "POST",
@@ -598,36 +601,76 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
   }
 
   function formatText(str) {
-    let t = str;
+    let t = str || "";
 
-    // eemaldame võimalikud 1. HEADER jne
+    // eemaldame 1. HEADER tüüpi prefiksid
     t = t.replace(/^\s*\d+\.\s*(HEADER:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(RISK LEVEL:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(SECTOR ANALYSIS:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(STRATEGIC DOCTRINE:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(NARRATIVE SYNTHESIS:)/gim, "$1");
 
-    // sektorijooned + bold label
-    t = t.replace(/- *GOVERNANCE:/i, "- GOVERNANCE:");
-    t = t.replace(/- *LOGISTICS *\/ *ECONOMY:/i, "- LOGISTICS / ECONOMY:");
-    t = t.replace(/- *COGNITIVE:/i, "- COGNITIVE:");
+    const lines = t.split(/\n/);
+    const out = [];
+    let sawFirstSector = false;
 
-    t = t.replace(/\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
-      "<b>$1</b>");
+    const govRe = /^[-–—\s]*governance\b\s*:?\s*/i;
+    const logRe = /^[-–—\s]*logistics\s*\/?\s*economy\b\s*:?\s*/i;
+    const cogRe = /^[-–—\s]*cognitive\b\s*:?\s*/i;
 
-    // lisame separatorid enne LOGISTICS ja COGNITIVE
-    t = t.replace(/- <b>LOGISTICS \/ ECONOMY:<\/b>/i,
-      "<div class='sector-sep'></div>- <b>LOGISTICS / ECONOMY:</b>");
-    t = t.replace(/- <b>COGNITIVE:<\/b>/i,
-      "<div class='sector-sep'></div>- <b>COGNITIVE:</b>");
+    for (let rawLine of lines) {
+      let line = rawLine;
+      const trimmed = rawLine.trimStart();
+      const lower = trimmed.toLowerCase();
 
-    // markdown tärnid → <b>
-    t = t
+      // normalize main labels
+      if (lower.startsWith("header:")) {
+        line = "HEADER:" + trimmed.slice("header:".length);
+      } else if (lower.startsWith("risk level:")) {
+        line = "RISK LEVEL:" + trimmed.slice("risk level:".length);
+      } else if (lower.startsWith("sector analysis:")) {
+        line = "SECTOR ANALYSIS:" + trimmed.slice("sector analysis:".length);
+      } else if (lower.startsWith("strategic doctrine:")) {
+        line = "STRATEGIC DOCTRINE:" + trimmed.slice("strategic doctrine:".length);
+      } else if (lower.startsWith("narrative synthesis:")) {
+        line = "NARRATIVE SYNTHESIS:" + trimmed.slice("narrative synthesis:".length);
+      }
+
+      // sector lines
+      if (govRe.test(trimmed)) {
+        const rest = trimmed.replace(govRe, "");
+        line = "- GOVERNANCE:" + (rest ? " " + rest : "");
+        sawFirstSector = true;
+      } else if (logRe.test(trimmed)) {
+        const rest = trimmed.replace(logRe, "");
+        if (sawFirstSector) out.push("<div class='sector-sep'></div>");
+        else sawFirstSector = true;
+        line = "- LOGISTICS / ECONOMY:" + (rest ? " " + rest : "");
+      } else if (cogRe.test(trimmed)) {
+        const rest = trimmed.replace(cogRe, "");
+        if (sawFirstSector) out.push("<div class='sector-sep'></div>");
+        else sawFirstSector = true;
+        line = "- COGNITIVE:" + (rest ? " " + rest : "");
+      }
+
+      out.push(line);
+    }
+
+    let joined = out.join("\n");
+
+    // bold labelid
+    joined = joined.replace(
+      /\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
+      "<b>$1</b>"
+    );
+
+    // markdown → <b>
+    joined = joined
       .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
       .replace(/\*(.+?)\*/g, "<b>$1</b>")
       .replace(/\*/g, "");
 
-    return t.replace(/\n/g, "<br>");
+    return joined.replace(/\n/g, "<br>");
   }
 
   async function callCosmotron(query) {
@@ -658,7 +701,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
         const lines = after.split(/\n/);
-        lines.shift(); // drop "NARRATIVE SYNTHESIS" line
+        lines.shift(); // drop "NARRATIVE SYNTHESIS..." first line
         mainRaw = before.trim();
         narrativeRaw = lines.join("\n").trim();
       }
