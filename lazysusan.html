@@ -12,6 +12,7 @@
       --term-alert: #ff3300;
       --term-amber: #ffcc00;
       --term-gold: #d4af37;
+      --term-cyan: #00f0ff;
       --term-bg: #050505;
       --panel-bg: #060606;
       --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
@@ -254,34 +255,80 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* ROHELINE RAPORTI KAST — ühine stiil mõlemale */
+    /* ========================================= */
+    /* UUS RAPORTI DISAIN - PROFF VÄLIMUS */
+    /* ========================================= */
+    
     .report-box {
       border: 1px solid #1c3f1e;
-      background: rgba(0, 18, 0, 0.9);
-      padding: 13px;
-      margin: 8px 0 4px;
+      background: rgba(0, 20, 0, 0.95); /* Tumedam taust kontrastiks */
+      padding: 16px;
+      margin: 10px 0 6px;
       position: relative;
-      line-height: 1.33;
-      color: #d7ffd7;
-      box-shadow: 0 0 12px rgba(0,255,51,0.18);
+      line-height: 1.45;
+      color: #d7ffd7; /* Põhitekst hele-roheline */
+      box-shadow: 0 0 12px rgba(0,255,51,0.1);
       animation: fadeIn 0.5s;
+      font-size: 12px;
     }
 
-    /* NARRATIIVIKAST = sama kast + veidi suurem vahe */
     .narrative-box {
-      margin-top: 12px;
+      margin-top: 16px;
+      background: rgba(10, 10, 10, 0.95); /* Narratiiv veidi neutraalsem tume */
+      border: 1px solid #444;
     }
 
-    /* sektorite separator */
+    /* PEALKIRJADE KLASSID (JS paneb need külge) */
+    
+    /* Pealkiri alumisel (Narratiivi) kastil - VALGE */
+    .lbl-white {
+      color: #ffffff !important;
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #555;
+      padding-bottom: 4px;
+    }
+
+    /* Pealkirjad ülemisel kastil (HEADER, RISK, SECTOR) - KULDNE */
+    .lbl-gold {
+      color: var(--term-gold) !important;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 12px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Alalõikude pealkirjad (Governance, Logistics...) - CYAN/ROHELINE HIGHLIGHT */
+    .lbl-sub {
+      color: #050505;
+      background-color: var(--term-green);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-right: 6px;
+      display: inline-block;
+      margin-top: 6px;
+      margin-bottom: 2px;
+    }
+
+    /* Tavaline bold tekst raportis */
+    .report-box b {
+      color: #fff;
+      font-weight: bold;
+    }
+
     .sector-sep {
       height: 1px;
-      margin: 6px 0 4px;
-      background: linear-gradient(
-        to right,
-        rgba(0, 255, 120, 0.0),
-        rgba(0, 255, 120, 0.45),
-        rgba(0, 255, 120, 0.0)
-      );
+      margin: 10px 0;
+      background: linear-gradient(90deg, transparent, #1c3f1e, transparent);
     }
 
     /* LICENSE BAR */
@@ -593,77 +640,59 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
     return text;
   }
 
-  function formatText(str) {
+  // --- UUS PROFF FORMATTEERIMINE ---
+  function formatText(str, isNarrative = false) {
     let t = str || "";
-
-    // eemaldame 1. HEADER jne
-    t = t.replace(/^\s*\d+\.\s*(HEADER:)/gim, "$1");
-    t = t.replace(/^\s*\d+\.\s*(RISK LEVEL:)/gim, "$1");
-    t = t.replace(/^\s*\d+\.\s*(SECTOR ANALYSIS:)/gim, "$1");
-    t = t.replace(/^\s*\d+\.\s*(STRATEGIC DOCTRINE:)/gim, "$1");
-    t = t.replace(/^\s*\d+\.\s*(NARRATIVE SYNTHESIS:)/gim, "$1");
+    
+    // Eemalda numbriprefiksid (1. HEADER jne)
+    t = t.replace(/^\s*\d+\.\s*/gm, "");
 
     const lines = t.split(/\n/);
     const out = [];
-    let sawFirstSector = false;
 
-    const govRe = /^[-–—\s]*governance\b\s*:?\s*/i;
-    const logRe = /^[-–—\s]*logistics\s*\/?\s*economy\b\s*:?\s*/i;
-    const cogRe = /^[-–—\s]*cognitive\b\s*:?\s*/i;
+    // Regexid eri taseme pealkirjade jaoks
+    const mainHeaderRe = /^(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:)(.*)/i;
+    const subHeaderRe = /^\s*-\s*(GOVERNANCE|LOGISTICS|ECONOMY|COGNITIVE|LOGISTICS \/ ECONOMY)(.*)/i;
+    // Lihtne "sõna:" regex (juhuks kui formaat kõigub)
+    const genericLabelRe = /^([A-Z\s\/]+:)(.*)/;
 
     for (let rawLine of lines) {
-      let line = rawLine;
-      const trimmed = rawLine.trimStart();
-      const lower = trimmed.toLowerCase();
+      let line = rawLine.trim();
+      if(!line) continue;
 
-      // normalize header-level labels
-      if (lower.startsWith("header:")) {
-        line = "HEADER:" + trimmed.slice("header:".length);
-      } else if (lower.startsWith("risk level:")) {
-        line = "RISK LEVEL:" + trimmed.slice("risk level:".length);
-      } else if (lower.startsWith("sector analysis:")) {
-        line = "SECTOR ANALYSIS:" + trimmed.slice("sector analysis:".length);
-      } else if (lower.startsWith("strategic doctrine:")) {
-        line = "STRATEGIC DOCTRINE:" + trimmed.slice("strategic doctrine:".length);
-      } else if (lower.startsWith("narrative synthesis:")) {
-        line = "NARRATIVE SYNTHESIS:" + trimmed.slice("narrative synthesis:".length);
+      // 1. KAS SEE ON ALAM-PEALKIRI? (Governance jne)
+      // Tulemus: Roheline/must kastike (pill)
+      let match = line.match(subHeaderRe);
+      if (match) {
+        // match[1] on nt "GOVERNANCE", match[2] on ülejäänud tekst
+        // Lisame väikse vahejoone
+        out.push("<div style='margin-top:8px;'></div>"); 
+        out.push(`<span class="lbl-sub">${match[1]}</span> <span style="color:#fff">${match[2]}</span>`);
+        continue;
       }
 
-      // sector normaliseerimine
-      if (govRe.test(trimmed)) {
-        const rest = trimmed.replace(govRe, "");
-        line = "- GOVERNANCE:" + (rest ? " " + rest : "");
-        sawFirstSector = true;
-      } else if (logRe.test(trimmed)) {
-        const rest = trimmed.replace(logRe, "");
-        if (sawFirstSector) out.push("<div class='sector-sep'></div>");
-        else sawFirstSector = true;
-        line = "- LOGISTICS / ECONOMY:" + (rest ? " " + rest : "");
-      } else if (cogRe.test(trimmed)) {
-        const rest = trimmed.replace(cogRe, "");
-        if (sawFirstSector) out.push("<div class='sector-sep'></div>");
-        else sawFirstSector = true;
-        line = "- COGNITIVE:" + (rest ? " " + rest : "");
+      // 2. KAS SEE ON PÕHI-PEALKIRI? (RISK LEVEL jne)
+      // Tulemus: Kuldne tekst, suurem
+      match = line.match(mainHeaderRe);
+      if (match) {
+        out.push(`<span class="lbl-gold">${match[1]}</span>${match[2]}`);
+        continue;
+      }
+      
+      // 3. Spetsiaalne fix NARRATIVE SYNTHESIS jaoks, kui see satub siia
+      if (line.toUpperCase().includes("NARRATIVE SYNTHESIS:")) {
+         // Seda me siin ei kuva, sest see läheb eraldi kasti, 
+         // aga kui mudel paneb selle teksti sisse, teeme valgeks.
+         continue; 
       }
 
-      out.push(line);
+      // Tavaline tekstirida
+      // Boldime Markdowni **text** -> <b>text</b>
+      line = line.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+      out.push(`<div>${line}</div>`);
     }
 
-    let joined = out.join("\n");
-
-    // top-level labelid → <b> (värv jääb samaks)
-    joined = joined.replace(
-      /\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
-      "<b>$1</b>"
-    );
-
-    // markdown → <b>
-    joined = joined
-      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-      .replace(/\*(.+?)\*/g, "<b>$1</b>")
-      .replace(/\*/g, "");
-
-    return joined.replace(/\n/g, "<br>");
+    return out.join("");
   }
 
   async function callCosmotron(query) {
@@ -674,70 +703,3 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
     await new Promise(r => setTimeout(r, 700));
     loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
-    await new Promise(r => setTimeout(r, 700));
-    loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
-
-    try {
-      const aiRaw = await generateFromModel(query);
-
-      loadingLine.style.display = 'none';
-      updateSignalStack(aiRaw);
-
-      let mainRaw = aiRaw;
-      let narrativeRaw = "";
-
-      const upper = aiRaw.toUpperCase();
-      const marker = "NARRATIVE SYNTHESIS";
-      const idx = upper.indexOf(marker);
-
-      if (idx !== -1) {
-        const before = aiRaw.slice(0, idx);
-        const after = aiRaw.slice(idx);
-        const lines = after.split(/\n/);
-        lines.shift(); // drop "NARRATIVE SYNTHESIS..." first line
-        mainRaw = before.trim();
-        narrativeRaw = lines.join("\n").trim();
-      }
-
-      const reportDiv = document.createElement('div');
-      reportDiv.className = 'report-box';
-      reportDiv.innerHTML = formatText(mainRaw);
-      mainCol.appendChild(reportDiv);
-
-      if (narrativeRaw) {
-        const narrativeDiv = document.createElement('div');
-        narrativeDiv.className = 'report-box narrative-box';
-        narrativeDiv.innerHTML =
-          "<b>NARRATIVE SYNTHESIS:</b><br><br>" + formatText(narrativeRaw);
-        mainCol.appendChild(narrativeDiv);
-      }
-
-      mainCol.scrollTop = reportDiv.offsetTop;
-    } catch (err) {
-      console.error(err);
-      loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
-      loadingLine.style.color = "red";
-    }
-
-    stopMeterAnimation();
-    input.disabled = false;
-    input.value = '';
-    input.focus();
-  }
-
-  function askAI(q) {
-    const val = (q || "").trim();
-    if (val) callCosmotron(val.toUpperCase());
-  }
-
-  input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const val = input.value.trim();
-      if (val) callCosmotron(val.toUpperCase());
-    }
-  });
-
-  (function init() { matrixRain(); })();
-</script>
-</body>
-</html>
