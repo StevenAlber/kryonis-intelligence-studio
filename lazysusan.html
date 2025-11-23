@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
+  <meta name="viewport" 
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
   <style>
@@ -72,17 +72,19 @@
     }
     .signal-metric:last-child { border-right: none; }
 
-    /* ⬇ Uuendatud: esimesed kastid – pealkirjad valged + glow */
+    /* ⬇ PARANDATUD OSA: Nüüd on pealkirjad kirkad ja selged */
     .sig-label {
       font-size: 9px;
+      font-weight: 700; /* See teeb teksti reaalselt valgeks */
       color: #ffffff;
       letter-spacing: 1px;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       text-transform: uppercase;
-      text-shadow:
-        0 0 6px rgba(255,255,255,0.7),
-        0 0 2px rgba(255,255,255,0.9);
+      /* Teravam vari parema kontrasti jaoks */
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.45);
+      opacity: 1;
     }
+
     .sig-value {
       font-size: 12px;
       font-weight: bold;
@@ -179,7 +181,7 @@
       #signal-stack { padding: 10px 12px; gap: 14px; }
     }
 
-    /* Uuendatud: stat kastid tugevamaks */
+    /* STAT BOXES */
     .stat-box {
       border: 1px solid #333333;
       padding: 6px 8px;
@@ -270,7 +272,7 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* Raporti kastid */
+    /* Report Boxes */
     .report-box {
       border: 1px solid #1c3f1e;
       background: radial-gradient(circle at top, #041108 0%, #010603 55%, #000 100%);
@@ -283,7 +285,7 @@
       animation: fadeIn 0.5s;
     }
 
-    /* gradient sector separator (Variant C) */
+    /* gradient sector separator */
     .sector-sep {
       height: 1px;
       margin: 6px 0 4px;
@@ -442,7 +444,7 @@
 
   <div class="input-row">
     <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-    <input type="text" id="user-input"
+    <input type="text" id="user-input" 
            placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
   </div>
 
