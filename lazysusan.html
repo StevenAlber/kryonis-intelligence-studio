@@ -260,26 +260,26 @@
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
     .report-box {
-      border: 1px solid #1f5a26;
-      background: rgba(0, 24, 0, 0.8);
-      padding: 15px;
-      margin: 10px 0;
+      border: 1px solid #1c3f1e;
+      background: rgba(0, 18, 0, 0.9);
+      padding: 13px;
+      margin: 8px 0 4px;
       position: relative;
-      line-height: 1.5;
+      line-height: 1.35;
       color: #d7ffd7;
-      box-shadow: 0 0 16px rgba(0,255,51,0.2);
+      box-shadow: 0 0 12px rgba(0,255,51,0.18);
       animation: fadeIn 0.5s;
     }
     .report-box b { color: #ffffff; }
 
     .narrative-box {
-      border: 1px solid #26462a;
-      background: rgba(0, 18, 0, 0.95);
-      padding: 14px;
-      margin: 6px 0 12px;
-      line-height: 1.6;
-      color: #e2ffe6;
-      box-shadow: 0 0 14px rgba(0,255,120,0.18);
+      border: 1px solid #132b16;
+      background: rgba(0, 14, 0, 0.95);
+      padding: 12px;
+      margin: 4px 0 10px;
+      line-height: 1.38;
+      color: #e4ffe7;
+      box-shadow: 0 0 10px rgba(0,255,120,0.16);
       animation: fadeIn 0.5s;
     }
     .narrative-box b { color: #ffffff; }
@@ -427,23 +427,36 @@ You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
 Your output must be a STRATEGIC INTELLIGENCE REPORT.
 Style: Military, cryptic, high-level. No polite filler words.
 
-Format structure:
-1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
-2. RISK LEVEL: (Low / Medium / Critical)
-3. SECTOR ANALYSIS:
-   - GOVERNANCE: geopolitical / sovereign activity
-   - LOGISTICS / ECONOMY: supply chains / energy / markets
-   - COGNITIVE: information flow / sentiment / psy-ops
-4. STRATEGIC DOCTRINE:
-   One punchline sentence that states the operational doctrine.
-5. NARRATIVE SYNTHESIS:
-   A flowing, story-like, readable summary (about 300–350 words)
-   that connects all sectors into one coherent strategic picture.
-   Style: RAND + Chatham House + military analysis.
-   Do NOT write word counts, numbers in brackets, or "(X WORDS)" anywhere.
+Use EXACTLY these section labels, without any numeric prefixes:
+HEADER:
+RISK LEVEL:
+SECTOR ANALYSIS:
+GOVERNANCE:
+LOGISTICS / ECONOMY:
+COGNITIVE:
+STRATEGIC DOCTRINE:
+NARRATIVE SYNTHESIS:
 
-Use <br> for line breaks and <b> for emphasis.
-Always deliver all 5 parts in order.
+Format structure:
+
+HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
+
+RISK LEVEL: (Low / Medium / Critical)
+
+SECTOR ANALYSIS:
+- GOVERNANCE: geopolitical / sovereign activity
+- LOGISTICS / ECONOMY: supply chains / energy / markets
+- COGNITIVE: information flow / sentiment / psy-ops
+
+STRATEGIC DOCTRINE:
+One punchline sentence that states the operational doctrine.
+
+NARRATIVE SYNTHESIS:
+A flowing, story-like, readable summary (about 300–350 words)
+that connects all sectors into one coherent strategic picture.
+Style: RAND + Chatham House + military analysis.
+Do NOT write any word counts, numbers in brackets, or "(X WORDS)".
+Do NOT prefix sections with "1.", "2.", "3." etc.
 `.trim();
 
   const rawMatrixEl  = document.getElementById('raw-matrix');
@@ -571,7 +584,7 @@ Always deliver all 5 parts in order.
         text = data.output_text.trim();
       }
     } catch (e) {
-      // ignore, handled below
+      // ignore
     }
 
     if (!text) {
@@ -586,11 +599,26 @@ Always deliver all 5 parts in order.
   }
 
   function formatText(str) {
-    return str
+    let t = str;
+
+    // Eemalda võimalikud numbrilised prefiksid 1. 2. 3. jne
+    t = t.replace(/^\s*\d+\.\s*(HEADER:)/gim, "$1");
+    t = t.replace(/^\s*\d+\.\s*(RISK LEVEL:)/gim, "$1");
+    t = t.replace(/^\s*\d+\.\s*(SECTOR ANALYSIS:)/gim, "$1");
+    t = t.replace(/^\s*\d+\.\s*(STRATEGIC DOCTRINE:)/gim, "$1");
+    t = t.replace(/^\s*\d+\.\s*(NARRATIVE SYNTHESIS:)/gim, "$1");
+
+    // Teeme olulisemad labelid automaatselt boldiks
+    t = t.replace(/\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
+      "<b>$1</b>");
+
+    // Markdown tärnid → <b>
+    t = t
       .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
       .replace(/\*(.+?)\*/g, "<b>$1</b>")
-      .replace(/\*/g, "")
-      .replace(/\n/g, "<br>");
+      .replace(/\*/g, "");
+
+    return t.replace(/\n/g, "<br>");
   }
 
   async function callCosmotron(query) {
@@ -610,7 +638,7 @@ Always deliver all 5 parts in order.
       loadingLine.style.display = 'none';
       updateSignalStack(aiRaw);
 
-      // eralda NARRATIVE SYNTHESIS eraldi kasti
+      // Narrative eraldus
       let mainRaw = aiRaw;
       let narrativeRaw = "";
 
@@ -621,11 +649,11 @@ Always deliver all 5 parts in order.
       if (idx !== -1) {
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
-        const afterLines = after.split(/\n/);
-        // drop first line (see sisaldab "NARRATIVE SYNTHESIS ..." pealkirja)
-        afterLines.shift();
+        const lines = after.split(/\n/);
+        // Esimene rida on "NARRATIVE SYNTHESIS:", selle me jätame vahele
+        lines.shift();
         mainRaw = before.trim();
-        narrativeRaw = afterLines.join("\n").trim();
+        narrativeRaw = lines.join("\n").trim();
       }
 
       const reportDiv = document.createElement('div');
@@ -666,7 +694,10 @@ Always deliver all 5 parts in order.
     }
   });
 
-  matrixRain();
+  // init
+  (function init() {
+    matrixRain();
+  })();
 </script>
 </body>
 </html>
