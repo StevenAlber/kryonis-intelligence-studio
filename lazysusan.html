@@ -568,7 +568,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
     let data;
     try {
       data = JSON.parse(rawText);
-    } catch (e) {
+    } catch {
       return rawText;
     }
 
@@ -587,7 +587,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       if (!text && typeof data.output_text === "string") {
         text = data.output_text.trim();
       }
-    } catch (e) {}
+    } catch {}
 
     if (!text) {
       return (
@@ -603,7 +603,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
   function formatText(str) {
     let t = str || "";
 
-    // eemaldame 1. HEADER tüüpi prefiksid
+    // eemaldame 1. HEADER jne
     t = t.replace(/^\s*\d+\.\s*(HEADER:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(RISK LEVEL:)/gim, "$1");
     t = t.replace(/^\s*\d+\.\s*(SECTOR ANALYSIS:)/gim, "$1");
@@ -623,7 +623,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       const trimmed = rawLine.trimStart();
       const lower = trimmed.toLowerCase();
 
-      // normalize main labels
+      // normalize header-level labels
       if (lower.startsWith("header:")) {
         line = "HEADER:" + trimmed.slice("header:".length);
       } else if (lower.startsWith("risk level:")) {
@@ -636,7 +636,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         line = "NARRATIVE SYNTHESIS:" + trimmed.slice("narrative synthesis:".length);
       }
 
-      // sector lines
+      // sector normaliseerimine
       if (govRe.test(trimmed)) {
         const rest = trimmed.replace(govRe, "");
         line = "- GOVERNANCE:" + (rest ? " " + rest : "");
@@ -658,7 +658,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
     let joined = out.join("\n");
 
-    // bold labelid
+    // labelid valgeks (header + sector + narrative)
     joined = joined.replace(
       /\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
       "<b>$1</b>"
@@ -719,17 +719,18 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         mainCol.appendChild(narrativeDiv);
       }
 
-      mainCol.scrollTop = mainCol.scrollHeight;
+      // ⬅ oluline muudatus: vaade uue raporti algusesse, mitte lõppu
+      mainCol.scrollTop = reportDiv.offsetTop;
     } catch (err) {
       console.error(err);
-      loadingLine.innerText = "CRITICAL ERROR: CORE LINK UNREACHABLE.";
+      loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
       loadingLine.style.color = "red";
     }
 
-    stopMeterAnimation();
-    input.disabled = false;
-    input.value = '';
-    input.focus();
+  stopMeterAnimation();
+  input.disabled = false;
+  input.value = '';
+  input.focus();
   }
 
   function askAI(q) {
