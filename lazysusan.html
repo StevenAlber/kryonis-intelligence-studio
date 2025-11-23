@@ -48,7 +48,7 @@
     #top-bar span:first-child { text-transform: uppercase; }
     #top-bar span:last-child  { font-size: 9px; color: var(--term-gold); }
 
-    /* SIGNAL STACK (ülemine kast) */
+    /* SIGNAL STACK */
     #signal-stack {
       background: #050505;
       border-bottom: 1px solid #222;
@@ -254,7 +254,7 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* RAPORTI KAST (ülemine roheline) */
+    /* ROHELINE RAPORTI KAST — ühine stiil mõlemale */
     .report-box {
       border: 1px solid #1c3f1e;
       background: rgba(0, 18, 0, 0.9);
@@ -267,7 +267,12 @@
       animation: fadeIn 0.5s;
     }
 
-    /* sektorite vaheline gradientjoon – peen, military-stiil */
+    /* NARRATIIVIKAST = sama kast + veidi suurem vahe */
+    .narrative-box {
+      margin-top: 12px;
+    }
+
+    /* sektorite separator */
     .sector-sep {
       height: 1px;
       margin: 6px 0 4px;
@@ -278,21 +283,6 @@
         rgba(0, 255, 120, 0.0)
       );
     }
-
-    /* NARRATIIVI KAST (alumine roheline) */
-    .narrative-box {
-      border: 1px solid #132b16;
-      background: rgba(0, 14, 0, 0.95);
-      padding: 12px;
-      margin: 4px 0 10px;
-      line-height: 1.38;
-      color: #e4ffe7;
-      box-shadow: 0 0 10px rgba(0,255,120,0.16);
-      animation: fadeIn 0.5s;
-    }
-
-    /* NB: EI määra <b> värvi – pealkirjad on lihtsalt bold, sama tooniga.
-       See hoiab stiili ühtse ja sõjaväeluure moodi, mitte “neoonreklaam”. */
 
     /* LICENSE BAR */
     #license-bar {
@@ -661,7 +651,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
     let joined = out.join("\n");
 
-    // labelid → <b> (AGA värv jääb kastide üldtooniks – CSS ei muuda seda)
+    // top-level labelid → <b> (värv jääb samaks)
     joined = joined.replace(
       /\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
       "<b>$1</b>"
@@ -716,7 +706,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
       if (narrativeRaw) {
         const narrativeDiv = document.createElement('div');
-        narrativeDiv.className = 'narrative-box';
+        narrativeDiv.className = 'report-box narrative-box';
         narrativeDiv.innerHTML =
           "<b>NARRATIVE SYNTHESIS:</b><br><br>" + formatText(narrativeRaw);
         mainCol.appendChild(narrativeDiv);
