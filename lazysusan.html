@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" 
+  <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
   <style>
@@ -72,19 +72,16 @@
     }
     .signal-metric:last-child { border-right: none; }
 
-    /* ⬇ PARANDATUD OSA: Nüüd on pealkirjad kirkad ja selged */
     .sig-label {
       font-size: 9px;
-      font-weight: 700; /* See teeb teksti reaalselt valgeks */
       color: #ffffff;
       letter-spacing: 1px;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       text-transform: uppercase;
-      /* Teravam vari parema kontrasti jaoks */
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.45);
-      opacity: 1;
+      text-shadow:
+        0 0 6px rgba(255,255,255,0.7),
+        0 0 2px rgba(255,255,255,0.9);
     }
-
     .sig-value {
       font-size: 12px;
       font-weight: bold;
@@ -181,7 +178,6 @@
       #signal-stack { padding: 10px 12px; gap: 14px; }
     }
 
-    /* STAT BOXES */
     .stat-box {
       border: 1px solid #333333;
       padding: 6px 8px;
@@ -272,7 +268,6 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* Report Boxes */
     .report-box {
       border: 1px solid #1c3f1e;
       background: radial-gradient(circle at top, #041108 0%, #010603 55%, #000 100%);
@@ -285,7 +280,6 @@
       animation: fadeIn 0.5s;
     }
 
-    /* gradient sector separator */
     .sector-sep {
       height: 1px;
       margin: 6px 0 4px;
@@ -308,12 +302,16 @@
       animation: fadeIn 0.5s;
     }
 
-    /* Pealkirjad (HEADER:, RISK LEVEL: jne) valge + glow */
-    .report-box b,
+    /* UUS: ülemise ja alumise kasti pealkirjad – maksimaalne glow */
+    .report-box b, 
     .narrative-box b {
-      color: #ffffff;
-      text-shadow: 0 0 8px rgba(0,255,140,0.85);
-      letter-spacing: 0.9px;
+      color: #ffffff !important;
+      text-shadow: 
+        0 0 12px rgba(0, 255, 140, 1),
+        0 0 5px #ffffff,
+        0 0 25px rgba(0, 255, 140, 0.7);
+      font-weight: 900;
+      letter-spacing: 1.1px;
       display: inline-block;
       margin-bottom: 2px;
     }
@@ -444,7 +442,7 @@
 
   <div class="input-row">
     <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-    <input type="text" id="user-input" 
+    <input type="text" id="user-input"
            placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
   </div>
 
@@ -732,7 +730,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
         const lines = after.split(/\n/);
-        lines.shift(); // drop "NARRATIVE SYNTHESIS..." first line
+        lines.shift();
         mainRaw = before.trim();
         narrativeRaw = lines.join("\n").trim();
       }
@@ -750,11 +748,10 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         mainCol.appendChild(narrativeDiv);
       }
 
-      // vaade uue raporti algusesse
       mainCol.scrollTop = reportDiv.offsetTop;
     } catch (err) {
       console.error(err);
-      loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
+      const loadingLine = addLog("CRITICAL ERROR: CRITICAL LINK FAILURE.", 'sys');
       loadingLine.style.color = "red";
     }
 
