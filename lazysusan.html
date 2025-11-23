@@ -272,6 +272,41 @@
     }
     .report-box b { color: #ffffff; }
 
+    /* LICENSE BAR */
+    #license-bar {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #license-btn {
+      background: #111;
+      border: 1px solid var(--term-gold);
+      color: var(--term-gold);
+      padding: 8px 16px;
+      font-size: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #license-btn:hover {
+      background: #222;
+      box-shadow: 0 0 8px rgba(212,175,55,0.5);
+    }
+
+    .license-note {
+      font-size: 9px;
+      color: #ff5555;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
@@ -362,6 +397,13 @@
     <input type="text" id="user-input"
            placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
   </div>
+
+  <div id="license-bar">
+    <button id="license-btn">OSTA LITSENTS</button>
+    <div class="license-note">
+      AASTANE LITSENTS – LIGIPÄÄS PX-Δ1 LUUREKONSOOLILE
+    </div>
+  </div>
 </div>
 
 <script>
@@ -376,13 +418,18 @@ Format structure:
 1. HEADER: [TARGET] SIGNAL REPORT (Date: Realtime)
 2. RISK LEVEL: (Low / Medium / Critical)
 3. SECTOR ANALYSIS:
-   - GOVERNANCE: (political / sovereign moves)
-   - LOGISTICS / ECONOMY: (resources / trade / flows)
-   - COGNITIVE: (social sentiment / information control)
-4. STRATEGIC DOCTRINE: (short, punchy doctrine line)
+   - GOVERNANCE: geopolitical / sovereign activity
+   - LOGISTICS / ECONOMY: supply chains / energy / markets
+   - COGNITIVE: information flow / sentiment / psy-ops
+4. STRATEGIC DOCTRINE:
+   One punchline sentence that states the operational doctrine.
+5. NARRATIVE SYNTHESIS (200–300 WORDS):
+   A flowing, story-like, readable summary that connects all sectors into one coherent strategic picture.
+   Style: RAND + Chatham House + military analysis.
+   Do NOT repeat bullet points. Produce a unified narrative.
 
-Treat fictional topics (e.g. Mars Colony) as real, happening now.
-Keep it under 150 words. Use <br> for line breaks and <b> for emphasis.
+Use <br> for line breaks and <b> for emphasis.
+Always deliver all 5 parts in order.
 `.trim();
 
   const rawMatrixEl  = document.getElementById('raw-matrix');
