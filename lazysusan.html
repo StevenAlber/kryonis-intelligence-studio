@@ -302,7 +302,7 @@
 
     .license-note {
       font-size: 9px;
-      color: #ff5555;
+      color: #c8a96c;
       text-transform: uppercase;
       letter-spacing: 0.6px;
     }
@@ -399,9 +399,9 @@
   </div>
 
   <div id="license-bar">
-    <button id="license-btn">OSTA LITSENTS</button>
+    <button id="license-btn">ACTIVATE SOVEREIGN ACCESS</button>
     <div class="license-note">
-      AASTANE LITSENTS – LIGIPÄÄS PX-Δ1 LUUREKONSOOLILE
+      ANNUAL LICENSE — PX-Δ1 SOVEREIGN INTELLIGENCE INTERFACE
     </div>
   </div>
 </div>
@@ -531,16 +531,32 @@ Always deliver all 5 parts in order.
 
     const data = await res.json();
 
-    if (!data.candidates ||
-        !data.candidates.length ||
-        !data.candidates[0].content ||
-        !data.candidates[0].content.parts ||
-        !data.candidates[0].content.parts.length ||
-        !data.candidates[0].content.parts[0].text) {
-      return { ok: false, status: 204, body: "EMPTY" };
+    // Make parsing robust – avoid 204 EMPTY error
+    let text = "";
+
+    try {
+      const cand = data.candidates && data.candidates[0];
+      if (cand && cand.content && cand.content.parts) {
+        text = cand.content.parts
+          .map(p => (p && typeof p.text === "string") ? p.text : "")
+          .join("\n")
+          .trim();
+      }
+      if (!text && cand && typeof cand.output_text === "string") {
+        text = cand.output_text.trim();
+      }
+      if (!text && typeof data.output_text === "string") {
+        text = data.output_text.trim();
+      }
+    } catch (e) {
+      // ignore, handled below
     }
 
-    return { ok: true, text: data.candidates[0].content.parts[0].text };
+    if (!text) {
+      return { ok: false, status: 204, body: JSON.stringify(data) };
+    }
+
+    return { ok: true, text };
   }
 
   async function callCosmotron(query) {
