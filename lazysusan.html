@@ -48,9 +48,9 @@
     #top-bar span:first-child { text-transform: uppercase; }
     #top-bar span:last-child  { font-size: 9px; color: var(--term-gold); }
 
-    /* SIGNAL STACK */
+    /* SIGNAL STACK (ülemine kast) */
     #signal-stack {
-      background: #020202;
+      background: #050505;
       border-bottom: 1px solid #222;
       padding: 8px 14px;
       display: flex;
@@ -74,23 +74,19 @@
 
     .sig-label {
       font-size: 9px;
-      color: #ffffff;
-      letter-spacing: 1px;
+      color: #88896a;
+      letter-spacing: 0.5px;
       margin-bottom: 2px;
       text-transform: uppercase;
-      text-shadow:
-        0 0 6px rgba(255,255,255,0.7),
-        0 0 2px rgba(255,255,255,0.9);
     }
     .sig-value {
       font-size: 12px;
       font-weight: bold;
       color: #c7ffd2;
-      text-shadow: 0 0 6px rgba(0,255,120,0.65);
     }
-    .sig-val-high { color: var(--term-alert);  text-shadow: 0 0 6px rgba(255,80,60,0.85); }
-    .sig-val-med  { color: var(--term-amber);  text-shadow: 0 0 6px rgba(255,200,80,0.85); }
-    .sig-val-low  { color: var(--term-green);  text-shadow: 0 0 6px rgba(0,255,120,0.85); }
+    .sig-val-high { color: var(--term-alert); }
+    .sig-val-med  { color: var(--term-amber); }
+    .sig-val-low  { color: var(--term-green); }
 
     /* MAIN GRID */
     #main-grid {
@@ -177,30 +173,20 @@
       #col-stat { display: none; }
       #signal-stack { padding: 10px 12px; gap: 14px; }
     }
-
     .stat-box {
-      border: 1px solid #333333;
-      padding: 6px 8px;
-      background: radial-gradient(circle at top, #111 0%, #050505 55%, #000 100%);
-      box-shadow: 0 0 10px rgba(0,0,0,0.7);
-    }
-    .stat-box:hover {
-      border-color: var(--term-gold);
-      box-shadow: 0 0 12px rgba(212,175,55,0.35);
+      border: 1px solid #262626;
+      padding: 6px;
+      background: #050505;
     }
     .stat-label {
-      font-size: 9px;
-      color: #e0e0e0;
+      font-size: 8px;
+      color: #747474;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      display: block;
-      margin-bottom: 2px;
     }
     .stat-val {
-      font-size: 13px;
-      font-weight: 700;
-      color: #ffffff;
-      text-shadow: 0 0 8px rgba(0,255,140,0.7);
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--term-gold);
     }
 
     /* CONTROLS */
@@ -268,9 +254,10 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
+    /* RAPORTI KAST (ülemine roheline) */
     .report-box {
       border: 1px solid #1c3f1e;
-      background: radial-gradient(circle at top, #041108 0%, #010603 55%, #000 100%);
+      background: rgba(0, 18, 0, 0.9);
       padding: 13px;
       margin: 8px 0 4px;
       position: relative;
@@ -280,6 +267,7 @@
       animation: fadeIn 0.5s;
     }
 
+    /* sektorite vaheline gradientjoon – peen, military-stiil */
     .sector-sep {
       height: 1px;
       margin: 6px 0 4px;
@@ -291,6 +279,7 @@
       );
     }
 
+    /* NARRATIIVI KAST (alumine roheline) */
     .narrative-box {
       border: 1px solid #132b16;
       background: rgba(0, 14, 0, 0.95);
@@ -302,19 +291,8 @@
       animation: fadeIn 0.5s;
     }
 
-    /* UUS: ülemise ja alumise kasti pealkirjad – maksimaalne glow */
-    .report-box b, 
-    .narrative-box b {
-      color: #ffffff !important;
-      text-shadow: 
-        0 0 12px rgba(0, 255, 140, 1),
-        0 0 5px #ffffff,
-        0 0 25px rgba(0, 255, 140, 0.7);
-      font-weight: 900;
-      letter-spacing: 1.1px;
-      display: inline-block;
-      margin-bottom: 2px;
-    }
+    /* NB: EI määra <b> värvi – pealkirjad on lihtsalt bold, sama tooniga.
+       See hoiab stiili ühtse ja sõjaväeluure moodi, mitte “neoonreklaam”. */
 
     /* LICENSE BAR */
     #license-bar {
@@ -380,9 +358,7 @@
   </div>
   <div class="signal-metric" style="border:none; min-width:110px;">
     <span class="sig-label">Mode</span>
-    <span class="sig-value" style="color:var(--term-gold); text-shadow:0 0 6px rgba(212,175,55,0.85);">
-      SOVEREIGN / ULTRA
-    </span>
+    <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
   </div>
 </div>
 
@@ -412,9 +388,7 @@
     </div>
     <div class="stat-box">
       <span class="stat-label">Threat Level</span>
-      <span class="stat-val" style="color:var(--term-alert); text-shadow:0 0 8px rgba(255,80,60,0.9);">
-        CRITICAL
-      </span>
+      <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
     </div>
   </div>
 </div>
@@ -687,7 +661,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
     let joined = out.join("\n");
 
-    // labelid valgeks (header + sector + narrative)
+    // labelid → <b> (AGA värv jääb kastide üldtooniks – CSS ei muuda seda)
     joined = joined.replace(
       /\b(HEADER:|RISK LEVEL:|SECTOR ANALYSIS:|STRATEGIC DOCTRINE:|GOVERNANCE:|LOGISTICS \/ ECONOMY:|COGNITIVE:|NARRATIVE SYNTHESIS:)\b/g,
       "<b>$1</b>"
@@ -730,7 +704,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
         const lines = after.split(/\n/);
-        lines.shift();
+        lines.shift(); // drop "NARRATIVE SYNTHESIS..." first line
         mainRaw = before.trim();
         narrativeRaw = lines.join("\n").trim();
       }
@@ -751,7 +725,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       mainCol.scrollTop = reportDiv.offsetTop;
     } catch (err) {
       console.error(err);
-      const loadingLine = addLog("CRITICAL ERROR: CRITICAL LINK FAILURE.", 'sys');
+      loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
       loadingLine.style.color = "red";
     }
 
