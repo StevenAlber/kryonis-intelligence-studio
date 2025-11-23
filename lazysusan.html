@@ -272,6 +272,18 @@
     }
     .report-box b { color: #ffffff; }
 
+    .narrative-box {
+      border: 1px solid #26462a;
+      background: rgba(0, 18, 0, 0.95);
+      padding: 14px;
+      margin: 6px 0 12px;
+      line-height: 1.6;
+      color: #e2ffe6;
+      box-shadow: 0 0 14px rgba(0,255,120,0.18);
+      animation: fadeIn 0.5s;
+    }
+    .narrative-box b { color: #ffffff; }
+
     /* LICENSE BAR */
     #license-bar {
       margin-top: 10px;
@@ -424,10 +436,11 @@ Format structure:
    - COGNITIVE: information flow / sentiment / psy-ops
 4. STRATEGIC DOCTRINE:
    One punchline sentence that states the operational doctrine.
-5. NARRATIVE SYNTHESIS (200–300 WORDS):
-   A flowing, story-like, readable summary that connects all sectors into one coherent strategic picture.
+5. NARRATIVE SYNTHESIS:
+   A flowing, story-like, readable summary (about 300–350 words)
+   that connects all sectors into one coherent strategic picture.
    Style: RAND + Chatham House + military analysis.
-   Do NOT repeat bullet points. Produce a unified narrative.
+   Do NOT write word counts, numbers in brackets, or "(X WORDS)" anywhere.
 
 Use <br> for line breaks and <b> for emphasis.
 Always deliver all 5 parts in order.
@@ -525,15 +538,13 @@ Always deliver all 5 parts in order.
       body: JSON.stringify(payload)
     });
 
-    // Kui server vastab veakoodiga, aga annab teksti, näitame seda raportina
     const rawText = await res.text();
 
     if (!res.ok) {
       return (
-        "[PX-Δ1 // LINK LAYER NOTICE]<br>" +
-        "Upstream responded with status " + res.status + ".<br><br>" +
-        "<b>RAW PAYLOAD:</b><br>" +
-        rawText.replace(/\n/g, "<br>")
+        "[PX-Δ1 // LINK LAYER NOTICE]\n" +
+        "Upstream responded with status " + res.status + ".\n\n" +
+        "RAW PAYLOAD:\n" + rawText
       );
     }
 
@@ -541,12 +552,10 @@ Always deliver all 5 parts in order.
     try {
       data = JSON.parse(rawText);
     } catch (e) {
-      // Kui pole JSON, näitame toorteksti
-      return rawText.replace(/\n/g, "<br>");
+      return rawText;
     }
 
     let text = "";
-
     try {
       const cand = data.candidates && data.candidates[0];
       if (cand && cand.content && cand.content.parts) {
@@ -562,18 +571,26 @@ Always deliver all 5 parts in order.
         text = data.output_text.trim();
       }
     } catch (e) {
-      // ignore, fallback all
+      // ignore, handled below
     }
 
     if (!text) {
       return (
-        "[PX-Δ1 // WARNING]<br>" +
-        "Model returned no direct text content. Raw response:<br><br>" +
-        JSON.stringify(data).replace(/\n/g, "<br>")
+        "[PX-Δ1 // WARNING]\n" +
+        "Model returned no direct text content. Raw response:\n\n" +
+        JSON.stringify(data)
       );
     }
 
     return text;
+  }
+
+  function formatText(str) {
+    return str
+      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+      .replace(/\*(.+?)\*/g, "<b>$1</b>")
+      .replace(/\*/g, "")
+      .replace(/\n/g, "<br>");
   }
 
   async function callCosmotron(query) {
@@ -593,18 +610,38 @@ Always deliver all 5 parts in order.
       loadingLine.style.display = 'none';
       updateSignalStack(aiRaw);
 
-      let aiText = aiRaw;
-      aiText = aiText
-        .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-        .replace(/\*(.+?)\*/g, "<b>$1</b>")
-        .replace(/\*/g, "");
+      // eralda NARRATIVE SYNTHESIS eraldi kasti
+      let mainRaw = aiRaw;
+      let narrativeRaw = "";
+
+      const upper = aiRaw.toUpperCase();
+      const marker = "NARRATIVE SYNTHESIS";
+      const idx = upper.indexOf(marker);
+
+      if (idx !== -1) {
+        const before = aiRaw.slice(0, idx);
+        const after = aiRaw.slice(idx);
+        const afterLines = after.split(/\n/);
+        // drop first line (see sisaldab "NARRATIVE SYNTHESIS ..." pealkirja)
+        afterLines.shift();
+        mainRaw = before.trim();
+        narrativeRaw = afterLines.join("\n").trim();
+      }
 
       const reportDiv = document.createElement('div');
       reportDiv.className = 'report-box';
-      reportDiv.innerHTML = aiText;
+      reportDiv.innerHTML = formatText(mainRaw);
       mainCol.appendChild(reportDiv);
-      mainCol.scrollTop = mainCol.scrollHeight;
 
+      if (narrativeRaw) {
+        const narrativeDiv = document.createElement('div');
+        narrativeDiv.className = 'narrative-box';
+        narrativeDiv.innerHTML =
+          "<b>NARRATIVE SYNTHESIS:</b><br><br>" + formatText(narrativeRaw);
+        mainCol.appendChild(narrativeDiv);
+      }
+
+      mainCol.scrollTop = mainCol.scrollHeight;
     } catch (err) {
       console.error(err);
       loadingLine.innerText = "CRITICAL ERROR: CORE LINK UNREACHABLE.";
@@ -629,7 +666,6 @@ Always deliver all 5 parts in order.
     }
   });
 
-  // matrix init
   matrixRain();
 </script>
 </body>
