@@ -61,7 +61,7 @@
     .noise{
       position:fixed;top:0;left:0;width:100%;height:100%;
       pointer-events:none;z-index:900;opacity:0.05;
-      /* PARANDATUD: lisatud data: prefix */
+      /* õige data: prefiks */
       background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
@@ -384,9 +384,8 @@
   </style>
 </head>
 
-<body>
+<body id="top">
   <div class="noise"></div>
-  <!-- PARANDATUD: canvas tag õigesti -->
   <canvas id="cosmos"></canvas>
 
   <div class="page">
@@ -394,20 +393,20 @@
       <div class="wrapper">
         <nav class="nav">
           <!-- BRAND -->
-          <a href="index.html" class="brand">
+          <a href="#top" class="brand">
             <div class="logo-mark">○</div>
             <div class="brand-text serif caps">KRYONIS.GLOBAL</div>
           </a>
 
-          <!-- NAV LINKS + BRIEFING -->
+          <!-- NAV LINKS + BRIEFING (kõik sama lehe sees) -->
           <div style="display:flex;align-items:center;gap:1.5rem;">
             <div class="nav-links caps mono">
-              <a href="index.html#axis1">AXIS I</a>
-              <a href="index.html#axis2">AXIS II</a>
-              <a href="index.html#gbx">GBX</a>
-              <a href="protocol.html" class="playbook-link">PLAYBOOK</a>
+              <a href="#mandate">AXIS I</a>
+              <a href="#method">AXIS II</a>
+              <a href="#commissions">GBX</a>
+              <a href="#method" class="playbook-link">PLAYBOOK</a>
             </div>
-            <a href="index.html#contact" class="cta-btn caps mono">BRIEFING</a>
+            <a href="#briefing" class="cta-btn caps mono">BRIEFING</a>
           </div>
         </nav>
       </div>
@@ -802,7 +801,7 @@
             </p>
 
             <div class="cta-row">
-              <a href="index.html#contact" class="btn btn-primary">
+              <a href="#briefing" class="btn btn-primary">
                 Submit Briefing
               </a>
               <div class="cta-note text-muted">
@@ -839,7 +838,7 @@
   </div>
 
   <script>
-    // Header scroll effect (same pattern as index)
+    // Header scroll effect
     window.addEventListener('scroll', () => {
       const header = document.getElementById('navbar');
       if (!header) return;
@@ -880,7 +879,7 @@
 
     window.addEventListener('load', activateVisibleReveals);
 
-    // Cosmic particles background – peen, hall, mitte "lumesadu"
+    // Cosmic particles background – peen, hall
     const canvas = document.getElementById('cosmos');
     if (canvas && canvas.getContext) {
       const ctx = canvas.getContext('2d');
@@ -902,9 +901,7 @@
       });
 
       class Particle {
-        constructor() {
-          this.reset();
-        }
+        constructor() { this.reset(); }
         reset() {
           this.x     = Math.random() * width;
           this.y     = Math.random() * height;
