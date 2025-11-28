@@ -3,638 +3,1325 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KRYONIS INTELLIGENCE STUDIO — Strategic Architecture</title>
-  <meta name="description" content="KRYONIS INTELLIGENCE STUDIO — The sovereign research and documentation bureau producing doctrinal intelligence for states and institutes." />
+  <title>KRYONIS Intelligence Studio — Axis I Research Bureau</title>
+  <meta name="description" content="KRYONIS Intelligence Studio — the Axis I Research Bureau of the KRYONIS operating system, safeguarding cognitive capital and designing long-horizon civilizational architectures." />
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* PALETTE - STUDIO VARIANT */
-      --bg-deep: #030304;
-      /* Tumedam paneeli taust paremaks kontrastiks */
-      --bg-panel: rgba(5, 6, 8, 0.6); 
-      
-      --fg: #e0e0e6;
-      --fg-muted: #7a808d;
-      --fg-dim: #4a505d;
+      --bg-deep: #020204;
+      --bg-panel: rgba(15, 15, 20, 0.6);
 
-      /* ACCENTS */
-      --gold: #C5A028; 
+      --fg: #e0e0e6;
+      --fg-muted: #8a8f9d;
+      --fg-dark: #555a66;
+
+      --gold: #C5A028;
       --gold-dim: rgba(197, 160, 40, 0.3);
-      --tech-blue: #6e8cff; 
+      --gold-glow: rgba(197, 160, 40, 0.15);
+
+      --violet: #7c73e6;
 
       --border: rgba(255, 255, 255, 0.08);
-      --border-strong: rgba(255, 255, 255, 0.15);
       --glass: blur(10px);
-      
-      --ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+      --radius-lg: 18px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.65);
+
+      --transition-fast: 0.18s ease-out;
+      --transition-med: 0.28s ease-out;
+
+      --max-width: 1160px;
     }
 
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-deep);
-      color: var(--fg);
-      line-height: 1.6;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
+    html, body {
+      height: 100%;
     }
 
-    /* UTILITIES */
-    .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
-    .serif { font-family: 'Cinzel', serif; }
-    .caps { text-transform: uppercase; letter-spacing: 0.12em; }
-    .text-gold { color: var(--gold); }
-    .text-blue { color: var(--tech-blue); }
-    .text-muted { color: var(--fg-muted); }
-    
-    a { text-decoration: none; color: inherit; transition: all 0.3s var(--ease); }
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #070814 0, #020204 55%);
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-    /* NOISE TEXTURE */
     .noise {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
+      inset: 0;
       pointer-events: none;
-      z-index: 900;
-      opacity: 0.05;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.08;
+      mix-blend-mode: soft-light;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+      z-index: 0;
     }
 
-    /* CANVAS BG */
-    #studio-grid {
+    canvas#cosmos {
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      opacity: 0.4;
-    }
-
-    /* LAYOUT */
-    .wrapper {
+      inset: 0;
       width: 100%;
-      max-width: 1160px;
-      margin: 0 auto;
-      padding: 0 2rem;
+      height: 100%;
+      display: block;
+      z-index: 0;
+    }
+
+    .page {
       position: relative;
-      z-index: 10;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* HEADER */
     header {
-      position: fixed;
-      top: 0; left: 0; width: 100%;
-      z-index: 100;
-      padding: 1rem 0;
-      background: rgba(3, 3, 4, 0.95);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: linear-gradient(to bottom, rgba(2, 2, 4, 0.94), rgba(2, 2, 4, 0.72));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      transition: background var(--transition-med), border-color var(--transition-med), transform 0.22s ease-out;
     }
 
-    .nav { display: flex; justify-content: space-between; align-items: center; }
-    
-    .brand { display: flex; flex-direction: column; line-height: 1; }
-    .brand-title { font-size: 0.9rem; font-weight: 600; color: var(--fg); }
-    .brand-sub { font-size: 0.6rem; color: var(--gold); margin-top: 4px; }
-
-    .nav-links { display: flex; gap: 1.5rem; }
-    .nav-links a { 
-      font-size: 0.7rem; color: var(--fg-muted); 
-      border: 1px solid transparent; padding: 0.3rem 0.6rem;
+    header.scrolled {
+      background: rgba(2, 2, 4, 0.98);
+      border-bottom-color: rgba(255, 255, 255, 0.08);
     }
-    .nav-links a:hover { 
-      border-color: var(--fg-muted); color: var(--fg); 
-      background: rgba(255,255,255,0.03);
-    }
-    .nav-links a.back-link { color: var(--gold); border-color: var(--gold-dim); }
 
-    /* HERO */
-    .hero {
-      min-height: 90vh;
+    .nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0.9rem 1.4rem;
       display: flex;
       align-items: center;
-      padding-top: 5rem;
+      justify-content: space-between;
+      gap: 1.2rem;
     }
 
-    .hero-layout {
-      display: grid;
-      grid-template-columns: 1.8fr 1fr;
-      gap: 4rem;
-      align-items: start;
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--fg-muted);
     }
 
-    .bureau-stamp {
-      border: 1px solid var(--gold);
+    .nav-logo {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1px solid var(--gold-dim);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.9), 0 0 24px rgba(197, 160, 40, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.55rem;
       color: var(--gold);
-      padding: 0.2rem 0.6rem;
-      font-size: 0.65rem;
-      display: inline-block;
-      margin-bottom: 1.5rem;
+    }
+
+    .nav-brand {
+      font-family: "Cinzel", serif;
+      font-size: 0.8rem;
+      color: #f1f1f7;
+    }
+
+    .nav-center {
+      display: flex;
+      gap: 1.6rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+    }
+
+    .nav-link {
+      position: relative;
+      cursor: pointer;
+      color: var(--fg-muted);
+      letter-spacing: 0.16em;
+      text-decoration: none;
+      transition: color var(--transition-fast), opacity var(--transition-fast);
+      opacity: 0.8;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -0.3rem;
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), var(--violet));
+      transition: width var(--transition-med);
+      opacity: 0.85;
+    }
+
+    .nav-link:hover {
+      color: #f5f5ff;
+      opacity: 1;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .nav-meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--fg-dark);
+    }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--gold-dim);
+      background: radial-gradient(circle at top left, rgba(197, 160, 40, 0.16), rgba(8, 8, 12, 0.95));
+      color: #fdfdfb;
+      padding: 0.45rem 1.1rem;
+      font-size: 0.7rem;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.85), 0 14px 40px rgba(0, 0, 0, 0.9);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn span {
+      font-size: 0.7rem;
+    }
+
+    .btn-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--gold), transparent);
+      box-shadow: 0 0 10px rgba(197, 160, 40, 0.8);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--gold);
+      background: radial-gradient(circle at top left, rgba(197, 160, 40, 0.26), rgba(6, 6, 10, 0.98));
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.95);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.16);
+      color: var(--fg-muted);
+      box-shadow: none;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--violet);
+      color: #f4f4ff;
+      background: radial-gradient(circle at top left, rgba(124, 115, 230, 0.2), rgba(5, 5, 9, 0.96));
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .wrapper {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3.5rem 1.4rem 4rem;
+    }
+
+    /* HERO */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.1fr);
+      gap: 3rem;
+      align-items: center;
+      padding-top: 1.5rem;
+      padding-bottom: 3.5rem;
+    }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--fg-muted);
+      margin-bottom: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: 1px solid var(--gold-dim);
+      box-shadow: 0 0 12px rgba(197, 160, 40, 0.7);
     }
 
     .hero-title {
-      font-family: 'Cinzel', serif;
-      font-size: 3.5rem;
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-      color: var(--fg);
+      font-family: "Cinzel", serif;
+      font-size: clamp(2.1rem, 3.1vw, 2.7rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.25;
+      margin-bottom: 1.2rem;
     }
 
-    .hero-lead {
-      font-size: 1rem;
+    .hero-title span {
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 0.98rem;
       color: var(--fg-muted);
-      max-width: 90%;
-      margin-bottom: 2rem;
-      font-weight: 300;
-      border-left: 1px solid var(--border-strong);
-      padding-left: 1.5rem;
+      line-height: 1.6;
+      max-width: 38rem;
+      margin-bottom: 1.4rem;
     }
 
-    /* COMPONENTS: DOCKETS & FILES */
-    .docket {
-      background: var(--bg-panel);
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.8rem;
+      font-size: 0.78rem;
+      color: var(--fg-dark);
+    }
+
+    .meta-pill {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: radial-gradient(circle at top left, rgba(124, 115, 230, 0.18), rgba(8, 8, 12, 0.9));
+      padding: 0.32rem 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .meta-pill span {
+      font-size: 0.66rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .hero-aside {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .hero-card {
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border);
-      padding: 2rem;
-      position: relative;
-      transition: 0.3s;
-    }
-    
-    .docket::before {
-      content: ''; position: absolute; top: -1px; left: -1px;
-      width: 40px; height: 1px; background: var(--gold);
-    }
-    .docket::after {
-      content: ''; position: absolute; top: -1px; right: -1px;
-      width: 10px; height: 10px; 
-      border-top: 1px solid var(--border); border-right: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(197, 160, 40, 0.15), rgba(12, 12, 18, 0.96));
+      padding: 1.1rem 1.15rem;
+      box-shadow: var(--shadow-soft);
     }
 
-    .docket:hover {
-      border-color: var(--fg-muted);
-      background: rgba(20, 22, 28, 0.8);
+    .hero-card-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
     }
 
-    .docket-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;
+    .hero-card-body {
+      font-size: 0.88rem;
+      color: var(--fg-muted);
+      line-height: 1.5;
+    }
+
+    .hero-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.7rem;
+    }
+
+    .chip {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 10, 16, 0.9);
+      padding: 0.25rem 0.7rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fg-dark);
     }
 
     /* SECTIONS */
-    section { padding: 5rem 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
-    
-    .section-label {
-      font-size: 0.7rem; color: var(--gold); margin-bottom: 0.5rem; display: block;
-    }
-    .section-heading {
-      font-family: 'Cinzel', serif; font-size: 2rem; margin-bottom: 3rem;
+
+    .section {
+      padding: 0 0 3.5rem;
     }
 
-    .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    .section-header {
+      margin-bottom: 1.8rem;
     }
+
+    .section-title {
+      font-family: "Cinzel", serif;
+      font-size: 1.08rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #f5f5ff;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-kicker {
+      font-size: 0.9rem;
+      color: var(--fg-muted);
+      max-width: 38rem;
+      line-height: 1.6;
+    }
+
     .grid-2 {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.1fr);
+      gap: 1.8rem;
+      align-items: flex-start;
     }
 
-    /* METHODOLOGY STEPS */
-    .step-card {
-      border-left: 1px solid var(--border);
-      padding-left: 1.5rem;
-      margin-bottom: 2rem;
+    .glass-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(10, 10, 16, 0.95), rgba(10, 10, 16, 0.6));
+      backdrop-filter: var(--glass);
+      -webkit-backdrop-filter: var(--glass);
+      box-shadow: var(--shadow-soft);
+      padding: 1.4rem 1.5rem;
     }
-    .step-num { font-size: 0.7rem; color: var(--gold); margin-bottom: 0.3rem; }
-    .step-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; }
-    .step-desc { font-size: 0.85rem; color: var(--fg-muted); }
 
-    /* DATA TABLE FOR COMMISSIONS */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
+    .glass-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+      gap: 0.6rem;
     }
-    .data-table th {
-      text-align: left; color: var(--fg-dim); font-weight: 400;
-      padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+
+    .glass-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--fg-dark);
     }
-    .data-table td {
-      padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+
+    .glass-tag {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(124, 115, 230, 0.5);
+      padding: 0.2rem 0.75rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--violet);
+      background: radial-gradient(circle at top left, rgba(124, 115, 230, 0.2), transparent);
+    }
+
+    .glass-title {
+      font-size: 0.98rem;
+      margin-bottom: 0.55rem;
+      color: #f7f7ff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .glass-body {
+      font-size: 0.9rem;
+      color: var(--fg-muted);
+      line-height: 1.7;
+      margin-bottom: 0.9rem;
+    }
+
+    .list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      font-size: 0.9rem;
+    }
+
+    .list-item {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .list-index {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding-top: 0.2rem;
+      min-width: 3.3rem;
+    }
+
+    .list-text {
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    .list-text strong {
+      color: #f7f7ff;
+      font-weight: 500;
+    }
+
+    .stack-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      font-size: 0.88rem;
+    }
+
+    .stack-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
       color: var(--fg-muted);
     }
-    .data-table tr:hover td { color: var(--fg); }
-    .val { color: var(--gold); }
+
+    .stack-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fg-dark);
+    }
+
+    .stack-value {
+      text-align: right;
+      color: var(--fg-muted);
+    }
+
+    .callout {
+      border-radius: var(--radius-lg);
+      border: 1px dashed rgba(197, 160, 40, 0.5);
+      padding: 1rem 1.1rem;
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+      line-height: 1.6;
+      background: radial-gradient(circle at top left, rgba(197, 160, 40, 0.13), rgba(8, 8, 12, 0.9));
+      margin-top: 1.1rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: radial-gradient(circle at center, rgba(197, 160, 40, 0.35), transparent);
+      opacity: 0.7;
+      margin: 0.7rem 0 1.1rem;
+    }
+
+    .timeline {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      font-size: 0.88rem;
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 1.4rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0.4rem;
+      top: 0.35rem;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--violet), transparent);
+      box-shadow: 0 0 12px rgba(124, 115, 230, 0.8);
+    }
+
+    .timeline-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fg-dark);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-text {
+      color: var(--fg-muted);
+      line-height: 1.6;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .cta-note {
+      font-size: 0.8rem;
+      color: var(--fg-dark);
+    }
 
     /* FOOTER */
+
     footer {
-      padding: 4rem 0; border-top: 1px solid var(--border);
-      font-size: 0.75rem; color: var(--fg-dim);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: radial-gradient(circle at top, rgba(10, 10, 16, 0.95), rgba(2, 2, 4, 0.98));
+      padding: 1.7rem 1.4rem 2.1rem;
+      margin-top: auto;
     }
 
-    /* ANIMATIONS */
+    .footer-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--fg-dark);
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .footer-logo {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid var(--gold-dim);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.6rem;
+      color: var(--gold);
+      box-shadow: 0 0 16px rgba(197, 160, 40, 0.55);
+    }
+
+    .footer-brand {
+      font-family: "Cinzel", serif;
+      font-size: 0.86rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f1f1f7;
+    }
+
+    .footer-meta {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .footer-right {
+      font-size: 0.76rem;
+      color: var(--fg-dark);
+      text-align: right;
+    }
+
+    .footer-right span {
+      display: block;
+    }
+
+    /* Reveal animation */
+
     .reveal {
-      opacity: 0; transform: translateY(20px);
-      transition: all 0.6s var(--ease);
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
     }
-    .reveal.active { opacity: 1; transform: translateY(0); }
 
-    /* SONIC MODE BUTTON */
-    .sonic-container {
-      position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
-    #sonic-btn {
-      background: #000; border: 1px solid rgba(212, 175, 55, 0.3); color: rgba(212, 175, 55, 0.5); 
-      font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 8px 12px; 
-      cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; transition: 0.3s;
-    }
+
+    /* RESPONSIVE */
 
     @media (max-width: 900px) {
-      .hero-layout, .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      .hero-title { font-size: 2.5rem; }
-      .nav-links { display: none; }
+      .nav {
+        flex-wrap: wrap;
+        gap: 0.6rem 1rem;
+      }
+
+      .nav-center {
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size: 0.64rem;
+        gap: 0.9rem;
+      }
+
+      .nav-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+      }
+
+      .hero-aside {
+        order: -1;
+      }
+
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .wrapper {
+        padding-top: 2.5rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .nav {
+        padding-inline: 1rem;
+      }
+
+      .hero-title {
+        font-size: 1.9rem;
+      }
+
+      .hero-sub {
+        font-size: 0.9rem;
+      }
+
+      .hero-card {
+        padding: 1rem 1rem;
+      }
+
+      .glass-card {
+        padding: 1.1rem 1.15rem;
+      }
+
+      .footer-content {
+        align-items: flex-start;
+      }
+
+      .footer-right {
+        text-align: left;
+      }
     }
   </style>
 </head>
 <body>
-
   <div class="noise"></div>
-  <canvas id="studio-grid"></canvas>
+  <canvas id="cosmos"></canvas>
 
   <div class="page">
-    
-    <header>
-      <div class="wrapper">
-        <nav class="nav">
-          <div class="brand">
-            <div class="brand-title serif caps">Kryonis Intelligence Studio</div>
-            <div class="brand-sub mono caps">Sovereign Architecture Division</div>
-          </div>
-          <div class="nav-links mono caps">
-            <a href="https://kryonis-global-proto.onrender.com" class="back-link">← Return to Global</a>
-            <a href="#mandate">Mandate</a>
-            <a href="#method">Method</a>
-            <a href="#commissions">Commissions</a>
-            <a href="#contact">Briefing</a>
-          </div>
-        </nav>
-      </div>
+    <header id="navbar">
+      <nav class="nav">
+        <div class="nav-left">
+          <div class="nav-logo">○</div>
+          <span class="nav-brand">KRYONIS.GLOBAL</span>
+        </div>
+        <div class="nav-center">
+          <a href="index.html#axis1" class="nav-link">Axis I</a>
+          <a href="index.html#axis2" class="nav-link">Axis II</a>
+          <a href="protocol.html#gbx" class="nav-link">GBX</a>
+          <a href="protocol.html" class="nav-link">Playbook</a>
+        </div>
+        <div class="nav-right">
+          <div class="nav-meta">Axis I / Studio</div>
+          <a href="index.html#contact" class="btn">
+            <span class="btn-dot"></span>
+            <span>Briefing</span>
+          </a>
+        </div>
+      </nav>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="wrapper">
-          <div class="hero-layout">
-            <div class="reveal">
-              <div class="bureau-stamp mono caps">Doc. Ref: KIS-2025-PUB</div>
-              <h1 class="hero-title">
-                The Textual Architecture of<br>
-                <span class="text-gold">Sovereignty.</span>
-              </h1>
-              <p class="hero-lead">
-                We do not write essays. We engineer the doctrinal frameworks that allow states, institutes and cognitive zones to survive the transition to a post-industrial intelligence epoch.
-              </p>
-              <div style="display:flex; gap:1rem;">
-                <a href="#commissions" style="border:1px solid var(--fg); padding:0.8rem 1.5rem; font-size:0.8rem;" class="mono caps hover-fill">Access Commissioning</a>
+      <div class="wrapper">
+        <!-- HERO -->
+        <section class="hero reveal">
+          <div>
+            <div class="eyebrow">
+              <span class="eyebrow-dot"></span>
+              <span>Axis I — Intelligence Studio</span>
+            </div>
+            <h1 class="hero-title">
+              KRYONIS<br />
+              <span>Intelligence Studio</span>
+            </h1>
+            <p class="hero-sub">
+              The KRYONIS Intelligence Studio is the
+              <strong>Research Bureau of Axis I (Cognitive Capital Stack)</strong>.
+              It does not sell content. It safeguards sovereign cognition,
+              assembles long-horizon architectures, and maintains the interface between
+              thought and metabolism in the KRYONIS operating system.
+            </p>
+            <div class="hero-meta">
+              <div class="meta-pill">
+                <span>Axis I</span>
+                <span>Research Bureau</span>
+              </div>
+              <div class="meta-pill">
+                <span>PoC</span>
+                <span>Proof-of-Coherence</span>
+              </div>
+              <div class="meta-pill">
+                <span>Round Table</span>
+                <span>Lazy Susan Method</span>
               </div>
             </div>
-
-            <aside class="docket reveal" style="transition-delay: 0.2s;">
-              <div class="docket-header">
-                <span class="mono caps text-gold" style="font-size:0.7rem;">Bureau Snapshot</span>
-                <span class="mono" style="font-size:0.7rem;">STATUS: ONLINE</span>
-              </div>
-              <div style="display:grid; gap:1rem;">
-                <div>
-                  <div class="mono text-muted" style="font-size:0.65rem;">PRIMARY FUNCTION</div>
-                  <div class="serif" style="font-size:0.9rem;">Strategic Architecture</div>
-                </div>
-                <div>
-                  <div class="mono text-muted" style="font-size:0.65rem;">OUTPUT FORMAT</div>
-                  <div class="serif" style="font-size:0.9rem;">Classified-Grade Intelligence</div>
-                </div>
-                <div>
-                  <div class="mono text-muted" style="font-size:0.65rem;">CLIENT TIER</div>
-                  <div class="serif" style="font-size:0.9rem;">State / Sovereign / Institute</div>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </div>
-      </section>
-
-      <section id="mandate">
-        <div class="wrapper">
-          <div class="reveal">
-            <span class="section-label mono caps">The Mandate</span>
-            <h2 class="section-heading">Architectural Writing</h2>
-          </div>
-          
-          <div class="grid-2 reveal">
-            <div>
-              <p class="text-muted" style="margin-bottom:1.5rem;">
-                Legacy analysis describes the world. <strong>Architectural writing redesigns it.</strong>
-              </p>
-              <p class="text-muted">
-                The Studio produces documents that act as operational blueprints. Whether it is a bioeconomic charter for the Arctic or a governance protocol for an AI grid, our output is designed to be adopted into national law and institutional doctrine.
-              </p>
+            <div class="hero-actions">
+              <a href="#mandate" class="btn">
+                <span class="btn-dot"></span>
+                <span>View Mandate</span>
+              </a>
+              <a href="#briefing" class="btn btn-outline">
+                <span>Briefing Protocol</span>
+              </a>
             </div>
-            <div class="docket">
-              <div class="mono caps text-blue" style="font-size:0.7rem; margin-bottom:1rem;">// Core Output Vectors</div>
-              <ul style="list-style:none; padding:0; font-size:0.85rem;" class="mono">
-                <li style="margin-bottom:0.8rem;">[01] STRATEGIC ARCHITECTURE PAPERS</li>
-                <li style="margin-bottom:0.8rem;">[02] DOCTRINAL REPORTS</li>
-                <li style="margin-bottom:0.8rem;">[03] INTELLIGENCE COMPENDIUMS</li>
-                <li>[04] SOVEREIGN WHITEBOOKS</li>
+          </div>
+
+          <aside class="hero-aside">
+            <div class="hero-card">
+              <div class="hero-card-title">Role inside KRYONIS.OS</div>
+              <div class="hero-card-body">
+                The Studio functions as a <strong>sovereign cognitive organ</strong> for actors who hold
+                real levers over bio-economic reality. It converts fragmented global signals
+                into <strong>coherent civilizational architectures</strong>, aligned with GBX, MSF and
+                TEC-X — and enforced by Proof-of-Coherence.
+                <div class="hero-chip-row">
+                  <div class="chip">Cognitive Capital</div>
+                  <div class="chip">Bio-Economy Strategy</div>
+                  <div class="chip">GBX Alignment</div>
+                </div>
+              </div>
+            </div>
+            <div class="hero-card" style="background: linear-gradient(135deg, rgba(10,10,18,0.96), rgba(20,10,26,0.92));">
+              <div class="hero-card-title">Who this is for</div>
+              <div class="hero-card-body">
+                Sovereign funds, state-level institutions, industrial actors and emergent
+                entities willing to think in <strong>5–20 year horizons</strong>. Not for short-term
+                optics, reputation management, or speculative hype.
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- MANDATE -->
+        <section id="mandate" class="section reveal">
+          <header class="section-header">
+            <h2 class="section-title">Mandate — The Cognitive Engine of KRYONIS.OS</h2>
+            <p class="section-kicker">
+              The Studio’s mandate is to maintain the integrity of Axis I — making sure that
+              any move taken under the KRYONIS banner is cognitively sound, metabolically
+              anchored, and geopolitically non-naïve.
+            </p>
+          </header>
+
+          <div class="glass-card">
+            <div class="glass-header">
+              <div class="glass-label">AXIS I</div>
+              <div class="glass-tag">Mandate</div>
+            </div>
+            <h3 class="glass-title">From content to civilizational architecture</h3>
+            <p class="glass-body">
+              The KRYONIS Intelligence Studio is the
+              <strong>core Research Bureau of Axis I (Cognitive Capital Stack)</strong>.
+              It is not a creative agency, consultancy, or contractor.
+              It is the <strong>thinking organ</strong> of a planetary operating system.
+            </p>
+            <ul class="list">
+              <li class="list-item">
+                <div class="list-index">M-01</div>
+                <div class="list-text">
+                  <strong>Safeguard and strengthen cognitive capital.</strong>
+                  The Studio filters global complexity into decision-grade signal frameworks,
+                  maintaining Proof-of-Coherence (PoC) across all strategic layers.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">M-02</div>
+                <div class="list-text">
+                  <strong>Convert fragmented signals into architecture.</strong>
+                  Bio-economy, GBX corridors, metabolic sovereignty, governance templates,
+                  long-horizon strategy — everything the Studio touches is reassembled as
+                  coherent civilizational architecture.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">M-03</div>
+                <div class="list-text">
+                  <strong>Maintain the Axis I → Axis II interface.</strong>
+                  Narratives and models are evaluated against their metabolic consequences
+                  in Axis II. There is no separation between cognition and biophysics
+                  inside the KRYONIS operating system.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">M-04</div>
+                <div class="list-text">
+                  <strong>Protect sovereign thought.</strong>
+                  The Studio neutralises ideological imports, market-driven delusions,
+                  geopolitical distortions, and short-term noise. It preserves the long-horizon
+                  intelligence of actors who matter.
+                </div>
+              </li>
+            </ul>
+            <div class="callout">
+              We do not write essays.
+              We construct the <strong>cognitive chassis</strong> on which a future civilization will either
+              stand — or collapse.
+            </div>
+          </div>
+        </section>
+
+        <!-- METHOD -->
+        <section id="method" class="section reveal">
+          <header class="section-header">
+            <h2 class="section-title">Method — The KRYONIS Round Table Cycle</h2>
+            <p class="section-kicker">
+              Inside Axis I, the Intelligence Studio follows a repeatable, auditable cycle:
+              the <strong>KRYONIS Round Table Methodology</strong>, also known as the Lazy Susan. We rotate
+              the field until coherence appears.
+            </p>
+          </header>
+
+          <div class="grid-2">
+            <div class="glass-card">
+              <div class="glass-header">
+                <div class="glass-label">PROCESS</div>
+                <div class="glass-tag">Lazy Susan</div>
+              </div>
+              <h3 class="glass-title">Five phases of cognitive work</h3>
+              <ul class="list">
+                <li class="list-item">
+                  <div class="list-index">P-01</div>
+                  <div class="list-text">
+                    <strong>Signal Intake.</strong>
+                    We gather only what is essential: briefs, institutional memos, research,
+                    political and technological signals, biospheric data. The goal is not volume
+                    but relevance density.
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">P-02</div>
+                  <div class="list-text">
+                    <strong>Rotation of Frames.</strong>
+                    All signals are placed on the table and rotated through multiple vantage
+                    points: geopolitical, metabolic, technological, financial, narrative,
+                    civilizational. Contradictions are surfaced without mercy.
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">P-03</div>
+                  <div class="list-text">
+                    <strong>Coherence Assembly.</strong>
+                    The Studio switches from analysis to architecture: we identify load-bearing
+                    variables, map systemic tensions, and extract strategy lines that survive
+                    physical reality.
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">P-04</div>
+                  <div class="list-text">
+                    <strong>Instrument Design.</strong>
+                    Architecture is converted into functional instruments: governance templates,
+                    program structures, GBX-aligned issuance logic, telemetry definitions
+                    that link into MSF and TEC-X.
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">P-05</div>
+                  <div class="list-text">
+                    <strong>Transmission & Reflection.</strong>
+                    We deliver the structure to the decision locus: confidential briefings,
+                    narrow-beam strategic documents, alignment scans, and explicit reflections
+                    on risk and failure modes.
+                  </div>
+                </li>
               </ul>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="method">
-        <div class="wrapper">
-          <div class="reveal">
-             <span class="section-label mono caps">Execution Protocol</span>
-             <h2 class="section-heading">The 5-Phase Authoring Cycle</h2>
-          </div>
-
-          <div class="grid-3 reveal">
-            <div>
-               <div class="step-card">
-                 <div class="step-num mono">PHASE I</div>
-                 <div class="step-title serif">Analysis</div>
-                 <div class="step-desc">Mapping the constraint landscape and doctrinal objectives.</div>
-               </div>
-               <div class="step-card">
-                 <div class="step-num mono">PHASE II</div>
-                 <div class="step-title serif">Synthesis</div>
-                 <div class="step-desc">Modeling system dynamics and cognitive patterns.</div>
-               </div>
-            </div>
-            <div>
-               <div class="step-card">
-                 <div class="step-num mono">PHASE III</div>
-                 <div class="step-title serif">Structuring</div>
-                 <div class="step-desc">Drafting the logical spine of the architecture.</div>
-               </div>
-               <div class="step-card">
-                 <div class="step-num mono">PHASE IV</div>
-                 <div class="step-title serif">Validation (PoC)</div>
-                 <div class="step-desc">Testing against Proof-of-Coherence metrics.</div>
-               </div>
-            </div>
-            <div class="docket" style="height:fit-content;">
-              <div class="step-num mono text-gold">PHASE V</div>
-              <div class="step-title serif text-gold">Publication</div>
-              <p class="step-desc" style="margin-bottom:1rem;">
-                Final delivery under agreed classification tier. Sovereign-grade standard.
+            <div class="glass-card">
+              <div class="glass-header">
+                <div class="glass-label">AXIS I / II</div>
+                <div class="glass-tag">Interface</div>
+              </div>
+              <h3 class="glass-title">Where cognitive and metabolic stacks meet</h3>
+              <p class="glass-body">
+                The method is evaluated not by elegance but by its capacity to align Axis I and Axis II:
               </p>
-              <div class="mono caps" style="font-size:0.6rem; border:1px solid var(--gold-dim); display:inline-block; padding:2px 6px; color:var(--gold);">
-                Encrypted Delivery
+              <ul class="stack-list">
+                <li class="stack-item">
+                  <span class="stack-label">Cognitive</span>
+                  <span class="stack-value">PoC and GCI track the coherence of decisions over time.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">Metabolic</span>
+                  <span class="stack-value">MSF and TEC-X telemetry confirm that architectures map to real processes.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">Sovereign</span>
+                  <span class="stack-value">Data and levers remain under sovereign control; KRYONIS coordinates, not commands.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">Legible</span>
+                  <span class="stack-value">Outputs can be explained in narrative form to citizens and boards, not only quants.</span>
+                </li>
+              </ul>
+              <div class="callout">
+                The Round Table proves its value when an impossible situation becomes
+                <strong>explainable, navigable and structurally coherent</strong> — without dumbing it down.
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="commissions">
-        <div class="wrapper">
-          <div class="reveal">
-            <span class="section-label mono caps">Commissioning</span>
-            <h2 class="section-heading">Fiscal Framework</h2>
+        <!-- COMMISSIONS -->
+        <section id="commissions" class="section reveal">
+          <header class="section-header">
+            <h2 class="section-title">Commissions — Axis I Sovereign Mandates</h2>
+            <p class="section-kicker">
+              The Studio does not take “projects”. It accepts commissions — bounded
+              sovereign mandates, defined by their long-horizon consequences for bio-economy,
+              governance and civilization-level alignment.
+            </p>
+          </header>
+
+          <div class="grid-2">
+            <div class="glass-card">
+              <div class="glass-header">
+                <div class="glass-label">ENGAGEMENT</div>
+                <div class="glass-tag">Parameters</div>
+              </div>
+              <h3 class="glass-title">How commissions are defined</h3>
+              <ul class="list">
+                <li class="list-item">
+                  <div class="list-index">C-01</div>
+                  <div class="list-text">
+                    <strong>Scope.</strong>
+                    From singular decision windows (entry / exit, fund or corridor design,
+                    response to a systemic shock) to multi-year architectures
+                    (national bio-economy, GBX integration, sovereignty models).
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">C-02</div>
+                  <div class="list-text">
+                    <strong>Access depth.</strong>
+                    Ranging from open-source intelligence only, through partial internal
+                    access, to deep sovereign access involving principals and restricted
+                    documents.
+                  </div>
+                </li>
+                <li class="list-item">
+                  <div class="list-index">C-03</div>
+                  <div class="list-text">
+                    <strong>Risk & horizon.</strong>
+                    Pricing reflects latency risk, not hours. The question is:
+                    what is the cost of being wrong over the next 5–20 years?
+                  </div>
+                </li>
+              </ul>
+              <div class="callout">
+                Existing pricing ranges and schedules remain valid.
+                This text simply names what they actually purchase:
+                access to a fully activated Axis I cognitive stack, integrated with
+                KRYONIS.OS.
+              </div>
+            </div>
+
+            <div class="glass-card">
+              <div class="glass-header">
+                <div class="glass-label">COUNTERPARTIES</div>
+                <div class="glass-tag">Eligibility</div>
+              </div>
+              <h3 class="glass-title">Who the Studio works with</h3>
+              <p class="glass-body">
+                The Studio engages with counterparties who hold real levers over
+                bio-economic and civilizational trajectories:
+              </p>
+              <ul class="stack-list">
+                <li class="stack-item">
+                  <span class="stack-label">Sovereign funds</span>
+                  <span class="stack-value">Designing reserves and corridors that include GBX and bio-capital.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">States</span>
+                  <span class="stack-value">Building long-horizon bio-economy strategies and metabolic sovereignty frames.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">Industrial actors</span>
+                  <span class="stack-value">Re-architecting supply chains, infrastructure and R&D through KRYONIS logic.</span>
+                </li>
+                <li class="stack-item">
+                  <span class="stack-label">Emergent entities</span>
+                  <span class="stack-value">New institutions willing to think in decades, not quarters.</span>
+                </li>
+              </ul>
+              <div class="divider"></div>
+              <p class="glass-body" style="margin-bottom:0;">
+                Purely reputational, speculative or extractive mandates are declined,
+                regardless of budget. Commissions are judged against their contribution
+                to systemic coherence, not short-term gain.
+              </p>
+            </div>
           </div>
+        </section>
 
-          <div class="docket reveal">
-             <div class="docket-header">
-               <span class="mono caps">Indicative Budget Ranges (EUR)</span>
-               <span class="mono caps text-muted">FY 2025-2026</span>
-             </div>
-             
-             <table class="data-table">
-               <thead>
-                 <tr>
-                   <th class="caps">Instrument Type</th>
-                   <th class="caps">Est. Scope</th>
-                   <th class="caps">Range</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <tr>
-                   <td>STRATEGIC ARCHITECTURE PAPER</td>
-                   <td>6-10 Weeks</td>
-                   <td class="val">€60,000 – €180,000</td>
-                 </tr>
-                 <tr>
-                   <td>DOCTRINAL REPORT</td>
-                   <td>4-8 Weeks</td>
-                   <td class="val">€45,000 – €120,000</td>
-                 </tr>
-                 <tr>
-                   <td>INTELLIGENCE COMPENDIUM</td>
-                   <td>12-24 Weeks</td>
-                   <td class="val">€100,000 – €250,000</td>
-                 </tr>
-                 
-                 <tr style="border-top: 1px solid var(--gold-dim);">
-                   <td style="padding-top:1.5rem;">
-                     <a href="https://kryonis-global-proto.onrender.com/protocol.html" target="_blank" style="color:var(--gold); font-weight:600; letter-spacing:0.05em; text-decoration:none; border-bottom:1px solid rgba(197, 160, 40, 0.3); transition:0.2s;">
-                       LAZY SUSAN
-                     </a>
-                     <div class="text-muted" style="font-size:0.7rem; margin-top:6px;">*Hybrid Synthesis Protocol (12 Nodes)</div>
-                   </td>
-                   <td style="padding-top:1.5rem;">24h</td>
-                   <td class="val text-gold" style="padding-top:1.5rem;">€90,000 – €280,000</td>
-                 </tr>
+        <!-- BRIEFING -->
+        <section id="briefing" class="section reveal">
+          <header class="section-header">
+            <h2 class="section-title">Briefing Protocol — Entry into Axis I</h2>
+            <p class="section-kicker">
+              Axis I does not “take calls”. It accepts briefing dossiers. The only way into
+              the Studio is through a written mandate that passes a coherence scan.
+            </p>
+          </header>
 
-               </tbody>
-             </table>
-             <div class="mono text-muted" style="font-size:0.7rem; margin-top:1.5rem;">
-               * Final budgets set after diagnostic phase. Executed under Sovereign Contract.
-             </div>
+          <div class="glass-card">
+            <div class="glass-header">
+              <div class="glass-label">PROTOCOL</div>
+              <div class="glass-tag">How to engage</div>
+            </div>
+            <h3 class="glass-title">What a briefing must contain</h3>
+            <ul class="list">
+              <li class="list-item">
+                <div class="list-index">B-01</div>
+                <div class="list-text">
+                  <strong>The real question.</strong>
+                  One or two paragraphs stating what is genuinely at stake if you get
+                  this wrong over the next 5–20 years — beyond PR and tactical noise.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">B-02</div>
+                <div class="list-text">
+                  <strong>Your current frame.</strong>
+                  How you presently see the problem, what you believe the options are,
+                  and which constraints you treat as non-negotiable.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">B-03</div>
+                <div class="list-text">
+                  <strong>Decision locus.</strong>
+                  Who actually has the authority to act on the outcome of this work,
+                  and what level of access the Studio would have to that locus.
+                </div>
+              </li>
+              <li class="list-item">
+                <div class="list-index">B-04</div>
+                <div class="list-text">
+                  <strong>Time, risk, stakes.</strong>
+                  What is your decision horizon? What happens if you do nothing?
+                  What happens if you move in the wrong direction?
+                </div>
+              </li>
+            </ul>
+            <div class="divider"></div>
+            <p class="glass-body">
+              Once the briefing is received, Axis I performs an internal <strong>coherence scan</strong>:
+              if the mandate fits the KRYONIS.OS frame and the Studio believes it can add
+              non-trivial systemic value, you receive a proposed engagement architecture
+              and fee range. If not, you receive a short, respectful decline — sometimes
+              with a minimal orientation note.
+            </p>
+            <div class="cta-row">
+              <a href="index.html#contact" class="btn">
+                <span class="btn-dot"></span>
+                <span>Submit Briefing</span>
+              </a>
+              <div class="cta-note">
+                The Intelligence Studio is not a service provider.
+                It is the <strong>cognitive organ</strong> of a future civilization.
+                You do not hire it — you align with it.
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section id="contact" style="border-bottom:none;">
-        <div class="wrapper">
-          <div class="grid-2 reveal">
-             <div>
-               <span class="section-label mono caps">Initiation</span>
-               <h2 class="section-heading">Request Briefing</h2>
-               <p class="text-muted">
-                 For governments, institutes and long-term capital only. No retail offers.
-               </p>
-               <div style="margin-top:2rem;">
-                 <div class="mono caps text-gold" style="font-size:0.8rem;">Secure Channel</div>
-                 <div style="font-size:1.1rem; margin-top:0.5rem; font-family:'Cinzel', serif;">hq@kryonis.global</div>
-               </div>
-             </div>
-
-             <div class="docket">
-               <div class="mono caps text-muted" style="font-size:0.7rem; margin-bottom:1rem;">Briefing Protocol</div>
-               <p class="text-muted" style="font-size:0.85rem; margin-bottom:1rem;">
-                 Please outline your jurisdiction, time horizon (25/100yr), and target domain (Bioeconomy, AI, Governance).
-               </p>
-               <div class="mono caps" style="font-size:0.6rem; color:var(--fg-dim);">
-                 ENCRYPTION: OPTIONAL / PREFERRED
-               </div>
-             </div>
-          </div>
-        </div>
-      </section>
-
+        </section>
+      </div>
     </main>
 
     <footer>
-      <div class="wrapper">
-        <div style="display:flex; justify-content:space-between; align-items:end;">
-           <div>
-             <div class="serif text-gold">Kryonis Intelligence Studio</div>
-             <div class="mono caps text-muted" style="margin-top:0.5rem;">Sovereign Strategic Architecture Division</div>
-           </div>
-           <div class="text-muted" style="text-align:right;">
-             Hong Kong SAR<br>
-             © 2025
-           </div>
+      <div class="footer-content">
+        <div class="footer-left">
+          <div class="footer-logo">○</div>
+          <div>
+            <div class="footer-brand">KRYONIS Sovereign Systems</div>
+            <div class="footer-meta">Hong Kong SAR · Axis I / Intelligence Studio</div>
+          </div>
+        </div>
+        <div class="footer-right">
+          <span>© 2025 KRYONIS.GLOBAL</span>
+          <span>Axis I Research Bureau — Intelligence Studio</span>
         </div>
       </div>
     </footer>
-
   </div>
-
-  <div class="sonic-container">
-    <button id="sonic-btn" onclick="toggleAudio()">
-      [ AUDIO: OFF ]
-    </button>
-  </div>
-
-  <audio id="ambient-track" loop preload="auto">
-    <source src="drone.mp3" type="audio/mpeg">
-  </audio>
 
   <script>
-    // 1. ANIMATIONS (REVEAL)
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('active');
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // 2. STUDIO GRID (The Architect's Canvas)
-    const canvas = document.getElementById('studio-grid');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let points = [];
-
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Point {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.15;
-        this.vy = (Math.random() - 0.5) * 0.15;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if(this.x < 0) this.x = width;
-        if(this.x > width) this.x = 0;
-        if(this.y < 0) this.y = height;
-        if(this.y > height) this.y = 0;
-      }
-    }
-
-    // Create a grid-like structure
-    function initPoints() {
-      points = [];
-      const count = Math.min(width / 12, 80);
-      for(let i=0; i<count; i++) points.push(new Point());
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      
-      for(let i=0; i<points.length; i++) {
-        points[i].update();
-        
-        // Draw rigid connections (The Architect's Lines)
-        for(let j=i; j<points.length; j++) {
-          const dx = points[i].x - points[j].x;
-          const dy = points[i].y - points[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          
-          if(dist < 120) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(110, 140, 255, ${0.04 - dist/3000})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(points[i].x, points[i].y);
-            ctx.lineTo(points[j].x, points[j].y);
-            ctx.stroke();
-          }
+    // Sticky header
+    (function () {
+      const header = document.getElementById("navbar");
+      const onScroll = () => {
+        const current = window.scrollY;
+        if (current > 48) {
+          header.classList.add("scrolled");
+        } else {
+          header.classList.remove("scrolled");
         }
-        
-        // Draw "Nodes"
-        ctx.fillStyle = 'rgba(255,255,255,0.1)';
-        ctx.fillRect(points[i].x - 1, points[i].y - 1, 2, 2); 
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // Reveal animation
+    (function () {
+      const elements = document.querySelectorAll(".reveal");
+
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            root: null,
+            rootMargin: "0px 0px -10% 0px",
+            threshold: 0.1
+          }
+        );
+
+        elements.forEach((el) => observer.observe(el));
+      } else {
+        const revealOnScroll = () => {
+          const triggerBottom = window.innerHeight * 0.9;
+          elements.forEach((el) => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < triggerBottom) {
+              el.classList.add("visible");
+            }
+          });
+        };
+        window.addEventListener("scroll", revealOnScroll, { passive: true });
+        revealOnScroll();
       }
-      requestAnimationFrame(animate);
-    }
+    })();
 
-    initPoints();
-    animate();
+    // Cosmic background particles (minimal version)
+    (function () {
+      const canvas = document.getElementById("cosmos");
+      if (!canvas) return;
 
-    // AUDIO LOGIC (FORCE PLAY)
-    const audio = document.getElementById('ambient-track');
-    const btn = document.getElementById('sonic-btn');
-    
-    audio.load();
-    audio.volume = 0.5; 
+      const ctx = canvas.getContext("2d");
+      const particles = [];
+      const PARTICLE_COUNT = 80;
 
-    function toggleAudio() {
-      if (audio.paused) {
-        var playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.then(_ => { updateBtn(true); })
-          .catch(error => {
-            console.log("Autoplay blocked");
-            audio.play();
-            updateBtn(true);
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+
+      function createParticles() {
+        particles.length = 0;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const speed = 0.1 + Math.random() * 0.4;
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: 0.6 + Math.random() * 1.8,
+            vx: (Math.random() - 0.5) * speed,
+            vy: (Math.random() - 0.5) * speed,
+            hue: Math.random() < 0.5 ? 48 : 260 // gold-ish / violet-ish
           });
         }
-      } else {
-        audio.pause();
-        updateBtn(false);
       }
-    }
 
-    function updateBtn(isPlaying) {
-      if (isPlaying) {
-        btn.innerHTML = "[ AUDIO: <span style='color:#33ff88'>ON</span> ]";
-        btn.style.borderColor = "var(--gold)";
-        btn.style.color = "var(--gold)";
-        btn.style.boxShadow = "0 0 15px rgba(212, 175, 55, 0.2)";
-      } else {
-        btn.innerHTML = "[ AUDIO: OFF ]";
-        btn.style.borderColor = "rgba(212, 175, 55, 0.3)";
-        btn.style.color = "rgba(212, 175, 55, 0.5)";
-        btn.style.boxShadow = "none";
+      function step() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p) => {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+
+          const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
+          gradient.addColorStop(0, `hsla(${p.hue}, 80%, 70%, 0.9)`);
+          gradient.addColorStop(1, `hsla(${p.hue}, 80%, 40%, 0)`);
+
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        requestAnimationFrame(step);
       }
-    }
+
+      createParticles();
+      step();
+    })();
   </script>
-  <div style="text-align: center; padding: 40px 0;">
-    <a href="lazysusan.html" style="font-family: monospace; color: var(--gold); text-decoration: none; letter-spacing: 2px; border-bottom: 1px solid var(--gold); padding-bottom: 3px;">[ INITIATE_PROTOCOL_V1 ]</a>
-  </div>
 </body>
 </html>
