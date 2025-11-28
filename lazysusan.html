@@ -1,503 +1,440 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
-  <style>
-    :root {
-      /* KRYONIS-iga sarnasem kuld */
-      --term-green: #00ff33;
-      --term-dim: #004411;
-      --term-alert: #ff3300;
-      --term-amber: #ffcc00;
-      --term-gold: #C5A028;
-      --term-bg: #050505;
-      --panel-bg: #060606;
-      --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
+ <meta charset="UTF-8">
+ <meta name="viewport"
+       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+ <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
+ <style>
+   :root {
+     --term-green: #00ff33;
+     --term-dim: #004411;
+     --term-alert: #ff3300;
+     --term-amber: #ffcc00;
+     --term-gold: #d4af37;
+     --term-bg: #050505;
+     --panel-bg: #060606;
+     --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
+   }
 
-    body {
-      /* kosmilisem taust */
-      background:
-        radial-gradient(circle at top, #151515 0%, #050505 45%, #000000 100%);
-      color: var(--term-green);
-      font-family: var(--font-stack);
-      font-size: 11px;
-      margin: 0;
-      padding: 0;
-      height: 100dvh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+   body {
+     background-color: var(--term-bg);
+     color: var(--term-green);
+     font-family: var(--font-stack);
+     font-size: 11px;
+     margin: 0;
+     padding: 0;
+     height: 100dvh;
+     overflow: hidden;
+     display: flex;
+     flex-direction: column;
+   }
 
-    /* väline “raam” – konsool kui paneel */
-    .kryonis-shell {
-      flex: 1;
-      max-width: 1180px;
-      width: 100%;
-      margin: 0 auto;
-      border: 1px solid rgba(197,160,40,0.25);
-      box-shadow: 0 0 28px rgba(0,0,0,0.9);
-      background: radial-gradient(circle at center,#050505 0%,#000000 70%);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
+   /* HEADER */
+   #top-bar {
+     height: 44px;
+     flex-shrink: 0;
+     border-bottom: 1px solid var(--term-gold);
+     padding: 0 14px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     background: radial-gradient(circle at top left,#111 0%,#050505 55%,#000 100%);
+     z-index: 10;
+     font-weight: bold;
+     letter-spacing: 1px;
+     color: var(--term-gold);
+   }
+   #top-bar span:first-child { text-transform: uppercase; }
+   #top-bar span:last-child  { font-size: 9px; color: var(--term-gold); }
 
-    /* KRYONIS header konsooli kohal */
-    #kryonis-header {
-      padding: 10px 18px 8px;
-      border-bottom: 1px solid rgba(197,160,40,0.35);
-      background: radial-gradient(circle at top left,#101010 0%,#050505 55%,#000 100%);
-      color: #f4f4f4;
-    }
+   /* SIGNAL STACK */
+   #signal-stack {
+     background: #050505;
+     border-bottom: 1px solid #222;
+     padding: 8px 14px;
+     display: flex;
+     gap: 18px;
+     overflow-x: auto;
+     white-space: nowrap;
+     align-items: center;
+     scrollbar-width: none;
+     -ms-overflow-style: none;
+   }
+   #signal-stack::-webkit-scrollbar { display: none; }
 
-    #kryonis-header-eyebrow {
-      font-size: 9px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(197,160,40,0.75);
-      margin-bottom: 4px;
-    }
+   .signal-metric {
+     display: flex;
+     flex-direction: column;
+     border-right: 1px solid #252525;
+     padding-right: 18px;
+     min-width: 90px;
+   }
+   .signal-metric:last-child { border-right: none; }
 
-    #kryonis-header-title {
-      font-size: 13px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #ffffff;
-    }
+   .sig-label {
+     font-size: 9px;
+     color: #88896a;
+     letter-spacing: 0.5px;
+     margin-bottom: 2px;
+     text-transform: uppercase;
+   }
+   .sig-value {
+     font-size: 12px;
+     font-weight: bold;
+     color: #c7ffd2;
+   }
+   .sig-val-high { color: var(--term-alert); }
+   .sig-val-med  { color: var(--term-amber); }
+   .sig-val-low  { color: var(--term-green); }
 
-    #kryonis-header-title span {
-      color: var(--term-gold);
-    }
+   /* MAIN GRID */
+   #main-grid {
+     display: flex;
+     flex: 1;
+     overflow: hidden;
+     position: relative;
+     background: radial-gradient(circle at center,#050b05 0%,#000 70%);
+     border-top: 1px solid #0c0c0c;
+     border-bottom: 1px solid #0c0c0c;
+   }
 
-    #kryonis-header-sub {
-      margin-top: 3px;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #858585;
-    }
+   /* LEFT COLUMN: MATRIX + RHEOSTAT */
+   #col-raw {
+     width: 70px;
+     flex-shrink: 0;
+     border-right: 1px solid #181818;
+     background: #020402;
+     padding: 6px 4px;
+     position: relative;
+     overflow: hidden;
+   }
+   #raw-matrix {
+     font-size: 9px;
+     line-height: 1.05;
+     white-space: pre;
+     color: #073c07;
+     opacity: 0.7;
+     user-select: none;
+   }
+   #raw-meter {
+     position: absolute;
+     bottom: 6px;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 10px;
+     height: calc(100% - 12px);
+     border: 1px solid var(--term-gold);
+     box-shadow: 0 0 8px rgba(212,175,55,0.35);
+     background: radial-gradient(circle at center,#050505 0%,#000 65%);
+     display: flex;
+     align-items: flex-end;
+     overflow: hidden;
+   }
+   #raw-meter-fill {
+     width: 100%;
+     height: 18%;
+     background: linear-gradient(to top, rgba(0,255,51,0.9), rgba(212,175,55,0.8));
+     box-shadow: 0 0 8px rgba(0,255,51,0.65);
+     transition: height 0.25s ease-out;
+   }
+   #raw-meter-idle {
+     position: absolute;
+     top: 4px;
+     left: 50%;
+     transform: translateX(-50%);
+     font-size: 7px;
+     letter-spacing: 0.8px;
+     color: #666045;
+   }
 
-    /* HEADER (konsooli enda riba) */
-    #top-bar {
-      height: 44px;
-      flex-shrink: 0;
-      border-bottom: 1px solid var(--term-gold);
-      padding: 0 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: radial-gradient(circle at top left,#111 0%,#050505 55%,#000 100%);
-      z-index: 10;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: var(--term-gold);
-    }
-    #top-bar span:first-child { text-transform: uppercase; }
-    #top-bar span:last-child  { font-size: 9px; color: var(--term-gold); }
+   /* CENTER COLUMN: LOG + REPORT */
+   #col-main {
+     flex: 1;
+     padding: 15px;
+     overflow-y: auto;
+     display: flex;
+     flex-direction: column;
+   }
+   #col-main::-webkit-scrollbar { width: 4px; }
+   #col-main::-webkit-scrollbar-thumb { background: #2f6132; }
 
-    /* SIGNAL STACK */
-    #signal-stack {
-      background: #050505;
-      border-bottom: 1px solid #222;
-      padding: 8px 14px;
-      display: flex;
-      gap: 18px;
-      overflow-x: auto;
-      white-space: nowrap;
-      align-items: center;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    #signal-stack::-webkit-scrollbar { display: none; }
+   /* RIGHT COLUMN: STATUS BOXES */
+   #col-stat {
+     width: 135px;
+     border-left: 1px solid #181818;
+     padding: 10px;
+     display: flex;
+     flex-direction: column;
+     gap: 15px;
+     background: #040404;
+   }
+   @media (max-width: 600px) {
+     #col-stat { display: none; }
+     #signal-stack { padding: 10px 12px; gap: 14px; }
+   }
+   .stat-box {
+     border: 1px solid #262626;
+     padding: 6px;
+     background: #050505;
+   }
+   .stat-label {
+     font-size: 8px;
+     color: #747474;
+     text-transform: uppercase;
+   }
+   .stat-val {
+     font-size: 12px;
+     font-weight: bold;
+     color: var(--term-gold);
+   }
 
-    .signal-metric {
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #252525;
-      padding-right: 18px;
-      min-width: 90px;
-    }
-    .signal-metric:last-child { border-right: none; }
+   /* CONTROLS */
+   #controls {
+     background: #040404;
+     border-top: 1px solid #181818;
+     padding: 10px;
+     padding-bottom: max(10px, env(safe-area-inset-bottom));
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+   }
+   #chip-rack {
+     display: flex;
+     gap: 8px;
+     overflow-x: auto;
+     padding-bottom: 4px;
+   }
+   #chip-rack::-webkit-scrollbar { height: 3px; }
+   #chip-rack::-webkit-scrollbar-thumb { background: #444; }
+   .chip {
+     background: #080808;
+     border: 1px solid #333;
+     color: #a5a5a5;
+     padding: 8px 12px;
+     font-size: 10px;
+     text-transform: uppercase;
+     cursor: pointer;
+     white-space: nowrap;
+   }
+   .chip:hover {
+     border-color: var(--term-gold);
+     color: #fff;
+     box-shadow: 0 0 6px rgba(212,175,55,0.4);
+   }
+   #prompt-help {
+     font-size: 9px;
+     color: #848484;
+     letter-spacing: 0.4px;
+     text-transform: uppercase;
+     border-left: 2px solid #333;
+     padding-left: 8px;
+   }
+   #prompt-help span { color: var(--term-gold); }
 
-    .sig-label {
-      font-size: 9px;
-      color: #88896a;
-      letter-spacing: 0.5px;
-      margin-bottom: 2px;
-      text-transform: uppercase;
-    }
-    .sig-value {
-      font-size: 12px;
-      font-weight: bold;
-      color: #c7ffd2;
-    }
-    .sig-val-high { color: var(--term-alert); }
-    .sig-val-med  { color: var(--term-amber); }
-    .sig-val-low  { color: var(--term-green); }
+   .input-row {
+     display: flex;
+     align-items: center;
+     border: 1px solid #333;
+     background: #050505;
+     padding: 10px;
+   }
+   input {
+     background: transparent;
+     border: none;
+     color: #f8f8f8;
+     flex: 1;
+     font-family: inherit;
+     font-size: 13px;
+     outline: none;
+     text-transform: uppercase;
+   }
 
-    /* MAIN GRID */
-    #main-grid {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-      background: radial-gradient(circle at center,#050b05 0%,#000 70%);
-      border-top: 1px solid #0c0c0c;
-      border-bottom: 1px solid #0c0c0c;
-    }
+   .log-line { margin-bottom: 6px; word-wrap: break-word; }
+   .sys  { color: #6b8a6b; }
+   .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* LEFT COLUMN: MATRIX + RHEOSTAT */
-    #col-raw {
-      width: 70px;
-      flex-shrink: 0;
-      border-right: 1px solid #181818;
-      background: #020402;
-      padding: 6px 4px;
-      position: relative;
-      overflow: hidden;
-    }
-    #raw-matrix {
-      font-size: 9px;
-      line-height: 1.05;
-      white-space: pre;
-      color: #073c07;
-      opacity: 0.7;
-      user-select: none;
-    }
-    #raw-meter {
-      position: absolute;
-      bottom: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: calc(100% - 12px);
-      border: 1px solid var(--term-gold);
-      box-shadow: 0 0 8px rgba(212,175,55,0.35);
-      background: radial-gradient(circle at center,#050505 0%,#000 65%);
-      display: flex;
-      align-items: flex-end;
-      overflow: hidden;
-    }
-    #raw-meter-fill {
-      width: 100%;
-      height: 18%;
-      background: linear-gradient(to top, rgba(0,255,51,0.9), rgba(212,175,55,0.8));
-      box-shadow: 0 0 8px rgba(0,255,51,0.65);
-      transition: height 0.25s ease-out;
-    }
-    #raw-meter-idle {
-      position: absolute;
-      top: 4px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 7px;
-      letter-spacing: 0.8px;
-      color: #666045;
-    }
+   /* ROHELINE RAPORTI KAST – ÜHINE STIIL MÕLEMALE */
+   .report-box {
+     border: 1px solid #1c3f1e;
+     background: rgba(0, 18, 0, 0.9);
+     padding: 13px;
+     margin: 8px 0 4px;
+     position: relative;
+     line-height: 1.33;
+     color: #d7ffd7;
+     box-shadow: 0 0 12px rgba(0,255,51,0.18);
+     animation: fadeIn 0.5s;
+   }
 
-    /* CENTER COLUMN: LOG + REPORT */
-    #col-main {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-    #col-main::-webkit-scrollbar { width: 4px; }
-    #col-main::-webkit-scrollbar-thumb { background: #2f6132; }
+   /* NARRATIIVIKAST = sama kast + veidi suurem vahe */
+   .narrative-box {
+     margin-top: 12px;
+   }
 
-    /* RIGHT COLUMN: STATUS BOXES */
-    #col-stat {
-      width: 135px;
-      border-left: 1px solid #181818;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      background: #040404;
-    }
-    @media (max-width: 600px) {
-      #col-stat { display: none; }
-      #signal-stack { padding: 10px 12px; gap: 14px; }
-    }
-    .stat-box {
-      border: 1px solid #262626;
-      padding: 6px;
-      background: #050505;
-    }
-    .stat-label {
-      font-size: 8px;
-      color: #747474;
-      text-transform: uppercase;
-    }
-    .stat-val {
-      font-size: 12px;
-      font-weight: bold;
-      color: var(--term-gold);
-    }
+   /* sektorite separator */
+   .sector-sep {
+     height: 1px;
+     margin: 6px 0 4px;
+     background: linear-gradient(
+       to right,
+       rgba(0, 255, 120, 0.0),
+       rgba(0, 255, 120, 0.45),
+       rgba(0, 255, 120, 0.0)
+     );
+   }
 
-    /* CONTROLS */
-    #controls {
-      background: #040404;
-      border-top: 1px solid #181818;
-      padding: 10px;
-      padding-bottom: max(10px, env(safe-area-inset-bottom));
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    #chip-rack {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-    #chip-rack::-webkit-scrollbar { height: 3px; }
-    #chip-rack::-webkit-scrollbar-thumb { background: #444; }
-    .chip {
-      background: #080808;
-      border: 1px solid #333;
-      color: #a5a5a5;
-      padding: 8px 12px;
-      font-size: 10px;
-      text-transform: uppercase;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .chip:hover {
-      border-color: var(--term-gold);
-      color: #fff;
-      box-shadow: 0 0 6px rgba(212,175,55,0.4);
-    }
-    #prompt-help {
-      font-size: 9px;
-      color: #848484;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      border-left: 2px solid #333;
-      padding-left: 8px;
-    }
-    #prompt-help span { color: var(--term-gold); }
+   /* PEALKIRJADE KLASSID – ilma neoonita, lihtsalt veidi heledam */
+   .report-heading {
+     font-weight: 700;
+     letter-spacing: 0.8px;
+     color: #e9ffe8;
+   }
 
-    .input-row {
-      display: flex;
-      align-items: center;
-      border: 1px solid #333;
-      background: #050505;
-      padding: 10px;
-    }
-    input {
-      background: transparent;
-      border: none;
-      color: #f8f8f8;
-      flex: 1;
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      text-transform: uppercase;
-    }
+   .sector-heading {
+     font-weight: 700;
+     letter-spacing: 0.6px;
+     color: #d4ffd0;
+   }
 
-    .log-line { margin-bottom: 6px; word-wrap: break-word; }
-    .sys  { color: #6b8a6b; }
-    .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
+   /* LICENSE BAR */
+   #license-bar {
+     margin-top: 10px;
+     padding-top: 8px;
+     border-top: 1px solid #222;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 4px;
+   }
 
-    /* RAPORTIKASTID */
-    .report-box {
-      border: 1px solid #1c3f1e;
-      background: rgba(0, 18, 0, 0.9);
-      padding: 13px;
-      margin: 8px 0 4px;
-      position: relative;
-      line-height: 1.33;
-      color: #d7ffd7;
-      box-shadow: 0 0 12px rgba(0,255,51,0.18);
-      animation: fadeIn 0.5s;
-    }
+   #license-btn {
+     background: #080808;
+     border: 1px solid #333;
+     color: var(--term-gold);
+     padding: 8px 18px;
+     font-size: 10px;
+     cursor: pointer;
+     border-radius: 4px;
+     text-transform: uppercase;
+     letter-spacing: 1px;
+   }
+   #license-btn:hover {
+     border-color: var(--term-gold);
+     box-shadow: 0 0 6px rgba(212,175,55,0.3);
+   }
 
-    .narrative-box {
-      margin-top: 12px;
-    }
+   .license-note {
+     font-size: 9px;
+     color: #c8a96c;
+     text-transform: uppercase;
+     letter-spacing: 0.6px;
+     margin-top: 2px;
+   }
 
-    .sector-sep {
-      height: 1px;
-      margin: 6px 0 4px;
-      background: linear-gradient(
-        to right,
-        rgba(0, 255, 120, 0.0),
-        rgba(0, 255, 120, 0.45),
-        rgba(0, 255, 120, 0.0)
-      );
-    }
-
-    .report-heading {
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: #e9ffe8;
-    }
-
-    .sector-heading {
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      color: #d4ffd0;
-    }
-
-    /* LICENSE BAR */
-    #license-bar {
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px solid #222;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    #license-btn {
-      background: #080808;
-      border: 1px solid #333;
-      color: var(--term-gold);
-      padding: 8px 18px;
-      font-size: 10px;
-      cursor: pointer;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    #license-btn:hover {
-      border-color: var(--term-gold);
-      box-shadow: 0 0 6px rgba(212,175,55,0.3);
-    }
-
-    .license-note {
-      font-size: 9px;
-      color: #c8a96c;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-top: 2px;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  </style>
+   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+ </style>
 </head>
 <body>
 
-<div class="kryonis-shell">
-  <!-- KRYONIS ülemine pealkiri -->
-  <div id="kryonis-header">
-    <div id="kryonis-header-eyebrow">KRYONIS / AXIS I — INTELLIGENCE STUDIO</div>
-    <div id="kryonis-header-title">
-      <span>PX-Δ1</span> SOVEREIGN INTELLIGENCE CONSOLE
-    </div>
-    <div id="kryonis-header-sub">
-      LIVE STRATEGIC SCAN · COSMOTRON-Δ1 UPLINK
-    </div>
-  </div>
+<div id="top-bar">
+ <span>PX-Δ1 // LIVE_UPLINK</span>
+ <span>COSMOTRON-Δ1 <span style="color:var(--term-alert)">●</span></span>
+</div>
 
-  <div id="top-bar">
-    <span>PX-Δ1 // LIVE_UPLINK</span>
-    <span>COSMOTRON-Δ1 <span style="color:var(--term-alert)">●</span></span>
-  </div>
+<div id="signal-stack">
+ <div class="signal-metric">
+   <span class="sig-label">Coherence Vector</span>
+   <span class="sig-value" id="sig-coherence">96.4</span>
+ </div>
+ <div class="signal-metric">
+   <span class="sig-label">Pattern Drift</span>
+   <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
+ </div>
+ <div class="signal-metric">
+   <span class="sig-label">Risk Vector</span>
+   <span class="sig-value" id="sig-risk">--</span>
+ </div>
+ <div class="signal-metric">
+   <span class="sig-label">Pulse Density</span>
+   <span class="sig-value" id="sig-pulse">0.84</span>
+ </div>
+ <div class="signal-metric" style="border:none; min-width:110px;">
+   <span class="sig-label">Mode</span>
+   <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
+ </div>
+</div>
 
-  <div id="signal-stack">
-    <div class="signal-metric">
-      <span class="sig-label">Coherence Vector</span>
-      <span class="sig-value" id="sig-coherence">96.4</span>
-    </div>
-    <div class="signal-metric">
-      <span class="sig-label">Pattern Drift</span>
-      <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
-    </div>
-    <div class="signal-metric">
-      <span class="sig-label">Risk Vector</span>
-      <span class="sig-value" id="sig-risk">--</span>
-    </div>
-    <div class="signal-metric">
-      <span class="sig-label">Pulse Density</span>
-      <span class="sig-value" id="sig-pulse">0.84</span>
-    </div>
-    <div class="signal-metric" style="border:none; min-width:110px;">
-      <span class="sig-label">Mode</span>
-      <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
-    </div>
-  </div>
+<div id="main-grid">
+ <div id="col-raw">
+   <div id="raw-matrix"></div>
+   <div id="raw-meter">
+     <div id="raw-meter-fill"></div>
+   </div>
+   <div id="raw-meter-idle">PX-Δ1</div>
+ </div>
 
-  <div id="main-grid">
-    <div id="col-raw">
-      <div id="raw-matrix"></div>
-      <div id="raw-meter">
-        <div id="raw-meter-fill"></div>
-      </div>
-      <div id="raw-meter-idle">PX-Δ1</div>
-    </div>
+ <div id="col-main">
+   <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
+   <div class="log-line sys">API HANDSHAKE: STANDBY</div>
+   <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
+ </div>
 
-    <div id="col-main">
-      <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
-      <div class="log-line sys">API HANDSHAKE: STANDBY</div>
-      <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
-    </div>
+ <div id="col-stat">
+   <div class="stat-box">
+     <span class="stat-label">Net Load</span>
+     <span class="stat-val" id="net-val">0 TB/s</span>
+   </div>
+   <div class="stat-box">
+     <span class="stat-label">Active Nodes</span>
+     <span class="stat-val">14,205</span>
+   </div>
+   <div class="stat-box">
+     <span class="stat-label">Threat Level</span>
+     <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
+   </div>
+ </div>
+</div>
 
-    <div id="col-stat">
-      <div class="stat-box">
-        <span class="stat-label">Net Load</span>
-        <span class="stat-val" id="net-val">0 TB/s</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Active Nodes</span>
-        <span class="stat-val">14,205</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">Threat Level</span>
-        <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
-      </div>
-    </div>
-  </div>
+<div id="controls">
+ <div id="chip-rack">
+   <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
+   <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
+   <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
+   <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
+   <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
+   <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
+   <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
+   <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
+   <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
+ </div>
 
-  <div id="controls">
-    <div id="chip-rack">
-      <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
-      <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
-      <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
-      <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
-      <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
-      <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
-      <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
-      <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
-      <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
-    </div>
+ <div id="prompt-help">
+   <span>FORMAT:</span> TARGET + CONTEXT + YEAR (OPTIONAL) ·
+   <span>EXAMPLES:</span>
+   "SIBERIA BIOECONOMY SIGNAL REPORT" ·
+   "AION SENTIA COGNITIVE CITY ANALYSIS" ·
+   "ARCTIC BIOSECURITY MODEL 2035"
+ </div>
 
-    <div id="prompt-help">
-      <span>FORMAT:</span> TARGET + CONTEXT + YEAR (OPTIONAL) ·
-      <span>EXAMPLES:</span>
-      "SIBERIA BIOECONOMY SIGNAL REPORT" ·
-      "AION SENTIA COGNITIVE CITY ANALYSIS" ·
-      "ARCTIC BIOSECURITY MODEL 2035"
-    </div>
+ <div class="input-row">
+   <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
+   <input type="text" id="user-input"
+          placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
+ </div>
 
-    <div class="input-row">
-      <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-      <input type="text" id="user-input"
-             placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
-    </div>
-
-    <div id="license-bar">
-      <button id="license-btn">ACTIVATE SOVEREIGN ACCESS</button>
-      <div class="license-note">
-        ANNUAL LICENSE — PX-Δ1 SOVEREIGN INTELLIGENCE INTERFACE
-      </div>
-    </div>
-  </div>
+ <div id="license-bar">
+   <button id="license-btn">ACTIVATE SOVEREIGN ACCESS</button>
+   <div class="license-note">
+     ANNUAL LICENSE — PX-Δ1 SOVEREIGN INTELLIGENCE INTERFACE
+   </div>
+ </div>
 </div>
 
 <script>
-  const COSMOTRON_PROXY_URL = "https://cosmotron-proxy.stevenalber.workers.dev";
+ const COSMOTRON_PROXY_URL = "https://cosmotron-proxy.stevenalber.workers.dev";
 
-  const SYSTEM_PROMPT = `
+ const SYSTEM_PROMPT = `
 You are PX-Δ1, a Sovereign Global Monitoring AI used by KRYONIS.
 Your output must be a STRATEGIC INTELLIGENCE REPORT.
 Style: Military, cryptic, high-level. No polite filler words.
@@ -534,294 +471,301 @@ Do NOT write any word counts, numbers in brackets, or "(X WORDS)".
 Do NOT prefix sections with "1.", "2.", "3." etc.
 `.trim();
 
-  const rawMatrixEl  = document.getElementById('raw-matrix');
-  const meterFillEl  = document.getElementById('raw-meter-fill');
-  const mainCol      = document.getElementById('col-main');
-  const input        = document.getElementById('user-input');
-  const netVal       = document.getElementById('net-val');
+ const rawMatrixEl  = document.getElementById('raw-matrix');
+ const meterFillEl  = document.getElementById('raw-meter-fill');
+ const mainCol      = document.getElementById('col-main');
+ const input        = document.getElementById('user-input');
+ const netVal       = document.getElementById('net-val');
 
-  let meterInterval  = null;
+ let meterInterval  = null;
 
-  function matrixRain() {
-    let text = "";
-    const chars = "01";
-    for (let i = 0; i < 150; i++) {
-      text += chars.charAt(Math.floor(Math.random() * chars.length));
-      if (i % 2 === 0) text += " ";
-      if (i % 6 === 0) text += "\n";
-    }
-    rawMatrixEl.innerText = text;
-    netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
-  }
-  setInterval(matrixRain, 90);
+ function matrixRain() {
+   let text = "";
+   const chars = "01";
+   for (let i = 0; i < 150; i++) {
+     text += chars.charAt(Math.floor(Math.random() * chars.length));
+     if (i % 2 === 0) text += " ";
+     if (i % 6 === 0) text += "\n";
+   }
+   rawMatrixEl.innerText = text;
+   netVal.innerText = Math.floor(Math.random() * 900 + 100) + " TB/s";
+ }
+ setInterval(matrixRain, 90);
 
-  function addLog(text, type) {
-    const div = document.createElement('div');
-    div.className = "log-line " + type;
-    div.innerHTML = text;
-    mainCol.appendChild(div);
-    mainCol.scrollTop = mainCol.scrollHeight;
-    return div;
-  }
+ function addLog(text, type) {
+   const div = document.createElement('div');
+   div.className = "log-line " + type;
+   div.innerHTML = text;
+   mainCol.appendChild(div);
+   mainCol.scrollTop = mainCol.scrollHeight;
+   return div;
+ }
 
-  function updateSignalStack(aiResponseText) {
-    const coherenceEl = document.getElementById('sig-coherence');
-    let currentCoherence = parseFloat(coherenceEl.innerText);
-    let newCoherence = currentCoherence + (Math.random() * 2 - 1);
-    if (newCoherence > 99.9) newCoherence = 99.9;
-    if (newCoherence < 85.0) newCoherence = 85.0;
-    coherenceEl.innerText = newCoherence.toFixed(1);
+ function updateSignalStack(aiResponseText) {
+   const coherenceEl = document.getElementById('sig-coherence');
+   let currentCoherence = parseFloat(coherenceEl.innerText);
+   let newCoherence = currentCoherence + (Math.random() * 2 - 1);
+   if (newCoherence > 99.9) newCoherence = 99.9;
+   if (newCoherence < 85.0) newCoherence = 85.0;
+   coherenceEl.innerText = newCoherence.toFixed(1);
 
-    const text = aiResponseText.toUpperCase();
-    const driftEl = document.getElementById('sig-drift');
-    if (text.includes("CRITICAL")) {
-      driftEl.innerText = "HIGH";
-      driftEl.className = "sig-value sig-val-high";
-    } else if (text.includes("MEDIUM") || text.includes("WARNING")) {
-      driftEl.innerText = "MED";
-      driftEl.className = "sig-value sig-val-med";
-    } else {
-      driftEl.innerText = "LOW";
-      driftEl.className = "sig-value sig-val-low";
-    }
+   const text = aiResponseText.toUpperCase();
+   const driftEl = document.getElementById('sig-drift');
+   if (text.includes("CRITICAL")) {
+     driftEl.innerText = "HIGH";
+     driftEl.className = "sig-value sig-val-high";
+   } else if (text.includes("MEDIUM") || text.includes("WARNING")) {
+     driftEl.innerText = "MED";
+     driftEl.className = "sig-value sig-val-med";
+   } else {
+     driftEl.innerText = "LOW";
+     driftEl.className = "sig-value sig-val-low";
+   }
 
-    const riskEl = document.getElementById('sig-risk');
-    if (text.includes("BIO") || text.includes("PATHOGEN") || text.includes("VIRUS")) {
-      riskEl.innerText = "BIO-SEC";
-    } else if (text.includes("GOVERN") || text.includes("SOVEREIGN") || text.includes("REGIME")) {
-      riskEl.innerText = "GOV-SYS";
-    } else if (text.includes("ECONOM") || text.includes("TRADE") || text.includes("MARKET")) {
-      riskEl.innerText = "ECO-FIN";
-    } else if (text.includes("AI") || text.includes("CYBER") || text.includes("ALGORITHM")) {
-      riskEl.innerText = "AI-COG";
-    } else {
-      riskEl.innerText = "GEN-SYS";
-    }
-  }
+   const riskEl = document.getElementById('sig-risk');
+   if (text.includes("BIO") || text.includes("PATHOGEN") || text.includes("VIRUS")) {
+     riskEl.innerText = "BIO-SEC";
+   } else if (text.includes("GOVERN") || text.includes("SOVEREIGN") || text.includes("REGIME")) {
+     riskEl.innerText = "GOV-SYS";
+   } else if (text.includes("ECONOM") || text.includes("TRADE") || text.includes("MARKET")) {
+     riskEl.innerText = "ECO-FIN";
+   } else if (text.includes("AI") || text.includes("CYBER") || text.includes("ALGORITHM")) {
+     riskEl.innerText = "AI-COG";
+   } else {
+     riskEl.innerText = "GEN-SYS";
+   }
+ }
 
-  function startMeterAnimation() {
-    if (meterInterval) return;
-    meterInterval = setInterval(() => {
-      const h = 20 + Math.random() * 70;
-      meterFillEl.style.height = h + "%";
-    }, 220);
-  }
+ function startMeterAnimation() {
+   if (meterInterval) return;
+   meterInterval = setInterval(() => {
+     const h = 20 + Math.random() * 70;
+     meterFillEl.style.height = h + "%";
+   }, 220);
+ }
 
-  function stopMeterAnimation() {
-    if (meterInterval) {
-      clearInterval(meterInterval);
-      meterInterval = null;
-    }
-    meterFillEl.style.height = "18%";
-  }
+ function stopMeterAnimation() {
+   if (meterInterval) {
+     clearInterval(meterInterval);
+     meterInterval = null;
+   }
+   meterFillEl.style.height = "18%";
+ }
 
-  async function generateFromModel(query) {
-    const payload = { prompt: SYSTEM_PROMPT + "\n\nQUERY: " + query };
+ async function generateFromModel(query) {
+   const payload = { prompt: SYSTEM_PROMPT + "\n\nQUERY: " + query };
 
-    const res = await fetch(COSMOTRON_PROXY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+   const res = await fetch(COSMOTRON_PROXY_URL, {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify(payload)
+   });
 
-    const rawText = await res.text();
+   const rawText = await res.text();
 
-    if (!res.ok) {
-      return (
-        "[PX-Δ1 // LINK LAYER NOTICE]\n" +
-        "Upstream responded with status " + res.status + ".\n\n" +
-        "RAW PAYLOAD:\n" + rawText
-      );
-    }
+   if (!res.ok) {
+     return (
+       "[PX-Δ1 // LINK LAYER NOTICE]\n" +
+       "Upstream responded with status " + res.status + ".\n\n" +
+       "RAW PAYLOAD:\n" + rawText
+     );
+   }
 
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      return rawText;
-    }
+   let data;
+   try {
+     data = JSON.parse(rawText);
+   } catch {
+     return rawText;
+   }
 
-    let text = "";
-    try {
-      const cand = data.candidates && data.candidates[0];
-      if (cand && cand.content && cand.content.parts) {
-        text = cand.content.parts
-          .map(p => (p && typeof p.text === "string") ? p.text : "")
-          .join("\n")
-          .trim();
-      }
-      if (!text && cand && typeof cand.output_text === "string") {
-        text = cand.output_text.trim();
-      }
-      if (!text && typeof data.output_text === "string") {
-        text = data.output_text.trim();
-      }
-    } catch {}
+   let text = "";
+   try {
+     const cand = data.candidates && data.candidates[0];
+     if (cand && cand.content && cand.content.parts) {
+       text = cand.content.parts
+         .map(p => (p && typeof p.text === "string") ? p.text : "")
+         .join("\n")
+         .trim();
+     }
+     if (!text && cand && typeof cand.output_text === "string") {
+       text = cand.output_text.trim();
+     }
+     if (!text && typeof data.output_text === "string") {
+       text = data.output_text.trim();
+     }
+   } catch {}
 
-    if (!text) {
-      return (
-        "[PX-Δ1 // WARNING]\n" +
-        "Model returned no direct text content. Raw response:\n\n" +
-        JSON.stringify(data)
-      );
-    }
+   if (!text) {
+     return (
+       "[PX-Δ1 // WARNING]\n" +
+       "Model returned no direct text content. Raw response:\n\n" +
+       JSON.stringify(data)
+     );
+   }
 
-    return text;
-  }
+   return text;
+ }
 
-  function formatText(str) {
-    if (!str) return "";
-    const lines = str.split(/\n/);
-    const out = [];
-    let sawSector = false;
+ // UUS: struktuuripõhine formatter
+ function formatText(str) {
+   if (!str) return "";
+   const lines = str.split(/\n/);
+   const out = [];
+   let sawSector = false;
 
-    for (let rawLine of lines) {
-      const trimmedStart = rawLine.trimStart();
-      if (!trimmedStart) {
-        out.push("");
-        continue;
-      }
+   for (let rawLine of lines) {
+     const trimmedStart = rawLine.trimStart();
+     if (!trimmedStart) {
+       out.push("");
+       continue;
+     }
 
-      const upper = trimmedStart.toUpperCase();
+     const upper = trimmedStart.toUpperCase();
 
-      if (upper.startsWith("HEADER:")) {
-        out.push(wrapReportHeading(trimmedStart, "HEADER:"));
-        continue;
-      }
-      if (upper.startsWith("RISK LEVEL:")) {
-        out.push(wrapReportHeading(trimmedStart, "RISK LEVEL:"));
-        continue;
-      }
-      if (upper.startsWith("SECTOR ANALYSIS:")) {
-        out.push(wrapReportHeading(trimmedStart, "SECTOR ANALYSIS:"));
-        continue;
-      }
-      if (upper.startsWith("STRATEGIC DOCTRINE:")) {
-        out.push(wrapReportHeading(trimmedStart, "STRATEGIC DOCTRINE:"));
-        continue;
-      }
-      if (upper.startsWith("NARRATIVE SYNTHESIS:")) {
-        out.push(wrapReportHeading(trimmedStart, "NARRATIVE SYNTHESIS:"));
-        continue;
-      }
+     // top-level pealkirjad
+     if (upper.startsWith("HEADER:")) {
+       out.push(wrapReportHeading(trimmedStart, "HEADER:"));
+       continue;
+     }
+     if (upper.startsWith("RISK LEVEL:")) {
+       out.push(wrapReportHeading(trimmedStart, "RISK LEVEL:"));
+       continue;
+     }
+     if (upper.startsWith("SECTOR ANALYSIS:")) {
+       out.push(wrapReportHeading(trimmedStart, "SECTOR ANALYSIS:"));
+       continue;
+     }
+     if (upper.startsWith("STRATEGIC DOCTRINE:")) {
+       out.push(wrapReportHeading(trimmedStart, "STRATEGIC DOCTRINE:"));
+       continue;
+     }
+     if (upper.startsWith("NARRATIVE SYNTHESIS:")) {
+       out.push(wrapReportHeading(trimmedStart, "NARRATIVE SYNTHESIS:"));
+       continue;
+     }
 
-      let clean = trimmedStart.replace(/^[-–—]\s*/, "");
-      const cleanUpper = clean.toUpperCase();
+     // sektorialased: võib olla "- GOVERNANCE:" jne
+     let clean = trimmedStart.replace(/^[-–—]\s*/, "");
+     const cleanUpper = clean.toUpperCase();
 
-      if (cleanUpper.startsWith("GOVERNANCE:")) {
-        out.push(wrapSectorHeading(clean, "GOVERNANCE:", sawSector));
-        sawSector = true;
-        continue;
-      }
-      if (cleanUpper.startsWith("LOGISTICS / ECONOMY:")) {
-        out.push(wrapSectorHeading(clean, "LOGISTICS / ECONOMY:", sawSector));
-        sawSector = true;
-        continue;
-      }
-      if (cleanUpper.startsWith("COGNITIVE:")) {
-        out.push(wrapSectorHeading(clean, "COGNITIVE:", sawSector));
-        sawSector = true;
-        continue;
-      }
+     if (cleanUpper.startsWith("GOVERNANCE:")) {
+       out.push(wrapSectorHeading(clean, "GOVERNANCE:", sawSector));
+       sawSector = true;
+       continue;
+     }
+     if (cleanUpper.startsWith("LOGISTICS / ECONOMY:")) {
+       out.push(wrapSectorHeading(clean, "LOGISTICS / ECONOMY:", sawSector));
+       sawSector = true;
+       continue;
+     }
+     if (cleanUpper.startsWith("COGNITIVE:")) {
+       out.push(wrapSectorHeading(clean, "COGNITIVE:", sawSector));
+       sawSector = true;
+       continue;
+     }
 
-      out.push(trimmedStart);
-    }
+     // muu tekst lihtsalt läbi
+     out.push(trimmedStart);
+   }
 
-    let joined = out.join("\n");
+   let joined = out.join("\n");
 
-    joined = joined
-      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
-      .replace(/\*(.+?)\*/g, "<b>$1</b>")
-      .replace(/\*/g, "");
+   // markdown → <b>
+   joined = joined
+     .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+     .replace(/\*(.+?)\*/g, "<b>$1</b>")
+     .replace(/\*/g, "");
 
-    return joined.replace(/\n/g, "<br>");
-  }
+   return joined.replace(/\n/g, "<br>");
+ }
 
-  function wrapReportHeading(line, label) {
-    const rest = line.slice(label.length).trimStart();
-    const span = "<span class='report-heading'>" + label + "</span>";
-    return rest ? span + " " + rest : span;
-  }
+ function wrapReportHeading(line, label) {
+   const rest = line.slice(label.length).trimStart();
+   const span = "<span class='report-heading'>" + label + "</span>";
+   return rest ? span + " " + rest : span;
+ }
 
-  function wrapSectorHeading(line, label, sawSector) {
-    const rest = line.slice(label.length).trimStart();
-    const span = "<span class='sector-heading'>" + label + "</span>";
-    const content = rest ? span + " " + rest : span;
-    if (!sawSector) return content;
-    return "<div class='sector-sep'></div>" + content;
-  }
+ function wrapSectorHeading(line, label, sawSector) {
+   const rest = line.slice(label.length).trimStart();
+   const span = "<span class='sector-heading'>" + label + "</span>";
+   const content = rest ? span + " " + rest : span;
+   if (!sawSector) return content;
+   // lisa õrn separator enne järgmisi sektoreid
+   return "<div class='sector-sep'></div>" + content;
+ }
 
-  async function callCosmotron(query) {
-    input.disabled = true;
-    addLog(`> UPLINK REQUEST: ${query}`, 'user');
-    const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
-    startMeterAnimation();
+ async function callCosmotron(query) {
+   input.disabled = true;
+   addLog(`> UPLINK REQUEST: ${query}`, 'user');
+   const loadingLine = addLog("SCANNING GLOBAL DATASETS...", 'sys');
+   startMeterAnimation();
 
-    await new Promise(r => setTimeout(r, 700));
-    loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
-    await new Promise(r => setTimeout(r, 700));
-    loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
+   await new Promise(r => setTimeout(r, 700));
+   loadingLine.innerText = "DECRYPTING STRATEGIC ARCHIVES...";
+   await new Promise(r => setTimeout(r, 700));
+   loadingLine.innerText = "SYNTHESIZING INTELLIGENCE...";
 
-    try {
-      const aiRaw = await generateFromModel(query);
+   try {
+     const aiRaw = await generateFromModel(query);
 
-      loadingLine.style.display = 'none';
-      updateSignalStack(aiRaw);
+     loadingLine.style.display = 'none';
+     updateSignalStack(aiRaw);
 
-      let mainRaw = aiRaw;
-      let narrativeRaw = "";
+     let mainRaw = aiRaw;
+     let narrativeRaw = "";
 
-      const upper = aiRaw.toUpperCase();
-      const marker = "NARRATIVE SYNTHESIS";
-      const idx = upper.indexOf(marker);
+     const upper = aiRaw.toUpperCase();
+     const marker = "NARRATIVE SYNTHESIS";
+     const idx = upper.indexOf(marker);
 
-      if (idx !== -1) {
-        const before = aiRaw.slice(0, idx);
-        const after = aiRaw.slice(idx);
-        const lines = after.split(/\n/);
-        lines.shift();
-        mainRaw = before.trim();
-        narrativeRaw = lines.join("\n").trim();
-      }
+     if (idx !== -1) {
+       const before = aiRaw.slice(0, idx);
+       const after = aiRaw.slice(idx);
+       const lines = after.split(/\n/);
+       lines.shift(); // viskame algse "NARRATIVE SYNTHESIS..." rea minema
+       mainRaw = before.trim();
+       narrativeRaw = lines.join("\n").trim();
+     }
 
-      const reportDiv = document.createElement('div');
-      reportDiv.className = 'report-box';
-      reportDiv.innerHTML = formatText(mainRaw);
-      mainCol.appendChild(reportDiv);
+     const reportDiv = document.createElement('div');
+     reportDiv.className = 'report-box';
+     reportDiv.innerHTML = formatText(mainRaw);
+     mainCol.appendChild(reportDiv);
 
-      if (narrativeRaw) {
-        const narrativeDiv = document.createElement('div');
-        narrativeDiv.className = 'report-box narrative-box';
-        narrativeDiv.innerHTML = formatText("NARRATIVE SYNTHESIS:\n\n" + narrativeRaw);
-        mainCol.appendChild(narrativeDiv);
-      }
+     if (narrativeRaw) {
+       const narrativeDiv = document.createElement('div');
+       narrativeDiv.className = 'report-box narrative-box';
+       // lisame pealkirja samasse loogikasse
+       narrativeDiv.innerHTML = formatText("NARRATIVE SYNTHESIS:\n\n" + narrativeRaw);
+       mainCol.appendChild(narrativeDiv);
+     }
 
-      mainCol.scrollTop = reportDiv.offsetTop;
-    } catch (err) {
-      console.error(err);
-      loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
-      loadingLine.style.color = "red";
-    }
+     mainCol.scrollTop = reportDiv.offsetTop;
+   } catch (err) {
+     console.error(err);
+     loadingLine.innerText = "CRITICAL ERROR: CRITICAL LINK FAILURE.";
+     loadingLine.style.color = "red";
+   }
 
-    stopMeterAnimation();
-    input.disabled = false;
-    input.value = '';
-    input.focus();
-  }
+   stopMeterAnimation();
+   input.disabled = false;
+   input.value = '';
+   input.focus();
+ }
 
-  function askAI(q) {
-    const val = (q || "").trim();
-    if (val) callCosmotron(val.toUpperCase());
-  }
+ function askAI(q) {
+   const val = (q || "").trim();
+   if (val) callCosmotron(val.toUpperCase());
+ }
 
-  input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      const val = input.value.trim();
-      if (val) callCosmotron(val.toUpperCase());
-    }
-  });
+ input.addEventListener('keypress', (e) => {
+   if (e.key === 'Enter') {
+     const val = input.value.trim();
+     if (val) callCosmotron(val.toUpperCase());
+   }
+ });
 
-  (function init() { matrixRain(); })();
+ (function init() { matrixRain(); })();
 </script>
 </body>
 </html>
