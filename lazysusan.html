@@ -7,18 +7,21 @@
   <title>PX-Δ1 // LIVE INTELLIGENCE — COSMOTRON-Δ1</title>
   <style>
     :root {
+      /* KRYONIS-iga sarnasem kuld */
       --term-green: #00ff33;
       --term-dim: #004411;
       --term-alert: #ff3300;
       --term-amber: #ffcc00;
-      --term-gold: #d4af37;
+      --term-gold: #C5A028;
       --term-bg: #050505;
       --panel-bg: #060606;
       --font-stack: 'Consolas', 'Monaco', 'Courier New', monospace;
     }
 
     body {
-      background-color: var(--term-bg);
+      /* kosmilisem taust */
+      background:
+        radial-gradient(circle at top, #151515 0%, #050505 45%, #000000 100%);
       color: var(--term-green);
       font-family: var(--font-stack);
       font-size: 11px;
@@ -30,7 +33,57 @@
       flex-direction: column;
     }
 
-    /* HEADER */
+    /* väline “raam” – konsool kui paneel */
+    .kryonis-shell {
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      border: 1px solid rgba(197,160,40,0.25);
+      box-shadow: 0 0 28px rgba(0,0,0,0.9);
+      background: radial-gradient(circle at center,#050505 0%,#000000 70%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* KRYONIS header konsooli kohal */
+    #kryonis-header {
+      padding: 10px 18px 8px;
+      border-bottom: 1px solid rgba(197,160,40,0.35);
+      background: radial-gradient(circle at top left,#101010 0%,#050505 55%,#000 100%);
+      color: #f4f4f4;
+    }
+
+    #kryonis-header-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(197,160,40,0.75);
+      margin-bottom: 4px;
+    }
+
+    #kryonis-header-title {
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    #kryonis-header-title span {
+      color: var(--term-gold);
+    }
+
+    #kryonis-header-sub {
+      margin-top: 3px;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #858585;
+    }
+
+    /* HEADER (konsooli enda riba) */
     #top-bar {
       height: 44px;
       flex-shrink: 0;
@@ -254,7 +307,7 @@
     .sys  { color: #6b8a6b; }
     .user { color: var(--term-gold); font-weight: bold; margin-top: 10px; }
 
-    /* ROHELINE RAPORTI KAST – ÜHINE STIIL MÕLEMALE */
+    /* RAPORTIKASTID */
     .report-box {
       border: 1px solid #1c3f1e;
       background: rgba(0, 18, 0, 0.9);
@@ -267,12 +320,10 @@
       animation: fadeIn 0.5s;
     }
 
-    /* NARRATIIVIKAST = sama kast + veidi suurem vahe */
     .narrative-box {
       margin-top: 12px;
     }
 
-    /* sektorite separator */
     .sector-sep {
       height: 1px;
       margin: 6px 0 4px;
@@ -284,7 +335,6 @@
       );
     }
 
-    /* PEALKIRJADE KLASSID – ilma neoonita, lihtsalt veidi heledam */
     .report-heading {
       font-weight: 700;
       letter-spacing: 0.8px;
@@ -337,96 +387,109 @@
 </head>
 <body>
 
-<div id="top-bar">
-  <span>PX-Δ1 // LIVE_UPLINK</span>
-  <span>COSMOTRON-Δ1 <span style="color:var(--term-alert)">●</span></span>
-</div>
-
-<div id="signal-stack">
-  <div class="signal-metric">
-    <span class="sig-label">Coherence Vector</span>
-    <span class="sig-value" id="sig-coherence">96.4</span>
-  </div>
-  <div class="signal-metric">
-    <span class="sig-label">Pattern Drift</span>
-    <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
-  </div>
-  <div class="signal-metric">
-    <span class="sig-label">Risk Vector</span>
-    <span class="sig-value" id="sig-risk">--</span>
-  </div>
-  <div class="signal-metric">
-    <span class="sig-label">Pulse Density</span>
-    <span class="sig-value" id="sig-pulse">0.84</span>
-  </div>
-  <div class="signal-metric" style="border:none; min-width:110px;">
-    <span class="sig-label">Mode</span>
-    <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
-  </div>
-</div>
-
-<div id="main-grid">
-  <div id="col-raw">
-    <div id="raw-matrix"></div>
-    <div id="raw-meter">
-      <div id="raw-meter-fill"></div>
+<div class="kryonis-shell">
+  <!-- KRYONIS ülemine pealkiri -->
+  <div id="kryonis-header">
+    <div id="kryonis-header-eyebrow">KRYONIS / AXIS I — INTELLIGENCE STUDIO</div>
+    <div id="kryonis-header-title">
+      <span>PX-Δ1</span> SOVEREIGN INTELLIGENCE CONSOLE
     </div>
-    <div id="raw-meter-idle">PX-Δ1</div>
-  </div>
-
-  <div id="col-main">
-    <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
-    <div class="log-line sys">API HANDSHAKE: STANDBY</div>
-    <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
-  </div>
-
-  <div id="col-stat">
-    <div class="stat-box">
-      <span class="stat-label">Net Load</span>
-      <span class="stat-val" id="net-val">0 TB/s</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-label">Active Nodes</span>
-      <span class="stat-val">14,205</span>
-    </div>
-    <div class="stat-box">
-      <span class="stat-label">Threat Level</span>
-      <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
+    <div id="kryonis-header-sub">
+      LIVE STRATEGIC SCAN · COSMOTRON-Δ1 UPLINK
     </div>
   </div>
-</div>
 
-<div id="controls">
-  <div id="chip-rack">
-    <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
-    <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
-    <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
-    <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
-    <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
-    <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
-    <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
-    <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
-    <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
+  <div id="top-bar">
+    <span>PX-Δ1 // LIVE_UPLINK</span>
+    <span>COSMOTRON-Δ1 <span style="color:var(--term-alert)">●</span></span>
   </div>
 
-  <div id="prompt-help">
-    <span>FORMAT:</span> TARGET + CONTEXT + YEAR (OPTIONAL) ·
-    <span>EXAMPLES:</span>
-    "SIBERIA BIOECONOMY SIGNAL REPORT" ·
-    "AION SENTIA COGNITIVE CITY ANALYSIS" ·
-    "ARCTIC BIOSECURITY MODEL 2035"
+  <div id="signal-stack">
+    <div class="signal-metric">
+      <span class="sig-label">Coherence Vector</span>
+      <span class="sig-value" id="sig-coherence">96.4</span>
+    </div>
+    <div class="signal-metric">
+      <span class="sig-label">Pattern Drift</span>
+      <span class="sig-value sig-val-low" id="sig-drift">LOW</span>
+    </div>
+    <div class="signal-metric">
+      <span class="sig-label">Risk Vector</span>
+      <span class="sig-value" id="sig-risk">--</span>
+    </div>
+    <div class="signal-metric">
+      <span class="sig-label">Pulse Density</span>
+      <span class="sig-value" id="sig-pulse">0.84</span>
+    </div>
+    <div class="signal-metric" style="border:none; min-width:110px;">
+      <span class="sig-label">Mode</span>
+      <span class="sig-value" style="color:var(--term-gold)">SOVEREIGN / ULTRA</span>
+    </div>
   </div>
 
-  <div class="input-row">
-    <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
-    <input type="text" id="user-input"
-           placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
+  <div id="main-grid">
+    <div id="col-raw">
+      <div id="raw-matrix"></div>
+      <div id="raw-meter">
+        <div id="raw-meter-fill"></div>
+      </div>
+      <div id="raw-meter-idle">PX-Δ1</div>
+    </div>
+
+    <div id="col-main">
+      <div class="log-line sys">INITIALIZING NEURAL BRIDGE...</div>
+      <div class="log-line sys">API HANDSHAKE: STANDBY</div>
+      <div class="log-line sys">READY FOR GLOBAL QUERIES.</div>
+    </div>
+
+    <div id="col-stat">
+      <div class="stat-box">
+        <span class="stat-label">Net Load</span>
+        <span class="stat-val" id="net-val">0 TB/s</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Active Nodes</span>
+        <span class="stat-val">14,205</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Threat Level</span>
+        <span class="stat-val" style="color:var(--term-alert)">CRITICAL</span>
+      </div>
+    </div>
   </div>
 
-  <div id="license-bar">
-    <button id="license-btn">ACTIVATE SOVEREIGN ACCESS</button>
-    <div class="license-note">
-      ANNUAL LICENSE — PX-Δ1 SOVEREIGN INTELLIGENCE INTERFACE
+  <div id="controls">
+    <div id="chip-rack">
+      <div class="chip" onclick="askAI('ANALYZE USA')">USA</div>
+      <div class="chip" onclick="askAI('ANALYZE CHINA')">CHINA</div>
+      <div class="chip" onclick="askAI('ANALYZE RUSSIA')">RUSSIA</div>
+      <div class="chip" onclick="askAI('ANALYZE SAUDI ARABIA')">SAUDI</div>
+      <div class="chip" onclick="askAI('ANALYZE ARCTIC BIOECONOMY')">ARCTIC</div>
+      <div class="chip" onclick="askAI('ANALYZE SIBERIA BIOECONOMY')">SIBERIA</div>
+      <div class="chip" onclick="askAI('ASSESS WATER CRISIS')">WATER</div>
+      <div class="chip" onclick="askAI('ASSESS AI GOVERNANCE')">AI GOV</div>
+      <div class="chip" onclick="askAI('ASSESS BITCOIN STRATEGY')">CRYPTO</div>
+    </div>
+
+    <div id="prompt-help">
+      <span>FORMAT:</span> TARGET + CONTEXT + YEAR (OPTIONAL) ·
+      <span>EXAMPLES:</span>
+      "SIBERIA BIOECONOMY SIGNAL REPORT" ·
+      "AION SENTIA COGNITIVE CITY ANALYSIS" ·
+      "ARCTIC BIOSECURITY MODEL 2035"
+    </div>
+
+    <div class="input-row">
+      <span style="color:var(--term-green); margin-right:10px;">CMD:~$</span>
+      <input type="text" id="user-input"
+             placeholder="ENTER TARGET (E.G. 'SIBERIA BIOECONOMY SIGNAL REPORT')..." autofocus>
+    </div>
+
+    <div id="license-bar">
+      <button id="license-btn">ACTIVATE SOVEREIGN ACCESS</button>
+      <div class="license-note">
+        ANNUAL LICENSE — PX-Δ1 SOVEREIGN INTELLIGENCE INTERFACE
+      </div>
     </div>
   </div>
 </div>
@@ -606,7 +669,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
     return text;
   }
 
-  // UUS: struktuuripõhine formatter
   function formatText(str) {
     if (!str) return "";
     const lines = str.split(/\n/);
@@ -622,7 +684,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
 
       const upper = trimmedStart.toUpperCase();
 
-      // top-level pealkirjad
       if (upper.startsWith("HEADER:")) {
         out.push(wrapReportHeading(trimmedStart, "HEADER:"));
         continue;
@@ -644,7 +705,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         continue;
       }
 
-      // sektorialased: võib olla "- GOVERNANCE:" jne
       let clean = trimmedStart.replace(/^[-–—]\s*/, "");
       const cleanUpper = clean.toUpperCase();
 
@@ -664,13 +724,11 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         continue;
       }
 
-      // muu tekst lihtsalt läbi
       out.push(trimmedStart);
     }
 
     let joined = out.join("\n");
 
-    // markdown → <b>
     joined = joined
       .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
       .replace(/\*(.+?)\*/g, "<b>$1</b>")
@@ -690,7 +748,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
     const span = "<span class='sector-heading'>" + label + "</span>";
     const content = rest ? span + " " + rest : span;
     if (!sawSector) return content;
-    // lisa õrn separator enne järgmisi sektoreid
     return "<div class='sector-sep'></div>" + content;
   }
 
@@ -722,7 +779,7 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
         const before = aiRaw.slice(0, idx);
         const after = aiRaw.slice(idx);
         const lines = after.split(/\n/);
-        lines.shift(); // viskame algse "NARRATIVE SYNTHESIS..." rea minema
+        lines.shift();
         mainRaw = before.trim();
         narrativeRaw = lines.join("\n").trim();
       }
@@ -735,7 +792,6 @@ Do NOT prefix sections with "1.", "2.", "3." etc.
       if (narrativeRaw) {
         const narrativeDiv = document.createElement('div');
         narrativeDiv.className = 'report-box narrative-box';
-        // lisame pealkirja samasse loogikasse
         narrativeDiv.innerHTML = formatText("NARRATIVE SYNTHESIS:\n\n" + narrativeRaw);
         mainCol.appendChild(narrativeDiv);
       }
