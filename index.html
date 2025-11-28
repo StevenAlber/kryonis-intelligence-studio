@@ -58,7 +58,11 @@
     .text-muted{color:var(--fg-muted);}
     a{text-decoration:none;color:inherit;transition:all 0.3s var(--ease);}
 
-  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    .noise{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      pointer-events:none;z-index:900;opacity:0.05;
+      /* PARANDATUD: lisatud data: prefix */
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     #cosmos{
@@ -381,8 +385,9 @@
 </head>
 
 <body>
- <div class="noise"></div>
-<canvas id="cosmos"></canvas>
+  <div class="noise"></div>
+  <!-- PARANDATUD: canvas tag õigesti -->
+  <canvas id="cosmos"></canvas>
 
   <div class="page">
     <header id="navbar">
@@ -445,7 +450,7 @@
               <div class="hero-card-body">
                 The Studio functions as a <strong>sovereign cognitive organ</strong> for actors who hold
                 real levers over bio-economic reality. It converts fragmented global signals
-                into <strong>coherent civilizational architectures</strong>, aligned with GBX, MSF and TEC‑X
+                into <strong>coherent civilizational architectures</strong>, aligned with GBX, MSF and TEC-X
                 and enforced by Proof-of-Coherence.
                 <div class="hero-chip-row mono caps">
                   <div class="chip">Cognitive Capital</div>
@@ -475,7 +480,7 @@
             <p class="section-kicker">
               The Studio’s mandate is to maintain the integrity of Axis I — ensuring that any move
               taken under the KRYONIS banner is cognitively sound, metabolically anchored
-              and geopolitically non‑naïve.
+              and geopolitically non-naïve.
             </p>
           </div>
 
@@ -494,23 +499,23 @@
 
             <ul class="list">
               <li class="list-item">
-                <div class="list-index mono">M‑01</div>
+                <div class="list-index mono">M-01</div>
                 <div class="list-text">
                   <strong>Safeguard and strengthen cognitive capital.</strong>
-                  The Studio filters global complexity into decision‑grade signal frameworks,
-                  maintaining Proof‑of‑Coherence across all strategic layers.
+                  The Studio filters global complexity into decision-grade signal frameworks,
+                  maintaining Proof-of-Coherence across all strategic layers.
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">M‑02</div>
+                <div class="list-index mono">M-02</div>
                 <div class="list-text">
                   <strong>Convert fragmented signals into architecture.</strong>
-                  Bio‑economy, GBX corridors, metabolic sovereignty, governance templates and long‑horizon
+                  Bio-economy, GBX corridors, metabolic sovereignty, governance templates and long-horizon
                   strategy are reassembled as coherent civilizational architectures.
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">M‑03</div>
+                <div class="list-index mono">M-03</div>
                 <div class="list-text">
                   <strong>Maintain the Axis I → Axis II interface.</strong>
                   Narratives and models are evaluated against their metabolic consequences in Axis II.
@@ -518,11 +523,11 @@
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">M‑04</div>
+                <div class="list-index mono">M-04</div>
                 <div class="list-text">
                   <strong>Protect sovereign thought.</strong>
-                  The Studio neutralises ideological imports, market‑driven delusions, geopolitical distortions
-                  and short‑term noise, preserving long‑horizon intelligence.
+                  The Studio neutralises ideological imports, market-driven delusions, geopolitical distortions
+                  and short-term noise, preserving long-horizon intelligence.
                 </div>
               </li>
             </ul>
@@ -558,7 +563,7 @@
               </h3>
               <ul class="list">
                 <li class="list-item">
-                  <div class="list-index mono">P‑01</div>
+                  <div class="list-index mono">P-01</div>
                   <div class="list-text">
                     <strong>Signal Intake.</strong>
                     Only essential briefs, institutional memos, research,
@@ -566,7 +571,7 @@
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">P‑02</div>
+                  <div class="list-index mono">P-02</div>
                   <div class="list-text">
                     <strong>Rotation of Frames.</strong>
                     Signals are rotated through geopolitical, metabolic, technological,
@@ -575,28 +580,28 @@
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">P‑03</div>
+                  <div class="list-index mono">P-03</div>
                   <div class="list-text">
                     <strong>Coherence Assembly.</strong>
-                    Load‑bearing variables are identified, systemic tensions mapped
+                    Load-bearing variables are identified, systemic tensions mapped
                     and strategy lines extracted that survive physical reality.
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">P‑04</div>
+                  <div class="list-index mono">P-04</div>
                   <div class="list-text">
                     <strong>Instrument Design.</strong>
                     Architectures are translated into instruments: governance templates,
-                    program structures, GBX‑aligned issuance logic and telemetry definitions
-                    linking into MSF and TEC‑X.
+                    program structures, GBX-aligned issuance logic and telemetry definitions
+                    linking into MSF and TEC-X.
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">P‑05</div>
+                  <div class="list-index mono">P-05</div>
                   <div class="list-text">
                     <strong>Transmission &amp; Reflection.</strong>
                     Structures are delivered to the decision locus via confidential briefings,
-                    narrow‑beam strategy documents and explicit reflections on risk and failure modes.
+                    narrow-beam strategy documents and explicit reflections on risk and failure modes.
                   </div>
                 </li>
               </ul>
@@ -620,7 +625,7 @@
                 </li>
                 <li class="stack-item">
                   <span class="stack-label mono">Metabolic</span>
-                  <span class="stack-value">MSF and TEC‑X telemetry confirm that architectures bind to real processes.</span>
+                  <span class="stack-value">MSF and TEC-X telemetry confirm that architectures bind to real processes.</span>
                 </li>
                 <li class="stack-item">
                   <span class="stack-label mono">Sovereign</span>
@@ -648,8 +653,8 @@
             <h2 class="section-title">Axis I Sovereign Mandates</h2>
             <p class="section-kicker">
               The Studio does not take “projects”.
-              It accepts bounded sovereign mandates defined by their long‑horizon effects on bio‑economy,
-              governance and civilization‑level alignment.
+              It accepts bounded sovereign mandates defined by their long-horizon effects on bio-economy,
+              governance and civilization-level alignment.
             </p>
           </div>
 
@@ -663,23 +668,23 @@
               </h3>
               <ul class="list">
                 <li class="list-item">
-                  <div class="list-index mono">C‑01</div>
+                  <div class="list-index mono">C-01</div>
                   <div class="list-text">
                     <strong>Scope.</strong>
                     From singular decision windows (entry / exit, fund or corridor design, systemic shock response)
-                    to multi‑year architectures (national bio‑economy, GBX integration, sovereignty models).
+                    to multi-year architectures (national bio-economy, GBX integration, sovereignty models).
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">C‑02</div>
+                  <div class="list-index mono">C-02</div>
                   <div class="list-text">
                     <strong>Access depth.</strong>
-                    Ranging from open‑source intelligence only, through partial internal access,
+                    Ranging from open-source intelligence only, through partial internal access,
                     to deep sovereign access involving principals and restricted documents.
                   </div>
                 </li>
                 <li class="list-item">
-                  <div class="list-index mono">C‑03</div>
+                  <div class="list-index mono">C-03</div>
                   <div class="list-text">
                     <strong>Risk &amp; horizon.</strong>
                     Pricing reflects latency risk, not hours: what is the cost of being wrong
@@ -703,20 +708,20 @@
               </h3>
               <p class="text-muted" style="font-size:0.9rem;margin-bottom:1.1rem;">
                 The Studio engages with counterparties who hold real levers over
-                bio‑economic and civilizational trajectories:
+                bio-economic and civilizational trajectories:
               </p>
               <ul class="stack-list">
                 <li class="stack-item">
                   <span class="stack-label mono">Sovereign funds</span>
-                  <span class="stack-value">Designing reserves and corridors that include GBX and bio‑capital.</span>
+                  <span class="stack-value">Designing reserves and corridors that include GBX and bio-capital.</span>
                 </li>
                 <li class="stack-item">
                   <span class="stack-label mono">States</span>
-                  <span class="stack-value">Building long‑horizon bio‑economy strategies and metabolic sovereignty frames.</span>
+                  <span class="stack-value">Building long-horizon bio-economy strategies and metabolic sovereignty frames.</span>
                 </li>
                 <li class="stack-item">
                   <span class="stack-label mono">Industrial actors</span>
-                  <span class="stack-value">Re‑architecting supply chains, infrastructure and R&amp;D through KRYONIS logic.</span>
+                  <span class="stack-value">Re-architecting supply chains, infrastructure and R&amp;D through KRYONIS logic.</span>
                 </li>
                 <li class="stack-item">
                   <span class="stack-label mono">Emergent entities</span>
@@ -726,7 +731,7 @@
               <div class="divider"></div>
               <p class="text-muted" style="font-size:0.9rem;margin:0;">
                 Purely reputational, speculative or extractive mandates are declined, regardless of budget.
-                Commissions are judged against their contribution to systemic coherence, not short‑term gain.
+                Commissions are judged against their contribution to systemic coherence, not short-term gain.
               </p>
             </div>
           </div>
@@ -756,7 +761,7 @@
 
             <ul class="list">
               <li class="list-item">
-                <div class="list-index mono">B‑01</div>
+                <div class="list-index mono">B-01</div>
                 <div class="list-text">
                   <strong>The real question.</strong>
                   One or two paragraphs stating what is genuinely at stake if you get this wrong
@@ -764,22 +769,22 @@
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">B‑02</div>
+                <div class="list-index mono">B-02</div>
                 <div class="list-text">
                   <strong>Your current frame.</strong>
                   How you currently see the problem, which options you believe exist
-                  and which constraints you treat as non‑negotiable.
+                  and which constraints you treat as non-negotiable.
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">B‑03</div>
+                <div class="list-index mono">B-03</div>
                 <div class="list-text">
                   <strong>Decision locus.</strong>
                   Who actually has authority to act on the outcome and what access the Studio would have.
                 </div>
               </li>
               <li class="list-item">
-                <div class="list-index mono">B‑04</div>
+                <div class="list-index mono">B-04</div>
                 <div class="list-text">
                   <strong>Time, risk, stakes.</strong>
                   Decision horizon, consequences of inaction and of moving in the wrong direction.
@@ -791,7 +796,7 @@
 
             <p class="text-muted" style="font-size:0.9rem;margin-bottom:1.3rem;">
               Once the briefing is received, Axis I performs an internal coherence scan.
-              If the mandate fits the KRYONIS.OS frame and the Studio can add non‑trivial systemic value,
+              If the mandate fits the KRYONIS.OS frame and the Studio can add non-trivial systemic value,
               you receive a proposed engagement architecture and fee range.
               Otherwise you receive a short, respectful decline, sometimes with a minimal orientation note.
             </p>
@@ -845,7 +850,7 @@
       }
     });
 
-    // Reveal animation (same logic as index)
+    // Reveal animation
     const reveals = document.querySelectorAll('.reveal');
 
     function activateVisibleReveals() {
@@ -875,7 +880,7 @@
 
     window.addEventListener('load', activateVisibleReveals);
 
-    // Cosmic particles background (copied from index so ensemble stays identical)
+    // Cosmic particles background – peen, hall, mitte "lumesadu"
     const canvas = document.getElementById('cosmos');
     if (canvas && canvas.getContext) {
       const ctx = canvas.getContext('2d');
