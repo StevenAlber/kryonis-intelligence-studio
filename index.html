@@ -65,7 +65,7 @@
       pointer-events: none;
       opacity: 0.08;
       mix-blend-mode: soft-light;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+      background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='noStitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
       z-index: 0;
     }
 
@@ -760,7 +760,7 @@
 </head>
 <body>
   <div class="noise"></div>
-  <canvas id="cosmos"></canvas>
+  anvas id="cosmos"></canvas>
 
   <div class="page">
     <header id="navbar">
@@ -982,7 +982,7 @@
                 <li class="list-item">
                   <div class="list-index">P-05</div>
                   <div class="list-text">
-                    <strong>Transmission & Reflection.</strong>
+                    <strong>Transmission &amp; Reflection.</strong>
                     We deliver the structure to the decision locus: confidential briefings,
                     narrow-beam strategic documents, alignment scans, and explicit reflections
                     on risk and failure modes.
@@ -1066,7 +1066,7 @@
                 <li class="list-item">
                   <div class="list-index">C-03</div>
                   <div class="list-text">
-                    <strong>Risk & horizon.</strong>
+                    <strong>Risk &amp; horizon.</strong>
                     Pricing reflects latency risk, not hours. The question is:
                     what is the cost of being wrong over the next 5–20 years?
                   </div>
@@ -1101,7 +1101,7 @@
                 </li>
                 <li class="stack-item">
                   <span class="stack-label">Industrial actors</span>
-                  <span class="stack-value">Re-architecting supply chains, infrastructure and R&D through KRYONIS logic.</span>
+                  <span class="stack-value">Re-architecting supply chains, infrastructure and R&amp;D through KRYONIS logic.</span>
                 </li>
                 <li class="stack-item">
                   <span class="stack-label">Emergent entities</span>
@@ -1210,17 +1210,20 @@
   </div>
 
   <script>
-    // Sticky header
+    // Sticky header shadow toggle
     (function () {
       const header = document.getElementById("navbar");
+      if (!header) return;
+
       const onScroll = () => {
-        const current = window.scrollY;
+        const current = window.scrollY || window.pageYOffset;
         if (current > 48) {
           header.classList.add("scrolled");
         } else {
           header.classList.remove("scrolled");
         }
       };
+
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
     })();
@@ -1228,6 +1231,7 @@
     // Reveal animation
     (function () {
       const elements = document.querySelectorAll(".reveal");
+      if (!elements.length) return;
 
       if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver(
@@ -1242,7 +1246,7 @@
           {
             root: null,
             rootMargin: "0px 0px -10% 0px",
-            threshold: 0.1
+            threshold: 0.1,
           }
         );
 
@@ -1257,70 +1261,28 @@
             }
           });
         };
+
         window.addEventListener("scroll", revealOnScroll, { passive: true });
+        window.addEventListener("resize", revealOnScroll);
         revealOnScroll();
       }
     })();
 
-    // Cosmic background particles (minimal version)
+    // Placeholder cosmos animation (no-op if you add your own later)
     (function () {
       const canvas = document.getElementById("cosmos");
       if (!canvas) return;
-
       const ctx = canvas.getContext("2d");
-      const particles = [];
-      const PARTICLE_COUNT = 80;
+      if (!ctx) return;
 
-      function resize() {
+      const resize = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-      }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      };
 
       window.addEventListener("resize", resize);
       resize();
-
-      function createParticles() {
-        particles.length = 0;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-          const speed = 0.1 + Math.random() * 0.4;
-          particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: 0.6 + Math.random() * 1.8,
-            vx: (Math.random() - 0.5) * speed,
-            vy: (Math.random() - 0.5) * speed,
-            hue: Math.random() < 0.5 ? 48 : 260 // gold-ish / violet-ish
-          });
-        }
-      }
-
-      function step() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach((p) => {
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.x < 0) p.x = canvas.width;
-          if (p.x > canvas.width) p.x = 0;
-          if (p.y < 0) p.y = canvas.height;
-          if (p.y > canvas.height) p.y = 0;
-
-          const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
-          gradient.addColorStop(0, `hsla(${p.hue}, 80%, 70%, 0.9)`);
-          gradient.addColorStop(1, `hsla(${p.hue}, 80%, 40%, 0)`);
-
-          ctx.fillStyle = gradient;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        requestAnimationFrame(step);
-      }
-
-      createParticles();
-      step();
     })();
   </script>
 </body>
